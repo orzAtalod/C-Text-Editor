@@ -7,7 +7,7 @@ static int bufferInt[255];
 StyleString* ReadStyleString(FILE* f)
 {
 	StyleString* res = (StyleString*)malloc(sizeof(StyleString));
-	fread(readBufferInt, sizeof(int), 5, f);
+	fread(bufferInt, sizeof(int), 5, f);
 	res->pointSize = bufferInt[0];
 	res->indent    = bufferInt[1];
 	res->color     = LookupIDInColorTable(bufferInt[2]);

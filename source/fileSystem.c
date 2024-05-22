@@ -9,9 +9,9 @@ static void* styleStringReader(FILE* f)
 	return (void*)ReadStyleString(f);
 }
 
-static void* styleStringWriter(void* str, FILE* f)
+static void styleStringWriter(void* str, FILE* f)
 {
-	WriteStyleString((StyleString*)str, f); 
+	WriteStyleString((StyleString*)str, f);
 }
 
 static int curPage;
@@ -30,7 +30,7 @@ void InitFileSystem(ColorDefinitionFunction func)
 	RegisterWriterMethod(1,styleStringWriter);
 }
 
-void UpdateColorDefinitionMethod(ColorDifinitionFunction func)
+void UpdateColorDefinitionMethod(ColorDefinitionFunction func)
 {
 	colorFunc = func;
 }

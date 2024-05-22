@@ -1,5 +1,6 @@
 #ifndef __BLOCK_LIST_H_INCLUDED__
 #define __BLOCK_LIST_H_INCLUDED__
+#include <stdio.h>
 
 typedef struct {
 	int column;
@@ -22,7 +23,7 @@ void RegisterWriterMethod(int type, FileWriter func);
 
 void ChangePageOfBlockList(int p);
 Block* BlockCreate(int type, void* dataptr);
-void   BlockMove(int ID, int newColumn, int newAlignType, int newAlignID, double newAlignArgument);
+void   BlockMove(int ID, AlignmentInfo align);
 
 void LoadBlockList(FILE* f);
 void SaveBlockList(FILE* f);

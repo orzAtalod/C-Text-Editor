@@ -1,5 +1,6 @@
 #ifndef __FILE_SYSTEM_CORE_H__
 #define __FILE_SYSTEM_CORE_H__
+#include <stdio.h>
 
 /*
 *
@@ -97,3 +98,4 @@ if() assert(ColorNameExsists);
 *
 *
 */
+#endif

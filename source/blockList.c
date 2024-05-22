@@ -1,7 +1,9 @@
 #include "blockList.h"
+#include <stdlib.h>
+#include <assert.h>
 
 #define BLOCKLIST_FIRST_SHARE_SPACE 100
-static block* blocklist[255];
+static Block* blocklist[255];
 static int blocklistLength[255];
 static int blocklistSpace[255];
 static int curPage;
@@ -12,12 +14,12 @@ static void ensureListSpace()
 	if(blocklistSpace[curPage] == 0)
 	{
 		blocklistSpace[curPage] = BLOCKLIST_FIRST_SHARE_SPACE;
-		blocklist[curPage] = (block*)malloc(BLOCKLIST_FIRST_SHARE_SPACE*sizeof(block));
+		blocklist[curPage] = (Block*)malloc(BLOCKLIST_FIRST_SHARE_SPACE*sizeof(Block));
 		return;
 	}
 	if(blocklistSpace[curPage] == blocklistLength[curPage])
 	{
-		blocklist[curPage] = (block*)realloc(blocklist[curPage], 2*blocklistSpace[curPage]*sizeof(block));
+		blocklist[curPage] = (Block*)realloc(blocklist[curPage], 2*blocklistSpace[curPage]*sizeof(Block));
 		blocklistSpace[curPage] *= 2;
 		return;
 	}
@@ -41,7 +43,7 @@ typedef struct {
 	AlignmentInfo align;
 } blockExchangeStruct;
 
-blockExcnageStruct blocksBuffer[65535];
+blockExchangeStruct blocksBuffer[65535];
 
 void LoadBlockList(FILE* f)
 {
@@ -75,7 +77,7 @@ void SaveBlockList(FILE* f)
 	for(int i=1; i<=blocknum; ++i)
 	{
 		blocksBuffer[i-1].type  = blocklist[curPage][i].type;
-		blocksBuffer[i-1].align = blocklist[curPage][i].align
+		blocksBuffer[i-1].align = blocklist[curPage][i].align;
 	}
 	fwrite(&blocknum, sizeof(int), 1, f);
 	fwrite(blocksBuffer, sizeof(blockExchangeStruct), blocknum, f);
@@ -101,7 +103,7 @@ Block* BlockCreate(int type, void* dataptr)
 	return blocklist[curPage] + curid;
 }
 
-void BlockMove(int ID, AligmentInfo align)
+void BlockMove(int ID, AlignmentInfo align)
 {
 	if(!curPage) return;
 	assert(align.alignBlockID < ID);

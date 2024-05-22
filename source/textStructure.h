@@ -1,5 +1,6 @@
 #ifndef __TEXT_STRUCTURE_INCLUDED__
 #define __TEXT_STRUCTURE_INCLUDED__
+#include <stdio.h>
 
 /*
 *
