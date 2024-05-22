@@ -4,11 +4,11 @@
 CPP      = g++.exe
 CC       = gcc.exe
 WINDRES  = windres.exe
-OBJ      = ../source/main.o ../libgraphics/exceptio.o ../libgraphics/genlib.o ../libgraphics/graphics.o ../libgraphics/linkedlist.o ../libgraphics/random.o ../libgraphics/simpio.o ../libgraphics/strlib.o ../source/textStructure.o ../source/blockList.o ../source/fileSystem.o
-LINKOBJ  = ../source/main.o ../libgraphics/exceptio.o ../libgraphics/genlib.o ../libgraphics/graphics.o ../libgraphics/linkedlist.o ../libgraphics/random.o ../libgraphics/simpio.o ../libgraphics/strlib.o ../source/textStructure.o ../source/blockList.o ../source/fileSystem.o
+OBJ      = ../outputs/main.o ../outputs/exceptio.o ../outputs/genlib.o ../outputs/graphics.o ../outputs/linkedlist.o ../outputs/random.o ../outputs/simpio.o ../outputs/strlib.o ../outputs/textStructure.o ../outputs/blockList.o ../outputs/fileSystem.o
+LINKOBJ  = ../outputs/main.o ../outputs/exceptio.o ../outputs/genlib.o ../outputs/graphics.o ../outputs/linkedlist.o ../outputs/random.o ../outputs/simpio.o ../outputs/strlib.o ../outputs/textStructure.o ../outputs/blockList.o ../outputs/fileSystem.o
 LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib" -L"C:/Program Files (x86)/Dev-Cpp/MinGW32/mingw32/lib" -static-libstdc++ -static-libgcc -mwindows
-INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include" -I"C:/Users/17599/Documents/GitHub/C-Text-Editor/libgraphics"
-CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib/gcc/mingw32/4.7.2/include/c++" -I"C:/Users/17599/Documents/GitHub/C-Text-Editor/libgraphics"
+INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include" -I"../libgraphics"
+CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib/gcc/mingw32/4.7.2/include/c++" -I"../libgraphics"
 BIN      = "../C Text Editor.exe"
 CXXFLAGS = $(CXXINCS) -Wall
 CFLAGS   = $(INCS) -Wall -std=c99
@@ -24,35 +24,35 @@ clean: clean-custom
 $(BIN): $(OBJ)
 	$(CC) $(LINKOBJ) -o $(BIN) $(LIBS)
 
-../source/main.o: ../source/main.c
-	$(CC) -c ../source/main.c -o ../source/main.o $(CFLAGS)
+../outputs/main.o: ../source/main.c
+	$(CC) -c ../source/main.c -o ../outputs/main.o $(CFLAGS)
 
-../libgraphics/exceptio.o: ../libgraphics/exceptio.c
-	$(CC) -c ../libgraphics/exceptio.c -o ../libgraphics/exceptio.o $(CFLAGS)
+../outputs/exceptio.o: ../libgraphics/exceptio.c
+	$(CC) -c ../libgraphics/exceptio.c -o ../outputs/exceptio.o $(CFLAGS)
 
-../libgraphics/genlib.o: ../libgraphics/genlib.c
-	$(CC) -c ../libgraphics/genlib.c -o ../libgraphics/genlib.o $(CFLAGS)
+../outputs/genlib.o: ../libgraphics/genlib.c
+	$(CC) -c ../libgraphics/genlib.c -o ../outputs/genlib.o $(CFLAGS)
 
-../libgraphics/graphics.o: ../libgraphics/graphics.c
-	$(CC) -c ../libgraphics/graphics.c -o ../libgraphics/graphics.o $(CFLAGS)
+../outputs/graphics.o: ../libgraphics/graphics.c
+	$(CC) -c ../libgraphics/graphics.c -o ../outputs/graphics.o $(CFLAGS)
 
-../libgraphics/linkedlist.o: ../libgraphics/linkedlist.c
-	$(CC) -c ../libgraphics/linkedlist.c -o ../libgraphics/linkedlist.o $(CFLAGS)
+../outputs/linkedlist.o: ../libgraphics/linkedlist.c
+	$(CC) -c ../libgraphics/linkedlist.c -o ../outputs/linkedlist.o $(CFLAGS)
 
-../libgraphics/random.o: ../libgraphics/random.c
-	$(CC) -c ../libgraphics/random.c -o ../libgraphics/random.o $(CFLAGS)
+../outputs/random.o: ../libgraphics/random.c
+	$(CC) -c ../libgraphics/random.c -o ../outputs/random.o $(CFLAGS)
 
-../libgraphics/simpio.o: ../libgraphics/simpio.c
-	$(CC) -c ../libgraphics/simpio.c -o ../libgraphics/simpio.o $(CFLAGS)
+../outputs/simpio.o: ../libgraphics/simpio.c
+	$(CC) -c ../libgraphics/simpio.c -o ../outputs/simpio.o $(CFLAGS)
 
-../libgraphics/strlib.o: ../libgraphics/strlib.c
-	$(CC) -c ../libgraphics/strlib.c -o ../libgraphics/strlib.o $(CFLAGS)
+../outputs/strlib.o: ../libgraphics/strlib.c
+	$(CC) -c ../libgraphics/strlib.c -o ../outputs/strlib.o $(CFLAGS)
 
-../source/textStructure.o: ../source/textStructure.c
-	$(CC) -c ../source/textStructure.c -o ../source/textStructure.o $(CFLAGS)
+../outputs/textStructure.o: ../source/textStructure.c
+	$(CC) -c ../source/textStructure.c -o ../outputs/textStructure.o $(CFLAGS)
 
-../source/blockList.o: ../source/blockList.c
-	$(CC) -c ../source/blockList.c -o ../source/blockList.o $(CFLAGS)
+../outputs/blockList.o: ../source/blockList.c
+	$(CC) -c ../source/blockList.c -o ../outputs/blockList.o $(CFLAGS)
 
-../source/fileSystem.o: ../source/fileSystem.c
-	$(CC) -c ../source/fileSystem.c -o ../source/fileSystem.o $(CFLAGS)
+../outputs/fileSystem.o: ../source/fileSystem.c
+	$(CC) -c ../source/fileSystem.c -o ../outputs/fileSystem.o $(CFLAGS)
