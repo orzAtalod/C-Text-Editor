@@ -38,10 +38,7 @@ void RegisterWriterMethod(int type, FileWriter func)
 
 typedef struct {
 	int type;
-	int alignType;
-	int alignBlockID;
-	int culumn
-	double alignArgument;
+	AlignmentInfo align;
 } blockExchangeStruct;
 
 blockExcnageStruct blocksBuffer[65535];
@@ -57,12 +54,9 @@ void LoadBlockList(FILE* f)
 		for(int i=1; i<=blocknum; ++i)
 		{
 			ensureListSpace();
-			blocklist[curPage][i].ID                  = i;
-			blocklist[curPage][i].type                = blocksBuffer[i-1].type;
-			blocklist[curPage][i].align.column        = blocksBuffer[i-1].column;
-			blocklist[curPage][i].align.alignType     = blocksBuffer[i-1].alignType;
-			blocklist[curPage][i].align.alignBlockID  = blocksBuffer[i-1].alignBlockID;
-			blocklist[curPage][i].align.alignArgument = blocksBuffer[i-1].alignArgument;
+			blocklist[curPage][i].ID    = i;
+			blocklist[curPage][i].type  = blocksBuffer[i-1].type;
+			blocklist[curPage][i].align = blocksBuffer[i-1].align;
 		}
 	}
 	
@@ -80,11 +74,8 @@ void SaveBlockList(FILE* f)
 	const int blocknum = blocklistLength[curPage];
 	for(int i=1; i<=blocknum; ++i)
 	{
-		blocksBuffer[i-1].type          = blocklist[curPage][i].type;
-		blocksBuffer[i-1].column        = blocklist[curPage][i].align.column;
-		blocksBuffer[i-1].alignType     = blocklist[curPage][i].align.alignType;
-		blocksBuffer[i-1].alignBlockID  = blocklist[curPage][i].align.alignBlockID;
-		blocksBuffer[i-1].alignArgument = blocklist[curPage][i].align.alignArgument;
+		blocksBuffer[i-1].type  = blocklist[curPage][i].type;
+		blocksBuffer[i-1].align = blocklist[curPage][i].align
 	}
 	fwrite(&blocknum, sizeof(int), 1, f);
 	fwrite(blocksBuffer, sizeof(blockExchangeStruct), blocknum, f);
@@ -110,14 +101,11 @@ Block* BlockCreate(int type, void* dataptr)
 	return blocklist[curPage] + curid;
 }
 
-void BlockMove(int ID, int newColumn, int newAlignType, int newAlignID, double newAlignArgument)
+void BlockMove(int ID, AligmentInfo align)
 {
 	if(!curPage) return;
-	assert(newAlignID < ID);
-	blocklist[curPage][ID].align.column        = newColumn;
-	blocklist[curPage][ID].align.alignType     = newAlignType;
-	blocklist[curPage][ID].align.alignBlockID  = newAlignID;
-	blocklist[curPage][ID].align.alignArgument = newAlignArgument;
+	assert(align.alignBlockID < ID);
+	blocklist[curPage][ID].align = align;
 }
 
 void TraverseBlockList(BlockListTraverseFunc func)
