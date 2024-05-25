@@ -2,6 +2,8 @@
 #define __BLOCK_LIST_H_INCLUDED__
 #include <stdio.h>
 
+typedef double (*GetHeightFunc)(void*,double);
+
 typedef struct {
 	int column;
 	int alignType; //0:head 1:middle 2:end
@@ -20,6 +22,7 @@ typedef void* (*FileReader)(FILE*);
 typedef void  (*FileWriter)(void*, FILE*);
 void RegisterReaderMethod(int type, FileReader func);
 void RegisterWriterMethod(int type, FileWriter func);
+//这两个函数在FileSystem初始化的时候完成注册 
 
 void ChangePageOfBlockList(int p);
 Block* BlockCreate(int type, void* dataptr);
@@ -32,5 +35,9 @@ typedef void  (BlockListTraverseFunc)(Block*);
 typedef void* (BlockListAccumlateFunc)(void*, Block*);
 void  TraverseBlockList(BlockListTraverseFunc func);
 void* AccumlateBlockList(BlockListAccumlateFunc func, void* beginValue);
+
+void RegisterGetHeightFunc(int type, GetHeightFunc func);
+double GetHeight(Block*, double);
+//这个函数在Editor初始化的时候完成注册 
 
 #endif

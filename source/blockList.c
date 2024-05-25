@@ -130,3 +130,16 @@ void* AccumlateBlockList(BlockListAccumlateFunc func, void* beginValue)
 	}
 	return beginValue;
 }
+
+static GetHeightFunc heightFunc[65535];
+
+void RegisterGetHeightFunc(int type, GetHeightFunc func)
+{
+	assert(type>=0);
+	heightFunc[type] = func;
+}
+
+double GetHeight(Block* blk, double width)
+{
+	return heightFunc[blk->type](blk->dataptr, width);
+}

@@ -24,12 +24,12 @@ HostApplication=
 UseCustomMakefile=0
 CustomMakefile=
 CommandLine=
-Folders=libgraphics
+Folders=header,libgraphics,source
 IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
 CompilerSettings=0000000000000000000000000
-UnitCount=32
+UnitCount=34
 
 [VersionInfo]
 Major=1
@@ -61,76 +61,6 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit2]
-FileName=..\source\textStructure.h
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit27]
-FileName=..\source\textStructure.c
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit28]
-FileName=..\source\fileSystemCore.h
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit29]
-FileName=..\source\blockList.h
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit30]
-FileName=..\source\fileSystem.h
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit31]
-FileName=..\source\blockList.c
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit32]
-FileName=..\source\fileSystem.c
-CompileCpp=0
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit3]
 FileName=..\libgraphics\boolean.h
 CompileCpp=0
 Folder=libgraphics
@@ -140,7 +70,57 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit4]
+[Unit28]
+FileName=..\header\fileSystemCore.h
+CompileCpp=0
+Folder=header
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit29]
+FileName=..\header\textStructure.h
+CompileCpp=0
+Folder=header
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit30]
+FileName=..\source\textStructure.c
+CompileCpp=0
+Folder=source
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit31]
+FileName=..\source\fileSystem.c
+CompileCpp=0
+Folder=source
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit32]
+FileName=..\source\blockList.c
+CompileCpp=0
+Folder=source
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit3]
 FileName=..\libgraphics\exceptio.c
 CompileCpp=0
 Folder=libgraphics
@@ -150,8 +130,9 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit5]
+[Unit4]
 FileName=..\libgraphics\exceptio.o
+CompileCpp=0
 Folder=libgraphics
 Compile=0
 Link=0
@@ -159,17 +140,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit6]
+[Unit5]
 FileName=..\libgraphics\exception.h
-CompileCpp=0
 Folder=libgraphics
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
+CompileCpp=0
 
-[Unit7]
+[Unit6]
 FileName=..\libgraphics\extgraph.h
 CompileCpp=0
 Folder=libgraphics
@@ -179,7 +160,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit8]
+[Unit7]
 FileName=..\libgraphics\gcalloc.h
 CompileCpp=0
 Folder=libgraphics
@@ -189,7 +170,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit9]
+[Unit8]
 FileName=..\libgraphics\genlib.c
 CompileCpp=0
 Folder=libgraphics
@@ -199,7 +180,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit10]
+[Unit9]
 FileName=..\libgraphics\genlib.h
 CompileCpp=0
 Folder=libgraphics
@@ -209,8 +190,9 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit11]
+[Unit10]
 FileName=..\libgraphics\genlib.o
+CompileCpp=0
 Folder=libgraphics
 Compile=0
 Link=0
@@ -218,17 +200,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit12]
+[Unit11]
 FileName=..\libgraphics\graphics.c
-CompileCpp=0
 Folder=libgraphics
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
+CompileCpp=0
 
-[Unit13]
+[Unit12]
 FileName=..\libgraphics\graphics.h
 CompileCpp=0
 Folder=libgraphics
@@ -238,8 +220,9 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit14]
+[Unit13]
 FileName=..\libgraphics\graphics.o
+CompileCpp=0
 Folder=libgraphics
 Compile=0
 Link=0
@@ -247,17 +230,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit15]
+[Unit14]
 FileName=..\libgraphics\linkedlist.c
-CompileCpp=0
 Folder=libgraphics
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
+CompileCpp=0
 
-[Unit16]
+[Unit15]
 FileName=..\libgraphics\linkedlist.h
 CompileCpp=0
 Folder=libgraphics
@@ -267,8 +250,9 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit17]
+[Unit16]
 FileName=..\libgraphics\linkedlist.o
+CompileCpp=0
 Folder=libgraphics
 Compile=0
 Link=0
@@ -276,17 +260,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit18]
+[Unit17]
 FileName=..\libgraphics\random.c
-CompileCpp=0
 Folder=libgraphics
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
+CompileCpp=0
 
-[Unit19]
+[Unit18]
 FileName=..\libgraphics\random.h
 CompileCpp=0
 Folder=libgraphics
@@ -296,8 +280,9 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit20]
+[Unit19]
 FileName=..\libgraphics\random.o
+CompileCpp=0
 Folder=libgraphics
 Compile=0
 Link=0
@@ -305,17 +290,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit21]
+[Unit20]
 FileName=..\libgraphics\simpio.c
-CompileCpp=0
 Folder=libgraphics
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
+CompileCpp=0
 
-[Unit22]
+[Unit21]
 FileName=..\libgraphics\simpio.h
 CompileCpp=0
 Folder=libgraphics
@@ -325,8 +310,9 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit23]
+[Unit22]
 FileName=..\libgraphics\simpio.o
+CompileCpp=0
 Folder=libgraphics
 Compile=0
 Link=0
@@ -334,17 +320,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit24]
+[Unit23]
 FileName=..\libgraphics\strlib.c
-CompileCpp=0
 Folder=libgraphics
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
+CompileCpp=0
 
-[Unit25]
+[Unit24]
 FileName=..\libgraphics\strlib.h
 CompileCpp=0
 Folder=libgraphics
@@ -354,11 +340,52 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit26]
+[Unit25]
 FileName=..\libgraphics\strlib.o
+CompileCpp=0
 Folder=libgraphics
 Compile=0
 Link=0
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit33]
+FileName=..\header\editorCore.h
+CompileCpp=0
+Folder=header
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit34]
+FileName=..\header\geometry.h
+CompileCpp=0
+Folder=header
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit26]
+FileName=..\header\blockList.h
+CompileCpp=0
+Folder=header
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit27]
+FileName=..\header\fileSystem.h
+CompileCpp=0
+Folder=header
+Compile=1
+Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
