@@ -67,9 +67,11 @@ typedef void (*ColorDefinitionMethod)(const char*,double,double,double)
 * 1. 快捷键信息，由 RegisterEditorHotKey(char*, ButtonEvent)定义，当按下快捷键时调用相应
 *    函数。 
 * 2. 鼠标拖动信息，当鼠标指针位于编辑区并且左键被按下时，对于任何鼠标移动信息调用注册的
-*    EditorMouseDown(double,double) 传入鼠标当前所处位置相对于编辑区左上角的坐标。 
+*    EditorMouseLeftDown(double,double) 传入鼠标当前所处位置相对于编辑区左上角的坐标。 
 * 3. 鼠标抬起信息，当鼠标指针位于编辑区并且鼠标左键松开，或者鼠标指针在左键按下的情况下
-*    从编辑区移开时，调用注册的 EditorMouseUp() 函数。 
+*    从编辑区移开时，调用注册的 EditorMouseLeftUp() 函数。 
+* 4. 右键与左键相同，左右两键同时按下时视为先松开原本按着的键再按下新键
+* 5. 中键的滚动也需要被记录 
 * 4. 键盘上下左右、Enter、Backspace、Delete 信息，调用相应函数即可。 
 * 5. 键盘输入信息，关于键盘输入信息的说明及要求见附录 1 。 
 *
@@ -103,8 +105,12 @@ void RegisterRollerUpperBoundDraw(GetInfoMethod);
 void RegisterRollerLowerBoundDraw(GetInfoMethod);
 
 void RegisterEditorHotKey(char*, BottonEvent);
-void RegisterEditorMouseDown(MouseEventMethod);
-void RegisterEditorMouseUp(BottonEvent);
+void RegisterEditorMouseLeftDown(MouseEventMethod);
+void RegisterEditorMouseLeftUp(BottonEvent);
+void RegisterEditorMouseMiddleRollup(BottonEvent);
+void RegisterEditorMouseMiddleRolldown(BottonEvent);
+void RegisterEditorMouseRightDown(MouseEventMethod);
+void RegisterEditorMouseLeftDown(MouseEventMethod); 
 void RegisterEditorKeyboard(KeyboardEventMethod);
 
 void RegisterEditorKeyboardSpecial(KeyboardEventMethod); //1上 2下 3左 4右 5回车 6退格 7Delete 
