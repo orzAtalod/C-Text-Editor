@@ -29,7 +29,7 @@ IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
 CompilerSettings=0000000000000000000000000
-UnitCount=34
+UnitCount=35
 
 [VersionInfo]
 Major=1
@@ -384,6 +384,16 @@ BuildCmd=
 FileName=..\header\fileSystem.h
 CompileCpp=0
 Folder=header
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit35]
+FileName=..\header\myGUI.h
+CompileCpp=0
+Folder=
 Compile=1
 Link=1
 Priority=1000
