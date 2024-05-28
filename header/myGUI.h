@@ -27,7 +27,7 @@
 void GUI_Start();
 
 typedef void (*ButtonEvent)();
-typedef void (*BottonEventWithInput)(const char*);
+typedef void (*ButtonEventWithInput)(const char*);
 typedef void (*AreaPaintMethod)(double,double,double,double); 
 typedef double (*GetInfoMethod)(void);
 typedef void (*MouseEventMethod)(double,double);
@@ -63,7 +63,7 @@ typedef void (*ColorDefinitionMethod)(const char*,double,double,double)
 * 滚动条：使用注册的 RollerUpperBound() 和 RollerLowerBound() 函数获知滚动条粗段的起始
 *         与结束位置，自行绘制（起始、结束位置格式为占整条长度的比例，在 0 和 1 之间） 
 *
-* 当鼠标事件位于大编辑区时，或者当键盘事件发生时，需要转发一些信息：
+* 当鼠标事件位于编辑区时，或者当键盘事件发生时，需要转发一些信息：
 * 1. 快捷键信息，由 RegisterEditorHotKey(char*, ButtonEvent)定义，当按下快捷键时调用相应
 *    函数。 
 * 2. 鼠标拖动信息，当鼠标指针位于编辑区并且左键被按下时，对于任何鼠标移动信息调用注册的
@@ -75,45 +75,54 @@ typedef void (*ColorDefinitionMethod)(const char*,double,double,double)
 * 4. 键盘上下左右、Enter、Backspace、Delete 信息，调用相应函数即可。 
 * 5. 键盘输入信息，关于键盘输入信息的说明及要求见附录 1 。 
 *
+* 鼠标事件位于浏览区、滚动条时也需要转发一些信息，内容与编辑区的同名函数相同
+* 若鼠标事件跨越浏览区与编辑区的界限（从编辑区拖动到浏览区或反之）则不将鼠标事件转发至 
+*   跨越入的区域，而是仍旧转发给跨越前的区域，照常计算鼠标的相对坐标（这次不在第四象限了） 
+*  
 */
 
 void ChangeDisplayMethodToMain();
 
-void RegisterSaveMethod(BottonEvent);
-void RegisterOpenMethod(BottonEvent);
-void RegisterCreateMethod(BottonEvent);
-void RegisterSaveasMethod(BottonEvent);
-void RegisterCloseMethod(BottonEvent);
+void RegisterSaveMethod(ButtonEvent);
+void RegisterOpenMethod(ButtonEvent);
+void RegisterCreateMethod(ButtonEvent);
+void RegisterSaveasMethod(ButtonEvent);
+void RegisterCloseMethod(ButtonEvent);
 
-void RegisterStatMethod(BottonEvent);
-void RegisterSearchMethod(BottonEvent);
-void RegisterExploreMethod(BottonEvent);
+void RegisterStatMethod(ButtonEvent);
+void RegisterSearchMethod(ButtonEvent);
+void RegisterExploreMethod(ButtonEvent);
 
-void RegisterSettingMethod(BottonEvent);
-void RegisterHelpMethod(BottonEvent);
+void RegisterSettingMethod(ButtonEvent);
+void RegisterHelpMethod(ButtonEvent);
 
-void RegisterColorMethod(BottonEventWithInput);
-void RegisterBoldMethod(BottonEvent);
-void RegisterItalicMethod(BottonEvent);
-void RegisterPointSizeMethod(BottonEventWithInput);
-void RegisterFontMethod(BottonEventWithInput);
-void RegisterImageMethod(BottonEvent);
+void RegisterColorMethod(ButtonEventWithInput);
+void RegisterBoldMethod(ButtonEvent);
+void RegisterItalicMethod(ButtonEvent);
+void RegisterPointSizeMethod(ButtonEventWithInput);
+void RegisterFontMethod(ButtonEventWithInput);
+void RegisterImageMethod(ButtonEvent);
 
 void RegisterExplorerDraw(AreaPaintMethod);
 void RegisterEditorGraphicDraw(AreaPaintMethod);
 void RegisterRollerUpperBoundDraw(GetInfoMethod);
 void RegisterRollerLowerBoundDraw(GetInfoMethod);
 
-void RegisterEditorHotKey(char*, BottonEvent);
+void RegisterEditorHotKey(char*, ButtonEvent);
 void RegisterEditorMouseLeftDown(MouseEventMethod);
-void RegisterEditorMouseLeftUp(BottonEvent);
-void RegisterEditorMouseMiddleRollup(BottonEvent);
-void RegisterEditorMouseMiddleRolldown(BottonEvent);
+void RegisterEditorMouseLeftUp(ButtonEvent);
+void RegisterEditorMouseMiddleRollup(ButtonEvent);
+void RegisterEditorMouseMiddleRolldown(ButtonEvent);
 void RegisterEditorMouseRightDown(MouseEventMethod);
-void RegisterEditorMouseLeftDown(MouseEventMethod); 
+void RegisterEditorMouseRightUp(ButtonEvent);
 void RegisterEditorKeyboard(KeyboardEventMethod);
 
 void RegisterEditorKeyboardSpecial(KeyboardEventMethod); //1上 2下 3左 4右 5回车 6退格 7Delete 
+
+void RegisterExplorerMouseLeftDown(MouseEventMethod);
+void RegisterExplorerMouseLeftUp(ButtonEvent);
+void RegisterExplorerMouseRightDown(MouseEventMethod);
+void RegisterExplorerMouseRightUp(ButtonEvent);
 
 /*
 *
@@ -129,7 +138,7 @@ void RegisterEditorKeyboardSpecial(KeyboardEventMethod); //1上 2下 3左 4右 5回车
 *
 */
 
-void ChangeDisplayMethodToInput(BottonEventWithInput callback);
+void ChangeDisplayMethodToInput(ButtonEventWithInput callback);
 
 /*
 *
@@ -142,7 +151,7 @@ void ChangeDisplayMethodToInput(BottonEventWithInput callback);
 *
 */
 
-void ChangeDisplayMethodToMajorInput(char* inputMessage, BottonEventWithInput callback);
+void ChangeDisplayMethodToMajorInput(char* inputMessage, ButtonEventWithInput callback);
 
 /*
 *
@@ -160,7 +169,7 @@ void ChangeDisplayMethodToMajorInput(char* inputMessage, BottonEventWithInput ca
 void ChangeDisplayMethodToSearch();
 
 void RegisterSearchDisplayMethod(AreaPaintMethod);
-void RegisterSearchInputMethod(BottonEventWithInput);
+void RegisterSearchInputMethod(ButtonEventWithInput);
 
 /*
 *
