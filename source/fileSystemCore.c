@@ -3,9 +3,12 @@
 #include<stdlib.h>
 #include<string.h>
 #include<assert.h>
+
+#define NAME_STRING_LIMIT 10 
+
 //先写color，再写font；先读color，再读font 
 typedef struct{
-	char name[10];
+	char name[NAME_STRING_LIMIT];
 	double code[3];//三原色值 
 }colorInfo;
 struct colorTable{
@@ -35,19 +38,19 @@ void ChangePageOfColorTable(int p)//不仅是转换页，也是创建一个页，所以第一次调用
 void ReadColorTable(FILE* f, ColorDefinitionFunction func)
 {
 	char *tempname;
-	tempname=(char *)malloc(sizeof(char)*10);
+	tempname=(char *)malloc(sizeof(char)*NAME_STRING_LIMIT);
 	double tempcode[3];
-	fread(tempname,sizeof(char),10,f);
+	fread(tempname,sizeof(char),NAME_STRING_LIMIT,f);
 	fread(tempcode,sizeof(double),3,f);
 	while(strcmp(tempname,"firstend")!=0){//firstend是结束标志  
 		RegisterColorName(tempname,tempcode[0],tempcode[1],tempcode[2]);
-		fread(tempname,sizeof(char),10,f);
+		fread(tempname,sizeof(char),NAME_STRING_LIMIT,f);
 		fread(tempcode,sizeof(double),3,f);
 	}
-	fread(tempname,sizeof(char),10,f);
+	fread(tempname,sizeof(char),NAME_STRING_LIMIT,f);
 	while(strcmp(tempname,"secondend")!=0){//secondend是结束标志  
 		RegisterColorTable(tempname);
-		fread(tempname,sizeof(char),10,f);
+		fread(tempname,sizeof(char),NAME_STRING_LIMIT,f);
 	}
 }
 
@@ -58,19 +61,19 @@ void WriteColorTable(FILE* f)
 	int secondl=p->slength;
 	int i;
 	for(i=1;i<=firstl;i++){
-		fwrite(p->first[i].name,sizeof(char),10,f);
+		fwrite(p->first[i].name,sizeof(char),NAME_STRING_LIMIT,f);
 		fwrite(p->first[i].code,sizeof(double),3,f);
 	}
-	char endchar[10]="firstend";//最后写入结束标志 
+	char endchar[NAME_STRING_LIMIT]="firstend";//最后写入结束标志 
 	double enddouble[3]={0,0,0};
-	fwrite(endchar,sizeof(char),10,f);
+	fwrite(endchar,sizeof(char),NAME_STRING_LIMIT,f);
 	fwrite(enddouble,sizeof(double),3,f);
 	
 	for(i=1;i<=secondl;i++){
-		fwrite(p->second[i],sizeof(char),10,f);
+		fwrite(p->second[i],sizeof(char),NAME_STRING_LIMIT,f);
 	}
 	strcpy(endchar,"secondend");
-	fwrite(endchar,sizeof(char),10,f);
+	fwrite(endchar,sizeof(char),NAME_STRING_LIMIT,f);
 }
 
 int RegisterColorTable(const char* colorName)
@@ -157,10 +160,10 @@ void ReadFontTable(FILE* f)
 {
 	char *tempname;
 	tempname=(char *)malloc(sizeof(char)*10);
-	fread(tempname,sizeof(char),10,f);
+	fread(tempname,sizeof(char),NAME_STRING_LIMIT,f);
 	while(strcmp(tempname,"fontend")!=0){//fontend是结束标志 
 		RegisterFontTable(tempname);
-		fread(tempname,sizeof(char),10,f);
+		fread(tempname,sizeof(char),NAME_STRING_LIMIT,f);
 	}
 }
 
@@ -170,10 +173,10 @@ void WriteFontTable(FILE* f)
 	int l=p->length;
 	int i;
 	for(i=1;i<=l;i++){
-		fwrite(p->second[i],sizeof(char),10,f);
+		fwrite(p->second[i],sizeof(char),NAME_STRING_LIMIT,f);
 	}
-	char endchar[10]="fontend";//最后写入结束标志 
-	fwrite(endchar,sizeof(char),10,f);
+	char endchar[NAME_STRING_LIMIT]="fontend";//最后写入结束标志 
+	fwrite(endchar,sizeof(char),NAME_STRING_LIMIT,f);
 }
 
 int RegisterFontTable(const char* fontName)
@@ -188,7 +191,7 @@ int RegisterFontTable(const char* fontName)
 			}
 		}
 	} 
-	p->second[l+1]=malloc(sizeof(char)*10);
+	p->second[l+1]=malloc(sizeof(char)*NAME_STRING_LIMIT);
 	strcpy(p->second[l+1],fontName);
 	p->length++;
 	return l+1;
