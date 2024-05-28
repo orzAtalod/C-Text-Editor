@@ -124,6 +124,9 @@ void RegisterExplorerMouseLeftUp(ButtonEvent);
 void RegisterExplorerMouseRightDown(MouseEventMethod);
 void RegisterExplorerMouseRightUp(ButtonEvent);
 
+void RegisterRollerMouseLeftDown(MouseEventMethod);
+void RegisterRollerMouseLeftUp(ButtonEvent);
+
 /*
 *
 * 界面 2：输入界面
