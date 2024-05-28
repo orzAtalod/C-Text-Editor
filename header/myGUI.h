@@ -5,169 +5,169 @@
 *
 * interface for GUI system
 * 
-* »ù´¡½»»¥Âß¼­ÈçÏÂ£º
-* 1. mainº¯ÊýÔÚ¸÷ÖÖ³õÊ¼»¯º¯ÊýÍê³ÉµÄ½áÎ²µ÷ÓÃ GUI_Start() º¯Êý²¢ÇÒ½áÊø¿ØÖÆÁ÷
-*    ÔÚ GUI_Start() º¯ÊýÖÐÓ¦¸ÃÍê³É¸÷ÖÖÏûÏ¢ÊÂ¼þµÄµÇÂ¼²¢ÇÒÖ÷µ¼ÏûÏ¢Ñ­»·
-* 2. ¸÷ÖÖ°´Å¥Ëù¼¤»îµÄº¯ÊýÍ¨¹ýÏàÓ¦µÄ register º¯ÊýÔÚ GUI_start() º¯Êýµ÷ÓÃÇ°
-*    Íê³É³õÊ¼»¯£¬GUIÏµÍ³Ö»¸ºÔðÏÔÊ¾ºÍ¼òµ¥µÄÏûÏ¢´¦Àí 
-* 3. ²»ÊÇÖ»ÓÐ GUI »áÊ¹ÓÃÍ¼ÐÎ¿âº¯Êý£¬³ÌÐòµÄÆäËû²¿·ÖÒ²»áÊ¹ÓÃÍ¼ÐÎ¿âº¯Êý½øÐÐ»æ
-*    ÖÆ£¨Ö÷ÒªÎªeditorGraphic.h£©£¬ÔÚ GUI Ö´ÐÐ»æÖÆÈÎÎñµÄÍ¬Ê±£¬ÐèÒªµ÷ÓÃÏàÓ¦
-*    µÄº¯Êý´«ÈëÏàÓ¦²ÎÊýÍê³ÉÏ¸²¿Ãè»æ£¬¾ßÌåÒªÇó¼û½çÃæÉè¼ÆÎÄµµ
-* 4. ¾ß±¸½çÃæÇÐ»»¹¦ÄÜ£¬²»Í¬µÄ½çÃæ×ñÑ­²»Í¬µÄÏûÏ¢×ª·¢Âß¼­£¬¾ßÌåÒªÇó¼û½çÃæÉè
-*    ¼ÆÎÄµµ 
-* 5. ÔÚ¹¦ÄÜ²âÊÔÊ±¿ÉÄÜ»áËæÐèÇóÌí¼ÓÐÂµÄ°´Å¥ 
-* 6. Ðí¶à×ø±êÐèÒª´«ÈëÏà¶ÔÓÚÏàÓ¦ÇøÓò**×óÉÏ½Ç**µÄ×ø±ê£¬±ð´«³É¾ø¶Ô×ø±êÁË£¬Ò²
-*    ±ð´«³ÉÏà¶ÔÓÚ×óÏÂ½ÇµÄ×ø±ê£»Ïà¶Ô×ø±êµÄ·½ÏòºÍ libgraphics µÄ¶¨ÒåÏàÍ¬£¬¼´
-*    ÏòÓÒÏòÉÏÎªÕý 
-* 7. ÔÚÈÎÒâÊ±¿ÌÄÜ¹»µ÷ÓÃ GetClock() º¯Êý¼ÇÂ¼×Ô´Ó GUI_Start() º¯ÊýÖ´ÐÐºóËù¹ý
-*    µÄºÁÃëÊý 
+* åŸºç¡€äº¤äº’é€»è¾‘å¦‚ä¸‹ï¼š
+* 1. mainå‡½æ•°åœ¨å„ç§åˆå§‹åŒ–å‡½æ•°å®Œæˆçš„ç»“å°¾è°ƒç”¨ GUI_Start() å‡½æ•°å¹¶ä¸”ç»“æŸæŽ§åˆ¶æµ
+*    åœ¨ GUI_Start() å‡½æ•°ä¸­åº”è¯¥å®Œæˆå„ç§æ¶ˆæ¯äº‹ä»¶çš„ç™»å½•å¹¶ä¸”ä¸»å¯¼æ¶ˆæ¯å¾ªçŽ¯
+* 2. å„ç§æŒ‰é’®æ‰€æ¿€æ´»çš„å‡½æ•°é€šè¿‡ç›¸åº”çš„ register å‡½æ•°åœ¨ GUI_start() å‡½æ•°è°ƒç”¨å‰
+*    å®Œæˆåˆå§‹åŒ–ï¼ŒGUIç³»ç»Ÿåªè´Ÿè´£æ˜¾ç¤ºå’Œç®€å•çš„æ¶ˆæ¯å¤„ç† 
+* 3. ä¸æ˜¯åªæœ‰ GUI ä¼šä½¿ç”¨å›¾å½¢åº“å‡½æ•°ï¼Œç¨‹åºçš„å…¶ä»–éƒ¨åˆ†ä¹Ÿä¼šä½¿ç”¨å›¾å½¢åº“å‡½æ•°è¿›è¡Œç»˜
+*    åˆ¶ï¼ˆä¸»è¦ä¸ºeditorGraphic.hï¼‰ï¼Œåœ¨ GUI æ‰§è¡Œç»˜åˆ¶ä»»åŠ¡çš„åŒæ—¶ï¼Œéœ€è¦è°ƒç”¨ç›¸åº”
+*    çš„å‡½æ•°ä¼ å…¥ç›¸åº”å‚æ•°å®Œæˆç»†éƒ¨æç»˜ï¼Œå…·ä½“è¦æ±‚è§ç•Œé¢è®¾è®¡æ–‡æ¡£
+* 4. å…·å¤‡ç•Œé¢åˆ‡æ¢åŠŸèƒ½ï¼Œä¸åŒçš„ç•Œé¢éµå¾ªä¸åŒçš„æ¶ˆæ¯è½¬å‘é€»è¾‘ï¼Œå…·ä½“è¦æ±‚è§ç•Œé¢è®¾
+*    è®¡æ–‡æ¡£ 
+* 5. åœ¨åŠŸèƒ½æµ‹è¯•æ—¶å¯èƒ½ä¼šéšéœ€æ±‚æ·»åŠ æ–°çš„æŒ‰é’® 
+* 6. è®¸å¤šåæ ‡éœ€è¦ä¼ å…¥ç›¸å¯¹äºŽç›¸åº”åŒºåŸŸ**å·¦ä¸Šè§’**çš„åæ ‡ï¼Œåˆ«ä¼ æˆç»å¯¹åæ ‡äº†ï¼Œä¹Ÿ
+*    åˆ«ä¼ æˆç›¸å¯¹äºŽå·¦ä¸‹è§’çš„åæ ‡ï¼›ç›¸å¯¹åæ ‡çš„æ–¹å‘å’Œ libgraphics çš„å®šä¹‰ç›¸åŒï¼Œå³
+*    å‘å³å‘ä¸Šä¸ºæ­£ 
+* 7. åœ¨ä»»æ„æ—¶åˆ»èƒ½å¤Ÿè°ƒç”¨ GetClock() å‡½æ•°è®°å½•è‡ªä»Ž GUI_Start() å‡½æ•°æ‰§è¡ŒåŽæ‰€è¿‡
+*    çš„æ¯«ç§’æ•° 
 *
 */ 
 
 void GUI_Start();
 
 typedef void (*ButtonEvent)();
-typedef void (*BottonEventWithInput)(const char*);
+typedef void (*ButtonEventWithInput)(const char*);
 typedef void (*AreaPaintMethod)(double,double,double,double); 
 typedef double (*GetInfoMethod)(void);
 typedef void (*MouseEventMethod)(double,double);
 typedef void (*KeyboardEventMethod)(char); 
-typedef void (*ColorDefinitionMethod)(const char*,double,double,double)
+typedef void (*ColorDefinitionMethod)(const char*,double,double,double);
 
 /*
 *
-* ½çÃæ 1£ºÖ÷±à¼­½çÃæ 
-* ´ÓÉÏµ½ÏÂ·ÖÎªÈýÐÐ£¬·Ö±ðÎª²Ëµ¥À¸¡¢°´Å¥À¸ºÍ´ó±à¼­Çø£¬´ó±à¼­ÇøÓ¦Õ¼´ó²¿·ÖÇøÓò 
+* ç•Œé¢ 1ï¼šä¸»ç¼–è¾‘ç•Œé¢ 
+* ä»Žä¸Šåˆ°ä¸‹åˆ†ä¸ºä¸‰è¡Œï¼Œåˆ†åˆ«ä¸ºèœå•æ ã€æŒ‰é’®æ å’Œå¤§ç¼–è¾‘åŒºï¼Œå¤§ç¼–è¾‘åŒºåº”å å¤§éƒ¨åˆ†åŒºåŸŸ 
 * 
-* ²Ëµ¥À¸°üº¬ÈýÏî£¬ÄÚÈÝÈçÏÂ 
-* 1. ÎÄ¼þ£º±£´æ¡¢´ò¿ª¡¢ÐÂ½¨¡¢Áí´æÎª¡¢¹Ø±Õ 
-* 2. ¹¤¾ß£ºÍ³¼Æ¡¢ËÑË÷¡¢ä¯ÀÀ 
-* 3. ¹ØÓÚ£ºÉèÖÃ¡¢°ïÖú
+* èœå•æ åŒ…å«ä¸‰é¡¹ï¼Œå†…å®¹å¦‚ä¸‹ 
+* 1. æ–‡ä»¶ï¼šä¿å­˜ã€æ‰“å¼€ã€æ–°å»ºã€å¦å­˜ä¸ºã€å…³é—­ 
+* 2. å·¥å…·ï¼šç»Ÿè®¡ã€æœç´¢ã€æµè§ˆ 
+* 3. å…³äºŽï¼šè®¾ç½®ã€å¸®åŠ©
 *
-* °´Å¥À¸°üº¬Ò»×é°´Å¥£¬ÄÚÈÝ·Ö±ðÈçÏÂ£¬Èç¹ûÃ»ÓÐÔÚÎÄºó½øÒ»²½ËµÃ÷£¬Ôòµã»÷°´Å¥ºóÖ±½Ó×ª·¢ÏûÏ¢ 
-* 1. ÑÕÉ«£¬ÐèÒª×ÔÐÐÇÐ»»µ½ÊäÈë½çÃæ£¨½çÃæ 2£©À´»ñÈ¡¾ßÌåÑÕÉ«
-* 2. ¿ì½ÝÑÕÉ«£¬¾ßÌåÑÕÉ«ÎªÉÏ´ÎÑ¡ÔñµÄ·ÇºÚÉ«ÑÕÉ«£¨Ä¬ÈÏÎªºìÉ«£© 
-*    ¿ì½ÝÑÕÉ«°´Å¥ÐèÒªÌáÊ¾Ä¿Ç°µÄ¿ì½ÝÑÕÉ«ÊÇÊ²Ã´£¨±ÈÈç¸ü¸ÄÎÄ±¾ÑÕÉ«ÎªÔ¤ÆÚµÄ¿ì½ÝÑÕÉ«£© 
-* 4. ¼Ó´Ö
-* 5. Ð±Ìå 
-* 6. ×ÖºÅ£¬×ÔÐÐÇÐ»»µ½ÊäÈë½çÃæ£¨½çÃæ 2£©À´»ñÈ¡¾ßÌå×ÖºÅ 
-* 7. ×ÖÌå£¬×ÔÐÐÇÐ»»µ½ÊäÈë½çÃæ£¨½çÃæ 2£©À´»ñÈ¡¾ßÌå×ÖÌå
-* 8. Í¼Æ¬²åÈë
-* Èç¹û°´Å¥Ì«¶àµ¼ÖÂÅÅ°æÀ§ÄÑ£¬¿ÉÒÔ¿¼ÂÇÈ¥µô 2 ÕâÒ»¸ö°´Å¥
+* æŒ‰é’®æ åŒ…å«ä¸€ç»„æŒ‰é’®ï¼Œå†…å®¹åˆ†åˆ«å¦‚ä¸‹ï¼Œå¦‚æžœæ²¡æœ‰åœ¨æ–‡åŽè¿›ä¸€æ­¥è¯´æ˜Žï¼Œåˆ™ç‚¹å‡»æŒ‰é’®åŽç›´æŽ¥è½¬å‘æ¶ˆæ¯ 
+* 1. é¢œè‰²ï¼Œéœ€è¦è‡ªè¡Œåˆ‡æ¢åˆ°è¾“å…¥ç•Œé¢ï¼ˆç•Œé¢ 2ï¼‰æ¥èŽ·å–å…·ä½“é¢œè‰²
+* 2. å¿«æ·é¢œè‰²ï¼Œå…·ä½“é¢œè‰²ä¸ºä¸Šæ¬¡é€‰æ‹©çš„éžé»‘è‰²é¢œè‰²ï¼ˆé»˜è®¤ä¸ºçº¢è‰²ï¼‰ 
+*    å¿«æ·é¢œè‰²æŒ‰é’®éœ€è¦æç¤ºç›®å‰çš„å¿«æ·é¢œè‰²æ˜¯ä»€ä¹ˆï¼ˆæ¯”å¦‚æ›´æ”¹æ–‡æœ¬é¢œè‰²ä¸ºé¢„æœŸçš„å¿«æ·é¢œè‰²ï¼‰ 
+* 4. åŠ ç²—
+* 5. æ–œä½“ 
+* 6. å­—å·ï¼Œè‡ªè¡Œåˆ‡æ¢åˆ°è¾“å…¥ç•Œé¢ï¼ˆç•Œé¢ 2ï¼‰æ¥èŽ·å–å…·ä½“å­—å· 
+* 7. å­—ä½“ï¼Œè‡ªè¡Œåˆ‡æ¢åˆ°è¾“å…¥ç•Œé¢ï¼ˆç•Œé¢ 2ï¼‰æ¥èŽ·å–å…·ä½“å­—ä½“
+* 8. å›¾ç‰‡æ’å…¥
+* å¦‚æžœæŒ‰é’®å¤ªå¤šå¯¼è‡´æŽ’ç‰ˆå›°éš¾ï¼Œå¯ä»¥è€ƒè™‘åŽ»æŽ‰ 2 è¿™ä¸€ä¸ªæŒ‰é’®
 *
-* ´ó±à¼­Çø´Ó×óÖÁÓÒ·ÖÎªÈý¸ö²¿·Ö£¬·Ö±ðÎªä¯ÀÀÀ¸¡¢±à¼­ÇøºÍ¹ö¶¯Ìõ£¬»æÖÆ·½·¨·Ö±ðÎª£º
-* ä¯ÀÀÀ¸£ºÊ¹ÓÃ×¢²áµÄ ExplorerDraw(double, double, double, double)º¯Êý£¬´«Èëä¯ÀÀÀ¸µÄ×óÉÏ½Ç
-*         ÓëÓÒÏÂ½Ç×ø±êÍê³É»æÖÆ¡£ 
-* ±à¼­Çø£ºÊ¹ÓÃ×¢²áµÄ EditorGraphicDraw(double, double, double, double)º¯Êý£¬´«Èë±à¼­ÇøµÄ
-*         ×óÉÏ½ÇÓëÓÒÏÂ½Ç×ø±êÍê³É»æÖÆ¡£ 
-* ¹ö¶¯Ìõ£ºÊ¹ÓÃ×¢²áµÄ RollerUpperBound() ºÍ RollerLowerBound() º¯Êý»ñÖª¹ö¶¯Ìõ´Ö¶ÎµÄÆðÊ¼
-*         Óë½áÊøÎ»ÖÃ£¬×ÔÐÐ»æÖÆ£¨ÆðÊ¼¡¢½áÊøÎ»ÖÃ¸ñÊ½ÎªÕ¼ÕûÌõ³¤¶ÈµÄ±ÈÀý£¬ÔÚ 0 ºÍ 1 Ö®¼ä£© 
+* å¤§ç¼–è¾‘åŒºä»Žå·¦è‡³å³åˆ†ä¸ºä¸‰ä¸ªéƒ¨åˆ†ï¼Œåˆ†åˆ«ä¸ºæµè§ˆæ ã€ç¼–è¾‘åŒºå’Œæ»šåŠ¨æ¡ï¼Œç»˜åˆ¶æ–¹æ³•åˆ†åˆ«ä¸ºï¼š
+* æµè§ˆæ ï¼šä½¿ç”¨æ³¨å†Œçš„ ExplorerDraw(double, double, double, double)å‡½æ•°ï¼Œä¼ å…¥æµè§ˆæ çš„å·¦ä¸Šè§’
+*         ä¸Žå³ä¸‹è§’åæ ‡å®Œæˆç»˜åˆ¶ã€‚ 
+* ç¼–è¾‘åŒºï¼šä½¿ç”¨æ³¨å†Œçš„ EditorGraphicDraw(double, double, double, double)å‡½æ•°ï¼Œä¼ å…¥ç¼–è¾‘åŒºçš„
+*         å·¦ä¸Šè§’ä¸Žå³ä¸‹è§’åæ ‡å®Œæˆç»˜åˆ¶ã€‚ 
+* æ»šåŠ¨æ¡ï¼šä½¿ç”¨æ³¨å†Œçš„ RollerUpperBound() å’Œ RollerLowerBound() å‡½æ•°èŽ·çŸ¥æ»šåŠ¨æ¡ç²—æ®µçš„èµ·å§‹
+*         ä¸Žç»“æŸä½ç½®ï¼Œè‡ªè¡Œç»˜åˆ¶ï¼ˆèµ·å§‹ã€ç»“æŸä½ç½®æ ¼å¼ä¸ºå æ•´æ¡é•¿åº¦çš„æ¯”ä¾‹ï¼Œåœ¨ 0 å’Œ 1 ä¹‹é—´ï¼‰ 
 *
-* µ±Êó±êÊÂ¼þÎ»ÓÚ´ó±à¼­ÇøÊ±£¬»òÕßµ±¼üÅÌÊÂ¼þ·¢ÉúÊ±£¬ÐèÒª×ª·¢Ò»Ð©ÐÅÏ¢£º
-* 1. ¿ì½Ý¼üÐÅÏ¢£¬ÓÉ RegisterEditorHotKey(char*, ButtonEvent)¶¨Òå£¬µ±°´ÏÂ¿ì½Ý¼üÊ±µ÷ÓÃÏàÓ¦
-*    º¯Êý¡£ 
-* 2. Êó±êÍÏ¶¯ÐÅÏ¢£¬µ±Êó±êÖ¸ÕëÎ»ÓÚ±à¼­Çø²¢ÇÒ×ó¼ü±»°´ÏÂÊ±£¬¶ÔÓÚÈÎºÎÊó±êÒÆ¶¯ÐÅÏ¢µ÷ÓÃ×¢²áµÄ
-*    EditorMouseLeftDown(double,double) ´«ÈëÊó±êµ±Ç°Ëù´¦Î»ÖÃÏà¶ÔÓÚ±à¼­Çø×óÉÏ½ÇµÄ×ø±ê¡£ 
-* 3. Êó±êÌ§ÆðÐÅÏ¢£¬µ±Êó±êÖ¸ÕëÎ»ÓÚ±à¼­Çø²¢ÇÒÊó±ê×ó¼üËÉ¿ª£¬»òÕßÊó±êÖ¸ÕëÔÚ×ó¼ü°´ÏÂµÄÇé¿öÏÂ
-*    ´Ó±à¼­ÇøÒÆ¿ªÊ±£¬µ÷ÓÃ×¢²áµÄ EditorMouseLeftUp() º¯Êý¡£ 
-* 4. ÓÒ¼üÓë×ó¼üÏàÍ¬£¬×óÓÒÁ½¼üÍ¬Ê±°´ÏÂÊ±ÊÓÎªÏÈËÉ¿ªÔ­±¾°´×ÅµÄ¼üÔÙ°´ÏÂÐÂ¼ü
-* 5. ÖÐ¼üµÄ¹ö¶¯Ò²ÐèÒª±»¼ÇÂ¼ 
-* 4. ¼üÅÌÉÏÏÂ×óÓÒ¡¢Enter¡¢Backspace¡¢Delete ÐÅÏ¢£¬µ÷ÓÃÏàÓ¦º¯Êý¼´¿É¡£ 
-* 5. ¼üÅÌÊäÈëÐÅÏ¢£¬¹ØÓÚ¼üÅÌÊäÈëÐÅÏ¢µÄËµÃ÷¼°ÒªÇó¼û¸½Â¼ 1 ¡£ 
+* å½“é¼ æ ‡äº‹ä»¶ä½äºŽå¤§ç¼–è¾‘åŒºæ—¶ï¼Œæˆ–è€…å½“é”®ç›˜äº‹ä»¶å‘ç”Ÿæ—¶ï¼Œéœ€è¦è½¬å‘ä¸€äº›ä¿¡æ¯ï¼š
+* 1. å¿«æ·é”®ä¿¡æ¯ï¼Œç”± RegisterEditorHotKey(char*, ButtonEvent)å®šä¹‰ï¼Œå½“æŒ‰ä¸‹å¿«æ·é”®æ—¶è°ƒç”¨ç›¸åº”
+*    å‡½æ•°ã€‚ 
+* 2. é¼ æ ‡æ‹–åŠ¨ä¿¡æ¯ï¼Œå½“é¼ æ ‡æŒ‡é’ˆä½äºŽç¼–è¾‘åŒºå¹¶ä¸”å·¦é”®è¢«æŒ‰ä¸‹æ—¶ï¼Œå¯¹äºŽä»»ä½•é¼ æ ‡ç§»åŠ¨ä¿¡æ¯è°ƒç”¨æ³¨å†Œçš„
+*    EditorMouseLeftDown(double,double) ä¼ å…¥é¼ æ ‡å½“å‰æ‰€å¤„ä½ç½®ç›¸å¯¹äºŽç¼–è¾‘åŒºå·¦ä¸Šè§’çš„åæ ‡ã€‚ 
+* 3. é¼ æ ‡æŠ¬èµ·ä¿¡æ¯ï¼Œå½“é¼ æ ‡æŒ‡é’ˆä½äºŽç¼–è¾‘åŒºå¹¶ä¸”é¼ æ ‡å·¦é”®æ¾å¼€ï¼Œæˆ–è€…é¼ æ ‡æŒ‡é’ˆåœ¨å·¦é”®æŒ‰ä¸‹çš„æƒ…å†µä¸‹
+*    ä»Žç¼–è¾‘åŒºç§»å¼€æ—¶ï¼Œè°ƒç”¨æ³¨å†Œçš„ EditorMouseLeftUp() å‡½æ•°ã€‚ 
+* 4. å³é”®ä¸Žå·¦é”®ç›¸åŒï¼Œå·¦å³ä¸¤é”®åŒæ—¶æŒ‰ä¸‹æ—¶è§†ä¸ºå…ˆæ¾å¼€åŽŸæœ¬æŒ‰ç€çš„é”®å†æŒ‰ä¸‹æ–°é”®
+* 5. ä¸­é”®çš„æ»šåŠ¨ä¹Ÿéœ€è¦è¢«è®°å½• 
+* 4. é”®ç›˜ä¸Šä¸‹å·¦å³ã€Enterã€Backspaceã€Delete ä¿¡æ¯ï¼Œè°ƒç”¨ç›¸åº”å‡½æ•°å³å¯ã€‚ 
+* 5. é”®ç›˜è¾“å…¥ä¿¡æ¯ï¼Œå…³äºŽé”®ç›˜è¾“å…¥ä¿¡æ¯çš„è¯´æ˜ŽåŠè¦æ±‚è§é™„å½• 1 ã€‚ 
 *
 */
 
 void ChangeDisplayMethodToMain();
 
-void RegisterSaveMethod(BottonEvent);
-void RegisterOpenMethod(BottonEvent);
-void RegisterCreateMethod(BottonEvent);
-void RegisterSaveasMethod(BottonEvent);
-void RegisterCloseMethod(BottonEvent);
+void RegisterSaveMethod(ButtonEvent);
+void RegisterOpenMethod(ButtonEvent);
+void RegisterCreateMethod(ButtonEvent);
+void RegisterSaveasMethod(ButtonEvent);
+void RegisterCloseMethod(ButtonEvent);
 
-void RegisterStatMethod(BottonEvent);
-void RegisterSearchMethod(BottonEvent);
-void RegisterExploreMethod(BottonEvent);
+void RegisterStatMethod(ButtonEvent);
+void RegisterSearchMethod(ButtonEvent);
+void RegisterExploreMethod(ButtonEvent);
 
-void RegisterSettingMethod(BottonEvent);
-void RegisterHelpMethod(BottonEvent);
+void RegisterSettingMethod(ButtonEvent);
+void RegisterHelpMethod(ButtonEvent);
 
-void RegisterColorMethod(BottonEventWithInput);
-void RegisterBoldMethod(BottonEvent);
-void RegisterItalicMethod(BottonEvent);
-void RegisterPointSizeMethod(BottonEventWithInput);
-void RegisterFontMethod(BottonEventWithInput);
-void RegisterImageMethod(BottonEvent);
+void RegisterColorMethod(ButtonEventWithInput);
+void RegisterBoldMethod(ButtonEvent);
+void RegisterItalicMethod(ButtonEvent);
+void RegisterPointSizeMethod(ButtonEventWithInput);
+void RegisterFontMethod(ButtonEventWithInput);
+void RegisterImageMethod(ButtonEvent);
 
 void RegisterExplorerDraw(AreaPaintMethod);
 void RegisterEditorGraphicDraw(AreaPaintMethod);
 void RegisterRollerUpperBoundDraw(GetInfoMethod);
 void RegisterRollerLowerBoundDraw(GetInfoMethod);
 
-void RegisterEditorHotKey(char*, BottonEvent);
+void RegisterEditorHotKey(char*, ButtonEvent);
 void RegisterEditorMouseLeftDown(MouseEventMethod);
-void RegisterEditorMouseLeftUp(BottonEvent);
-void RegisterEditorMouseMiddleRollup(BottonEvent);
-void RegisterEditorMouseMiddleRolldown(BottonEvent);
+void RegisterEditorMouseLeftUp(ButtonEvent);
+void RegisterEditorMouseMiddleRollup(ButtonEvent);
+void RegisterEditorMouseMiddleRolldown(ButtonEvent);
 void RegisterEditorMouseRightDown(MouseEventMethod);
 void RegisterEditorMouseLeftDown(MouseEventMethod); 
 void RegisterEditorKeyboard(KeyboardEventMethod);
 
-void RegisterEditorKeyboardSpecial(KeyboardEventMethod); //1ÉÏ 2ÏÂ 3×ó 4ÓÒ 5»Ø³µ 6ÍË¸ñ 7Delete 
+void RegisterEditorKeyboardSpecial(KeyboardEventMethod); //1ä¸Š 2ä¸‹ 3å·¦ 4å³ 5å›žè½¦ 6é€€æ ¼ 7Delete 
 
 /*
 *
-* ½çÃæ 2£ºÊäÈë½çÃæ
-* ÓëÖ÷±à¼­½çÃæ»ù±¾ÏàÍ¬£¬Çø±ðÊÇÔÚÄ³´¦£¨ËæÅÅ°æ¶ø¶¨£¬½¨ÒéÊÇÔÚ°´Å¦À¸ÏÂ·½»òÒ³Ãæ×îµ×²¿£©Ôö¼Ó
-*   Ò»ÐÐÊäÈëÀ¸£¬Í¬Ê±½ûÓÃËùÓÐÓë´ó±à¼­ÇøÏà¹ØµÄ×ª·¢ÊÂ¼þ¡£ 
-* ÊäÈëÀ¸Ó¦¸ÃÀ¹½Ø¼üÅÌ×Ö·ûÊäÈë£¨¼û¸½Â¼ 1£©×ª»»Îª²¢ÒÔÄ³¸ö×ÖÌå£¨¿É¸ü¸Ä£©ÏÔÊ¾ÊäÈëÄÚÈÝ²¢¼ÇÂ¼ 
-* ÔÚÊäÈëÀ¸µÄÄ³´¦ÉèÖÃÈ·ÈÏºÍÍË³ö°´Å¥£¬°´»Ø³µÒ²¿ÉÖ±½ÓÈ·ÈÏÊäÈëÄÚÈÝ¡£ 
-* È·ÈÏÊäÈëÄÚÈÝºóÓ¦µ÷ÓÃÏàÓ¦»Øµ÷º¯Êý£»Èç¹ûÊÇ×ÔÐÐ½øÈëÔòÓ¦»ñÈ¡ÏàÓ¦Öµ×÷ÎªÏûÏ¢²ÎÊý¡£ 
-* ÍË³öÊäÈëºóÓ¦¶ªÆúÊäÈëÄÚÈÝ£¬µ÷ÓÃÏàÓ¦»Øµ÷º¯Êý´«Èë¿Õ×Ö·û´®£¬Èç¹ûÊÇ×ÔÐÐ½øÈëÔò²»Ö´ÐÐÈÎºÎÐÐ¶¯
-* ÔÚÊäÈë¹ý³ÌÖÐÊó±êµã»÷²Ëµ¥À¸ÖÐÑ¡Ïî»òÕß°´Å¥À¸ÖÐ°´Å¥µÈÍ¬ÓÚÖ±½ÓÍË³ö²¢Í¬Ê±´¥·¢ÏàÓ¦°´Å¥£¬ÐèÒª
-*   ×¢ÒâÊó±êµã»÷´ó±à¼­Çø»òÆäËûÎÞ¹ØÇøÓòÓ¦ºöÂÔ£¬ÒòÎªÏûÏ¢×ª·¢ÒÑ±»½ûÓÃ¡£ 
+* ç•Œé¢ 2ï¼šè¾“å…¥ç•Œé¢
+* ä¸Žä¸»ç¼–è¾‘ç•Œé¢åŸºæœ¬ç›¸åŒï¼ŒåŒºåˆ«æ˜¯åœ¨æŸå¤„ï¼ˆéšæŽ’ç‰ˆè€Œå®šï¼Œå»ºè®®æ˜¯åœ¨æŒ‰çº½æ ä¸‹æ–¹æˆ–é¡µé¢æœ€åº•éƒ¨ï¼‰å¢žåŠ 
+*   ä¸€è¡Œè¾“å…¥æ ï¼ŒåŒæ—¶ç¦ç”¨æ‰€æœ‰ä¸Žå¤§ç¼–è¾‘åŒºç›¸å…³çš„è½¬å‘äº‹ä»¶ã€‚ 
+* è¾“å…¥æ åº”è¯¥æ‹¦æˆªé”®ç›˜å­—ç¬¦è¾“å…¥ï¼ˆè§é™„å½• 1ï¼‰è½¬æ¢ä¸ºå¹¶ä»¥æŸä¸ªå­—ä½“ï¼ˆå¯æ›´æ”¹ï¼‰æ˜¾ç¤ºè¾“å…¥å†…å®¹å¹¶è®°å½• 
+* åœ¨è¾“å…¥æ çš„æŸå¤„è®¾ç½®ç¡®è®¤å’Œé€€å‡ºæŒ‰é’®ï¼ŒæŒ‰å›žè½¦ä¹Ÿå¯ç›´æŽ¥ç¡®è®¤è¾“å…¥å†…å®¹ã€‚ 
+* ç¡®è®¤è¾“å…¥å†…å®¹åŽåº”è°ƒç”¨ç›¸åº”å›žè°ƒå‡½æ•°ï¼›å¦‚æžœæ˜¯è‡ªè¡Œè¿›å…¥åˆ™åº”èŽ·å–ç›¸åº”å€¼ä½œä¸ºæ¶ˆæ¯å‚æ•°ã€‚ 
+* é€€å‡ºè¾“å…¥åŽåº”ä¸¢å¼ƒè¾“å…¥å†…å®¹ï¼Œè°ƒç”¨ç›¸åº”å›žè°ƒå‡½æ•°ä¼ å…¥ç©ºå­—ç¬¦ä¸²ï¼Œå¦‚æžœæ˜¯è‡ªè¡Œè¿›å…¥åˆ™ä¸æ‰§è¡Œä»»ä½•è¡ŒåŠ¨
+* åœ¨è¾“å…¥è¿‡ç¨‹ä¸­é¼ æ ‡ç‚¹å‡»èœå•æ ä¸­é€‰é¡¹æˆ–è€…æŒ‰é’®æ ä¸­æŒ‰é’®ç­‰åŒäºŽç›´æŽ¥é€€å‡ºå¹¶åŒæ—¶è§¦å‘ç›¸åº”æŒ‰é’®ï¼Œéœ€è¦
+*   æ³¨æ„é¼ æ ‡ç‚¹å‡»å¤§ç¼–è¾‘åŒºæˆ–å…¶ä»–æ— å…³åŒºåŸŸåº”å¿½ç•¥ï¼Œå› ä¸ºæ¶ˆæ¯è½¬å‘å·²è¢«ç¦ç”¨ã€‚ 
 *
 */
 
-void ChangeDisplayMethodToInput(BottonEventWithInput callback);
+void ChangeDisplayMethodToInput(ButtonEventWithInput callback);
 
 /*
 *
-* ½çÃæ 3£ºµ¯´°ÊäÈë½çÃæ
-* ÓëÊäÈë½çÃæ»ù±¾ÏàÍ¬£¬Çø±ðÔÚÓÚÊäÈëÀ¸ÒÔµ¯´°ÐÎÊ½³ÊÏÖ£¬²¢ÒÆ¶¯µ½´ó±à¼­ÇøÖÐÑë¡£ 
-* µ¯´°Ó¦¸ÃÄÜÔÚÊäÈëÀ¸µÄÉÏ·½ÏÔÊ¾Ò»ÐÐÎÄ±¾¡£ 
-* ±à¼­ÇøÏûÏ¢Í¬Ñù±»½ûÓÃ£¬Í¬Ê±¿ÉÒÔ²»»æÖÆ±à¼­ÇøÄÚÈÝ£¬ÒòÎªÉÐ²»Çå³þÄÜ·ñÍ¬Ê±ÏÔÊ¾±à¼­ÇøÄÚÈÝÓë
-*   µ¯´°ÄÚÈÝ²¢ÇÒ²»Ïà»¥µþ¼Ó£»Èç¹ûextgraphicÖÐµÄeraseÏà¹Ø·½·¨ÄÜÊµÏÖ²»Ïà»¥µþ¼Ó£¬Ôò¿ÉÄÜÏÔ
-*   Ê¾±à¼­Çø¸ü¼ÓÃÀ¹Û¡£ 
+* ç•Œé¢ 3ï¼šå¼¹çª—è¾“å…¥ç•Œé¢
+* ä¸Žè¾“å…¥ç•Œé¢åŸºæœ¬ç›¸åŒï¼ŒåŒºåˆ«åœ¨äºŽè¾“å…¥æ ä»¥å¼¹çª—å½¢å¼å‘ˆçŽ°ï¼Œå¹¶ç§»åŠ¨åˆ°å¤§ç¼–è¾‘åŒºä¸­å¤®ã€‚ 
+* å¼¹çª—åº”è¯¥èƒ½åœ¨è¾“å…¥æ çš„ä¸Šæ–¹æ˜¾ç¤ºä¸€è¡Œæ–‡æœ¬ã€‚ 
+* ç¼–è¾‘åŒºæ¶ˆæ¯åŒæ ·è¢«ç¦ç”¨ï¼ŒåŒæ—¶å¯ä»¥ä¸ç»˜åˆ¶ç¼–è¾‘åŒºå†…å®¹ï¼Œå› ä¸ºå°šä¸æ¸…æ¥šèƒ½å¦åŒæ—¶æ˜¾ç¤ºç¼–è¾‘åŒºå†…å®¹ä¸Ž
+*   å¼¹çª—å†…å®¹å¹¶ä¸”ä¸ç›¸äº’å åŠ ï¼›å¦‚æžœextgraphicä¸­çš„eraseç›¸å…³æ–¹æ³•èƒ½å®žçŽ°ä¸ç›¸äº’å åŠ ï¼Œåˆ™å¯èƒ½æ˜¾
+*   ç¤ºç¼–è¾‘åŒºæ›´åŠ ç¾Žè§‚ã€‚ 
 *
 */
 
-void ChangeDisplayMethodToMajorInput(char* inputMessage, BottonEventWithInput callback);
+void ChangeDisplayMethodToMajorInput(char* inputMessage, ButtonEventWithInput callback);
 
 /*
 *
-* ½çÃæ 4£ºËÑË÷½çÃæ£¨Óëä¯ÀÀ½çÃæ¹²ÓÃ£© 
-* ½çÃæ½ö°üº¬²Ëµ¥À¸¡¢ÊäÈëÀ¸ÓëËÑË÷½á¹ûÏÔÊ¾Èý¸ö²¿·Ö
-* ²Ëµ¥À¸Ëù°üº¬ÄÚÈÝÓëÖ÷±à¼­½çÃæÏàÍ¬
-* ÊäÈëÀ¸Âß¼­Óëµ¯´°ÊäÈë½çÃæÏàÍ¬£¬µ«Ðè×¢ÒâÊäÈëÀ¸ËùÊäÈëÄÚÈÝÐèÒªÊµÊ±×ª·¢£¨Ã¿¸ü¸ÄÒ»´Î¼´µ÷ÓÃ
-*   Ò»´ÎÏàÓ¦»Øµ÷º¯Êý£©
-* ËÑË÷½á¹ûÏÔÊ¾Ê¹ÓÃÍâ²¿Ä£¿é»æÖÆ£¬Âß¼­ÓëÆäËûÍâ²¿Ä£¿é»æÖÆµÄ½çÃæÏàÍ¬
-* ËÑË÷½á¹ûÏÔÊ¾²¿·ÖÐèÒª×ª·¢Êó±êµã»÷ÊÂ¼þ 
-* Í¬Ê±ÐèÒªÓÐÍË³ö°´Å¥£¬ÍË³öºó·µ»ØÔ­½çÃæ£¨Èç¹û²»Ò×ÊµÏÖ¿ÉÒÔ¸ÄÎª·µ»ØÖ÷±à¼­½çÃæ£© 
+* ç•Œé¢ 4ï¼šæœç´¢ç•Œé¢ï¼ˆä¸Žæµè§ˆç•Œé¢å…±ç”¨ï¼‰ 
+* ç•Œé¢ä»…åŒ…å«èœå•æ ã€è¾“å…¥æ ä¸Žæœç´¢ç»“æžœæ˜¾ç¤ºä¸‰ä¸ªéƒ¨åˆ†
+* èœå•æ æ‰€åŒ…å«å†…å®¹ä¸Žä¸»ç¼–è¾‘ç•Œé¢ç›¸åŒ
+* è¾“å…¥æ é€»è¾‘ä¸Žå¼¹çª—è¾“å…¥ç•Œé¢ç›¸åŒï¼Œä½†éœ€æ³¨æ„è¾“å…¥æ æ‰€è¾“å…¥å†…å®¹éœ€è¦å®žæ—¶è½¬å‘ï¼ˆæ¯æ›´æ”¹ä¸€æ¬¡å³è°ƒç”¨
+*   ä¸€æ¬¡ç›¸åº”å›žè°ƒå‡½æ•°ï¼‰
+* æœç´¢ç»“æžœæ˜¾ç¤ºä½¿ç”¨å¤–éƒ¨æ¨¡å—ç»˜åˆ¶ï¼Œé€»è¾‘ä¸Žå…¶ä»–å¤–éƒ¨æ¨¡å—ç»˜åˆ¶çš„ç•Œé¢ç›¸åŒ
+* æœç´¢ç»“æžœæ˜¾ç¤ºéƒ¨åˆ†éœ€è¦è½¬å‘é¼ æ ‡ç‚¹å‡»äº‹ä»¶ 
+* åŒæ—¶éœ€è¦æœ‰é€€å‡ºæŒ‰é’®ï¼Œé€€å‡ºåŽè¿”å›žåŽŸç•Œé¢ï¼ˆå¦‚æžœä¸æ˜“å®žçŽ°å¯ä»¥æ”¹ä¸ºè¿”å›žä¸»ç¼–è¾‘ç•Œé¢ï¼‰ 
 *
 */
 
 void ChangeDisplayMethodToSearch();
 
 void RegisterSearchDisplayMethod(AreaPaintMethod);
-void RegisterSearchInputMethod(BottonEventWithInput);
+void RegisterSearchInputMethod(ButtonEventWithInput);
 
 /*
 *
-* ½çÃæ 5£ºÍ³¼Æ½çÃæ
-* ½çÃæ½ö°üº¬²Ëµ¥À¸ºÍÍ³¼ÆÃæ°åÁ½¸ö²¿·Ö£¬²Ëµ¥À¸Ëù°üº¬ÄÚÈÝÓëÖ÷±à¼­½çÃæÏàÍ¬£¬Í³¼ÆÃæ°å
-*   ÓÉÍâ²¿Ä£¿é»æÖÆ
-* ±ðÍüÁËÉè¼ÆÍË³ö°´Å¥ 
+* ç•Œé¢ 5ï¼šç»Ÿè®¡ç•Œé¢
+* ç•Œé¢ä»…åŒ…å«èœå•æ å’Œç»Ÿè®¡é¢æ¿ä¸¤ä¸ªéƒ¨åˆ†ï¼Œèœå•æ æ‰€åŒ…å«å†…å®¹ä¸Žä¸»ç¼–è¾‘ç•Œé¢ç›¸åŒï¼Œç»Ÿè®¡é¢æ¿
+*   ç”±å¤–éƒ¨æ¨¡å—ç»˜åˆ¶
+* åˆ«å¿˜äº†è®¾è®¡é€€å‡ºæŒ‰é’® 
 *
 */
 
@@ -177,11 +177,11 @@ void RegisterStatDisplayMethod(AreaPaintMethod);
 
 /*
 *
-* ½çÃæ 6£ºÉèÖÃ½çÃæ 
-* ½çÃæ°üº¬ÒÔÏÂÉèÖÃÏî
-* 1. ¶¨ÒåÑÕÉ«£¬°üº¬ÑÕÉ«ÃûºÍRGBËÄ¸öÊäÈëÀ¸
-* 2. ¶¨ÒåÊäÈëÀ¸×ÖÌå£¬°üº¬Ò»¸öÊäÈëÀ¸ÓÃÓÚÊäÈë×ÖÌå
-* 3. ÆäËûÑ¡Ïî´ý¶¨ 
+* ç•Œé¢ 6ï¼šè®¾ç½®ç•Œé¢ 
+* ç•Œé¢åŒ…å«ä»¥ä¸‹è®¾ç½®é¡¹
+* 1. å®šä¹‰é¢œè‰²ï¼ŒåŒ…å«é¢œè‰²åå’ŒRGBå››ä¸ªè¾“å…¥æ 
+* 2. å®šä¹‰è¾“å…¥æ å­—ä½“ï¼ŒåŒ…å«ä¸€ä¸ªè¾“å…¥æ ç”¨äºŽè¾“å…¥å­—ä½“
+* 3. å…¶ä»–é€‰é¡¹å¾…å®š 
 *
 */
 
@@ -191,23 +191,23 @@ void RegisterColorDifinitionMethod(ColorDefinitionMethod);
 
 /*
 *
-* ¸½Â¼1£º¼üÅÌÊäÈëÂß¼­
-* ºÏ·¨µÄÊäÈë×Ö·û°üº¬¼üÅÌÉÏÈÎºÎ¿ÉÏÔÊ¾×Ö·û¼°¿Õ¸ñ£¬»Ø³µ×÷ÎªÃüÁî¿¼ÂÇ
-* µ±Ò»¸ö¼üÅÌÊÂ¼þ±»¿¼ÂÇÎª×Ö·ûÊäÈë£¬µ±ÇÒ½öµ±Ã»ÓÐCtrl¡¢AltÓëÆäÒ»Æð°´ÏÂ£¬Èç¹ûÒ»Æð°´ÏÂÔòÓ¦¸Ã
-*   ×÷Îª¿ì½Ý¼ü´¦Àí£¬Èç¹ûÃ»ÓÐÏàÓ¦µÄ¿ì½Ý¼üÔòÓ¦±»ºöÂÔ
-* ×ª·¢¼üÅÌÊäÈëÏûÏ¢Ê±£¬ÐèÒª¿¼ÂÇ×Ö·ûµÄ´óÐ¡Ð´£¬Èç¹ûCAPSLOCK´¦ÓÚ¿ªÆô×´Ì¬£¬Ôò×Ö·ûÄ¬ÈÏ´óÐ´¡£Èç
-*   ¹ûÔÚ¼üÈë×Ö·ûµÄÍ¬Ê±Shift´¦ÓÚ°´ÏÂ×´Ì¬£¬Ôò·´×ªÊäÈë×Ö·ûµÄ´óÐ¡Ð´
-* ×ª·¢¼üÅÌÊäÈëÏûÏ¢Ê±£¬ÈôShiftÍ¬Ê±°´ÏÂ£¬ÔòÓ¦×ª·¢ÓÉShift×ª»»ºóµÄÏàÓ¦×Ö·û£¨ÈçShit+1×ª»»Îª!)
-* Òà¼´£¬¼üÅÌ¼üÈë»Øµ÷º¯Êý´«ÈëµÄ²ÎÊýÓ¦¸ÃÊÇÒâÍ¼ÊäÈëµÄÄÇ¸ö×Ö·û 
+* é™„å½•1ï¼šé”®ç›˜è¾“å…¥é€»è¾‘
+* åˆæ³•çš„è¾“å…¥å­—ç¬¦åŒ…å«é”®ç›˜ä¸Šä»»ä½•å¯æ˜¾ç¤ºå­—ç¬¦åŠç©ºæ ¼ï¼Œå›žè½¦ä½œä¸ºå‘½ä»¤è€ƒè™‘
+* å½“ä¸€ä¸ªé”®ç›˜äº‹ä»¶è¢«è€ƒè™‘ä¸ºå­—ç¬¦è¾“å…¥ï¼Œå½“ä¸”ä»…å½“æ²¡æœ‰Ctrlã€Altä¸Žå…¶ä¸€èµ·æŒ‰ä¸‹ï¼Œå¦‚æžœä¸€èµ·æŒ‰ä¸‹åˆ™åº”è¯¥
+*   ä½œä¸ºå¿«æ·é”®å¤„ç†ï¼Œå¦‚æžœæ²¡æœ‰ç›¸åº”çš„å¿«æ·é”®åˆ™åº”è¢«å¿½ç•¥
+* è½¬å‘é”®ç›˜è¾“å…¥æ¶ˆæ¯æ—¶ï¼Œéœ€è¦è€ƒè™‘å­—ç¬¦çš„å¤§å°å†™ï¼Œå¦‚æžœCAPSLOCKå¤„äºŽå¼€å¯çŠ¶æ€ï¼Œåˆ™å­—ç¬¦é»˜è®¤å¤§å†™ã€‚å¦‚
+*   æžœåœ¨é”®å…¥å­—ç¬¦çš„åŒæ—¶Shiftå¤„äºŽæŒ‰ä¸‹çŠ¶æ€ï¼Œåˆ™åè½¬è¾“å…¥å­—ç¬¦çš„å¤§å°å†™
+* è½¬å‘é”®ç›˜è¾“å…¥æ¶ˆæ¯æ—¶ï¼Œè‹¥ShiftåŒæ—¶æŒ‰ä¸‹ï¼Œåˆ™åº”è½¬å‘ç”±Shiftè½¬æ¢åŽçš„ç›¸åº”å­—ç¬¦ï¼ˆå¦‚Shit+1è½¬æ¢ä¸º!)
+* äº¦å³ï¼Œé”®ç›˜é”®å…¥å›žè°ƒå‡½æ•°ä¼ å…¥çš„å‚æ•°åº”è¯¥æ˜¯æ„å›¾è¾“å…¥çš„é‚£ä¸ªå­—ç¬¦ 
 *
 */
 
 /*
 *
-* ¸½Â¼2£º¿ì½Ý¼ü¸ñÊ½
-* Ò»¸ö¿ì½Ý¼üÓÉ Ctrl¡¢Alt¡¢Shift ÓëÄ³¸ö×Ö·û¶¨Òå£¬Ð´×÷Èý¸ö¶þ½øÖÆÊý+×Ö·ûµÄËÄÎ»×Ö·û´®
-* ÀýÈç£¬Ctrl+Alt+EÐ´Îª"110e"£¬Alt+TABÐ´Îª"010\t"£¬Ctrl+Shift+EnterÐ´Îª"101\n"
-* ×Ö·ûÄ¬ÈÏÐ¡Ð´£¬»òÕßÊÇ¶ÔÓ¦¼üÅÌÉÏ²»°´shiftÊ±ÊäÈëµÄÄÇ¸ö¼ü 
+* é™„å½•2ï¼šå¿«æ·é”®æ ¼å¼
+* ä¸€ä¸ªå¿«æ·é”®ç”± Ctrlã€Altã€Shift ä¸ŽæŸä¸ªå­—ç¬¦å®šä¹‰ï¼Œå†™ä½œä¸‰ä¸ªäºŒè¿›åˆ¶æ•°+å­—ç¬¦çš„å››ä½å­—ç¬¦ä¸²
+* ä¾‹å¦‚ï¼ŒCtrl+Alt+Eå†™ä¸º"110e"ï¼ŒAlt+TABå†™ä¸º"010\t"ï¼ŒCtrl+Shift+Enterå†™ä¸º"101\n"
+* å­—ç¬¦é»˜è®¤å°å†™ï¼Œæˆ–è€…æ˜¯å¯¹åº”é”®ç›˜ä¸Šä¸æŒ‰shiftæ—¶è¾“å…¥çš„é‚£ä¸ªé”® 
 *
 */
 
