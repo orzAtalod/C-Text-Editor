@@ -68,8 +68,8 @@ typedef void (*ColorDefinitionMethod)(const char*,double,double,double)
 *    函数。 
 * 2. 鼠标拖动信息，当鼠标指针位于编辑区并且左键被按下时，对于任何鼠标移动信息调用注册的
 *    EditorMouseLeftDown(double,double) 传入鼠标当前所处位置相对于编辑区左上角的坐标。 
-* 3. 鼠标抬起信息，当鼠标指针位于编辑区并且鼠标左键松开，或者鼠标指针在左键按下的情况下
-*    从编辑区移开时，调用注册的 EditorMouseLeftUp() 函数。 
+* 3. 鼠标抬起信息，当鼠标指针松开时调用 EditorMouseLeftUp() 事件（有修改，现在在鼠标移出
+*    界面后不再视为已松开鼠标） 
 * 4. 右键与左键相同，左右两键同时按下时视为先松开原本按着的键再按下新键
 * 5. 中键的滚动也需要被记录 
 * 4. 键盘上下左右、Enter、Backspace、Delete 信息，调用相应函数即可。 
