@@ -4,7 +4,7 @@
 #include<string.h>
 #include<assert.h>
 
-#define NAME_STRING_LIMIT 10 
+#define NAME_STRING_LIMIT 20 
 
 //先写color，再写font；先读color，再读font 
 typedef struct{
@@ -44,6 +44,7 @@ void ReadColorTable(FILE* f, ColorDefinitionFunction func)
 	fread(tempcode,sizeof(double),3,f);
 	while(strcmp(tempname,"firstend")!=0){//firstend是结束标志  
 		RegisterColorName(tempname,tempcode[0],tempcode[1],tempcode[2]);
+		func(tempname,tempcode[0],tempcode[1],tempcode[2]);
 		fread(tempname,sizeof(char),NAME_STRING_LIMIT,f);
 		fread(tempcode,sizeof(double),3,f);
 	}
@@ -88,7 +89,7 @@ int RegisterColorTable(const char* colorName)
 			}
 		}
 	}
-	p->second[l+1]=malloc(sizeof(char)*10);
+	p->second[l+1]=malloc(sizeof(char)*NAME_STRING_LIMIT);
 	strcpy(p->second[l+1],colorName);
 	p->slength++;
 	return l+1;
@@ -159,7 +160,7 @@ void ChangePageOfFontTable(int p)
 void ReadFontTable(FILE* f)
 {
 	char *tempname;
-	tempname=(char *)malloc(sizeof(char)*10);
+	tempname=(char *)malloc(sizeof(char)*NAME_STRING_LIMIT);
 	fread(tempname,sizeof(char),NAME_STRING_LIMIT,f);
 	while(strcmp(tempname,"fontend")!=0){//fontend是结束标志 
 		RegisterFontTable(tempname);
