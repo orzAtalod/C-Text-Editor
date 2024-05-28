@@ -19,14 +19,15 @@ struct colorTable{
 };
 static struct colorTable* colorPage[255]; 
 static int curColorPage=0;//当前在哪一页 
-static int colorPageNum=0;//当前有多少页 
+static unsigned long long colorPageExsists[4];
 
 
 void ChangePageOfColorTable(int p)//不仅是转换页，也是创建一个页，所以第一次调用color数据结构时，需要先用这个函数创建一个页 
 {
-	if(p<=colorPageNum){
+	if(colorPageExsists[p%64] | (1LLU<<(p/64))){
 		curColorPage=p;//这一页已经存在，直接转换 
 	}else{//创建页 
+		colorPageExsists[p%64] |= 1LLU<<(p/64);
 		curColorPage=p;
 		colorPage[p]=(struct colorTable*)malloc(sizeof(struct colorTable));
 		colorPage[p]->flength=0;
@@ -142,14 +143,15 @@ struct fontTable{
 };
 static struct fontTable* fontPage[255];
 static int curFontPage=0;//当前在哪一页 
-static int fontPageNum=0;//当前有多少页 
+static unsigned long long fontPageExsists[4];
 
 
 void ChangePageOfFontTable(int p)
 {
-	if(p<=fontPageNum){
+	if(fontPageExsists[p/64] | (1LLU<<(p%64))){
 		curFontPage=p;
 	}else{
+		fontPageExsists[p/64] |= 1LLU<<(p%64);
 		curFontPage=p;
 		fontPage[p]=(struct fontTable*)malloc(sizeof(struct fontTable));
 		fontPage[p]->length=0;
