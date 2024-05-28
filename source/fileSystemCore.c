@@ -51,7 +51,7 @@ void ReadColorTable(FILE* f, ColorDefinitionFunction func)
 	}
 	fread(tempname,sizeof(char),NAME_STRING_LIMIT,f);
 	while(strcmp(tempname,"secondend")!=0){//secondend是结束标志  
-		RegisterColorTable(tempname);
+		(void)RegisterColorTable(tempname); //make complier happy
 		fread(tempname,sizeof(char),NAME_STRING_LIMIT,f);
 	}
 }
@@ -96,17 +96,16 @@ int RegisterColorTable(const char* colorName)
 	return l+1;
  } 
  
-void RegisterColorName(const char* colorName,double r,double g,double b)
+int RegisterColorName(const char* colorName,double r,double g,double b)
 {
 	struct colorTable* p=colorPage[curColorPage];
 	int l=p->flength;
-	int i,flag;
+	int i;
 	for(i=1;i<=l;i++){
 		if(strcmp(colorName,p->first[i].name)==0){
-			flag=1;
+			return 1;
 		}
 	}
-	assert(flag==1);//找到，报错 
 	strcpy(p->first[l+1].name,colorName);//存入颜色名
 	p->first[l+1].code[0]=r;
 	p->first[l+1].code[0]=g;

@@ -43,7 +43,7 @@
 * 建议以从1开始逐次加一的方式分配ID
 *
 * 6. void RegisterColorName(const char* colorName,double r,double g,double b)
-* 将一个颜色名添加到表的第一部分，若颜色名本就存在于第一部分则报错。 
+* 将一个颜色名添加到表的第一部分，成功返回 0，颜色名本就存在返回 1 
 *
 *
 */
@@ -54,7 +54,7 @@ void WriteColorTable(FILE* f);
 const char* LookupIDInColorTable(int id);
 int LookupColorNameInColorTable(const char* colorName);
 int RegisterColorTable(const char* colorName);
-void RegisterColorName(const char* colorName,double r,double g,double b);
+int RegisterColorName(const char* colorName,double r,double g,double b);
 
 /*
 *
