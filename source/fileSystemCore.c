@@ -111,6 +111,7 @@ int RegisterColorName(const char* colorName,double r,double g,double b)
 	p->first[l+1].code[0]=g;
 	p->first[l+1].code[0]=b;
 	p->flength++;
+	return 0; 
 }
 
 const char* LookupIDInColorTable(int id)
