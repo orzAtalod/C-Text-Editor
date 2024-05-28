@@ -33,7 +33,6 @@ void ChangePageOfColorTable(int p)//不仅是转换页，也是创建一个页，所以第一次调用
 		colorPage[p]->flength=0;
 		colorPage[p]->slength=0;
 	}
-
 }
 
 void ReadColorTable(FILE* f, ColorDefinitionFunction func)
@@ -156,7 +155,6 @@ void ChangePageOfFontTable(int p)
 		fontPage[p]=(struct fontTable*)malloc(sizeof(struct fontTable));
 		fontPage[p]->length=0;
 	}
-
 }
 
 void ReadFontTable(FILE* f)
@@ -165,7 +163,7 @@ void ReadFontTable(FILE* f)
 	tempname=(char *)malloc(sizeof(char)*NAME_STRING_LIMIT);
 	fread(tempname,sizeof(char),NAME_STRING_LIMIT,f);
 	while(strcmp(tempname,"fontend")!=0){//fontend是结束标志 
-		RegisterFontTable(tempname);
+		(void)RegisterFontTable(tempname); //make complier happy
 		fread(tempname,sizeof(char),NAME_STRING_LIMIT,f);
 	}
 }
