@@ -114,7 +114,7 @@ void RegisterEditorMouseLeftUp(ButtonEvent);
 void RegisterEditorMouseMiddleRollup(ButtonEvent);
 void RegisterEditorMouseMiddleRolldown(ButtonEvent);
 void RegisterEditorMouseRightDown(MouseEventMethod);
-void RegisterEditorMouseRightUp(ButtonEvent);
+void RegisterEditorMouseLeftDown(ButtonEvent);
 void RegisterEditorKeyboard(KeyboardEventMethod);
 
 void RegisterEditorKeyboardSpecial(KeyboardEventMethod); //1上 2下 3左 4右 5回车 6退格 7Delete 
