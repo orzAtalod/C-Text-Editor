@@ -12,10 +12,10 @@ typedef struct{
 	double code[3];//三原色值 
 }colorInfo;
 struct colorTable{
-	colorInfo first[255];//第一部分 
-	char *second[255];//第二部分 
 	int flength;//first有多少数据项 
 	int slength;//second有多少数据项 
+	char *second[255];//第二部分 
+	colorInfo first[255];//第一部分 
 };
 static struct colorTable* colorPage[255]; 
 static int curColorPage=0;//当前在哪一页 
@@ -137,8 +137,8 @@ int LookupColorNameInColorTable(const char* colorName)
 
 
 struct fontTable{
-	char *second[255];
 	int length;//有多少数据项 
+	char *second[255];
 };
 static struct fontTable* fontPage[255];
 static int curFontPage=0;//当前在哪一页 
