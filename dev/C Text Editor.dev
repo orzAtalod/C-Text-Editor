@@ -1,6 +1,6 @@
 [Project]
 FileName=C Text Editor.dev
-Name=C Text Editor
+Name=BlockChain Editor
 Type=0
 Ver=2
 ObjFiles=
@@ -29,7 +29,7 @@ IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
 CompilerSettings=0000000000000000000000000
-UnitCount=35
+UnitCount=37
 
 [VersionInfo]
 Major=1
@@ -360,16 +360,6 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit34]
-FileName=..\header\geometry.h
-CompileCpp=0
-Folder=header
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
 [Unit26]
 FileName=..\header\blockList.h
 CompileCpp=0
@@ -391,6 +381,36 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit35]
+FileName=..\source\fileSystemCore.c
+CompileCpp=0
+Folder=source
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit36]
+FileName=..\header\explorerCore.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit37]
+FileName=..\header\dictionaryList.h
+CompileCpp=0
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit34]
 FileName=..\header\myGUI.h
 CompileCpp=0
 Folder=
