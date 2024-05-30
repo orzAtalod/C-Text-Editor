@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 typedef double (*GetHeightFunc)(void*,double);
-typedef void (*DrawFunc)(void*,double,double,double); 
+typedef void (*DrawFunc)(void*,double,double,double,double,double); 
 
 typedef struct {
 	int column;
@@ -40,7 +40,7 @@ void* AccumlateBlockList(BlockListAccumlateFunc func, void* beginValue);
 void RegisterGetHeightFunc(int type, GetHeightFunc func);
 double GetHeight(Block*, double);
 void RegisterDrawFunc(int type, DrawFunc func);
-void DrawBlock(Block*, double, double, double);
+void DrawBlock(Block*, double cx, double cy, double width, double begH, double endH);
 //这个函数在Editor初始化的时候完成注册 
 
 #endif

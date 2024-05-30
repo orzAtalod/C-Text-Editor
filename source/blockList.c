@@ -131,15 +131,28 @@ void* AccumlateBlockList(BlockListAccumlateFunc func, void* beginValue)
 	return beginValue;
 }
 
-static GetHeightFunc heightFunc[65535];
+static GetHeightFunc heightFunc[255];
 
 void RegisterGetHeightFunc(int type, GetHeightFunc func)
 {
-	assert(type>=0);
+	assert(type>=0 && type<=255);
 	heightFunc[type] = func;
 }
 
 double GetHeight(Block* blk, double width)
 {
 	return heightFunc[blk->type](blk->dataptr, width);
+}
+
+static DrawFunc drawfunc[255];
+
+void RegisterDrawFunc(int type, DrawFunc func)
+{
+	assert(type>=0 && type<=255);
+	drawfunc[type] = func;
+}
+
+void DrawBlock(Block* b, double cx, double cy, double width, double begH, double endH)
+{
+	drawfunc[b->type](b->dataptr, cx, cy, width, begH, endH);
 }
