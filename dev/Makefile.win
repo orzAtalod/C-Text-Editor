@@ -1,11 +1,11 @@
-# Project: C Text Editor
+# Project: BlockChain Editor
 # Makefile created by Dev-C++ 5.5.3
 
 CPP      = g++.exe
 CC       = gcc.exe
 WINDRES  = windres.exe
-OBJ      = ../outputs/main.o ../outputs/exceptio.o ../outputs/genlib.o ../outputs/graphics.o ../outputs/linkedlist.o ../outputs/random.o ../outputs/simpio.o ../outputs/strlib.o ../outputs/textStructure.o ../outputs/fileSystem.o ../outputs/blockList.o
-LINKOBJ  = ../outputs/main.o ../outputs/exceptio.o ../outputs/genlib.o ../outputs/graphics.o ../outputs/linkedlist.o ../outputs/random.o ../outputs/simpio.o ../outputs/strlib.o ../outputs/textStructure.o ../outputs/fileSystem.o ../outputs/blockList.o
+OBJ      = ../outputs/main.o ../outputs/exceptio.o ../outputs/genlib.o ../outputs/graphics.o ../outputs/linkedlist.o ../outputs/random.o ../outputs/simpio.o ../outputs/strlib.o ../outputs/textStructure.o ../outputs/fileSystem.o ../outputs/blockList.o ../outputs/fileSystemCore.o
+LINKOBJ  = ../outputs/main.o ../outputs/exceptio.o ../outputs/genlib.o ../outputs/graphics.o ../outputs/linkedlist.o ../outputs/random.o ../outputs/simpio.o ../outputs/strlib.o ../outputs/textStructure.o ../outputs/fileSystem.o ../outputs/blockList.o ../outputs/fileSystemCore.o
 LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib" -L"C:/Program Files (x86)/Dev-Cpp/MinGW32/mingw32/lib" -static-libstdc++ -static-libgcc -mwindows
 INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include" -I"../libgraphics"
 CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib/gcc/mingw32/4.7.2/include/c++" -I"../libgraphics"
@@ -56,3 +56,6 @@ $(BIN): $(OBJ)
 
 ../outputs/blockList.o: ../source/blockList.c
 	$(CC) -c ../source/blockList.c -o ../outputs/blockList.o $(CFLAGS)
+
+../outputs/fileSystemCore.o: ../source/fileSystemCore.c
+	$(CC) -c ../source/fileSystemCore.c -o ../outputs/fileSystemCore.o $(CFLAGS)
