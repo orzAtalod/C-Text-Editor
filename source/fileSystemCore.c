@@ -21,7 +21,6 @@ static struct colorTable* colorPage[255];
 static int curColorPage=0;//当前在哪一页 
 static unsigned long long colorPageExsists[4];
 
-
 void ChangePageOfColorTable(int p)//不仅是转换页，也是创建一个页，所以第一次调用color数据结构时，需要先用这个函数创建一个页 
 {
 	if(colorPageExsists[p%64] | (1LLU<<(p/64))){
@@ -35,6 +34,14 @@ void ChangePageOfColorTable(int p)//不仅是转换页，也是创建一个页，所以第一次调用
 	}
 }
 
+void ClearColorTable()
+{
+	if(colorPage[p]) free(colorPage[p]);
+	colorPage[p]=(struct colorTable*)malloc(sizeof(struct colorTable));
+	colorPage[p]->flength=0;
+	colorPage[p]->slength=0;	
+}
+
 void ReadColorTable(FILE* f, ColorDefinitionFunction func)
 {
 	char *tempname;
@@ -42,14 +49,14 @@ void ReadColorTable(FILE* f, ColorDefinitionFunction func)
 	double tempcode[3];
 	fread(tempname,sizeof(char),NAME_STRING_LIMIT,f);
 	fread(tempcode,sizeof(double),3,f);
-	while(strcmp(tempname,"firstend")!=0){//firstend是结束标志  
+	while(strcmp(tempname,"_firstend")!=0){//firstend是结束标志  
 		RegisterColorName(tempname,tempcode[0],tempcode[1],tempcode[2]);
 		func(tempname,tempcode[0],tempcode[1],tempcode[2]);
 		fread(tempname,sizeof(char),NAME_STRING_LIMIT,f);
 		fread(tempcode,sizeof(double),3,f);
 	}
 	fread(tempname,sizeof(char),NAME_STRING_LIMIT,f);
-	while(strcmp(tempname,"secondend")!=0){//secondend是结束标志  
+	while(strcmp(tempname,"_secondend")!=0){//secondend是结束标志  
 		(void)RegisterColorTable(tempname); //make complier happy
 		fread(tempname,sizeof(char),NAME_STRING_LIMIT,f);
 	}
@@ -65,7 +72,7 @@ void WriteColorTable(FILE* f)
 		fwrite(p->first[i].name,sizeof(char),NAME_STRING_LIMIT,f);
 		fwrite(p->first[i].code,sizeof(double),3,f);
 	}
-	char endchar[NAME_STRING_LIMIT]="firstend";//最后写入结束标志 
+	char endchar[NAME_STRING_LIMIT]="_firstend";//最后写入结束标志 
 	double enddouble[3]={0,0,0};
 	fwrite(endchar,sizeof(char),NAME_STRING_LIMIT,f);
 	fwrite(enddouble,sizeof(double),3,f);
@@ -73,7 +80,7 @@ void WriteColorTable(FILE* f)
 	for(i=1;i<=secondl;i++){
 		fwrite(p->second[i],sizeof(char),NAME_STRING_LIMIT,f);
 	}
-	strcpy(endchar,"secondend");
+	strcpy(endchar,"_secondend");
 	fwrite(endchar,sizeof(char),NAME_STRING_LIMIT,f);
 }
 
@@ -157,12 +164,19 @@ void ChangePageOfFontTable(int p)
 	}
 }
 
+void ClearFontTable()
+{
+	if(fontPage[p]) free(fontPage[p]);
+	fontPage[p]=(struct fontTable*)malloc(sizeof(struct fontTable));
+	fontPage[p]->length=0;	
+}
+
 void ReadFontTable(FILE* f)
 {
 	char *tempname;
 	tempname=(char *)malloc(sizeof(char)*NAME_STRING_LIMIT);
 	fread(tempname,sizeof(char),NAME_STRING_LIMIT,f);
-	while(strcmp(tempname,"fontend")!=0){//fontend是结束标志 
+	while(strcmp(tempname,"_fontend")!=0){//fontend是结束标志 
 		(void)RegisterFontTable(tempname); //make complier happy
 		fread(tempname,sizeof(char),NAME_STRING_LIMIT,f);
 	}
@@ -176,7 +190,7 @@ void WriteFontTable(FILE* f)
 	for(i=1;i<=l;i++){
 		fwrite(p->second[i],sizeof(char),NAME_STRING_LIMIT,f);
 	}
-	char endchar[NAME_STRING_LIMIT]="fontend";//最后写入结束标志 
+	char endchar[NAME_STRING_LIMIT]="_fontend";//最后写入结束标志 
 	fwrite(endchar,sizeof(char),NAME_STRING_LIMIT,f);
 }
 
@@ -196,8 +210,7 @@ int RegisterFontTable(const char* fontName)
 	strcpy(p->second[l+1],fontName);
 	p->length++;
 	return l+1;
- } 
- 
+} 
 
 const char* LookupIDInFontTable(int id)
 {

@@ -145,7 +145,7 @@ void ChangeDisplayMethodToInput(ButtonEventWithInput callback);
 
 /*
 *
-* 界面 3：弹窗输入界面
+* 界面 3(1)：弹窗输入界面
 * 与输入界面基本相同，区别在于输入栏以弹窗形式呈现，并移动到大编辑区中央。 
 * 弹窗应该能在输入栏的上方显示一行文本。 
 * 编辑区消息同样被禁用，同时可以不绘制编辑区内容，因为尚不清楚能否同时显示编辑区内容与
@@ -155,6 +155,17 @@ void ChangeDisplayMethodToInput(ButtonEventWithInput callback);
 */
 
 void ChangeDisplayMethodToMajorInput(char* inputMessage, ButtonEventWithInput callback);
+
+/*
+*
+* 界面 3(2)：弹窗按钮界面 
+* 与弹窗输入界面基本相同，输入方式不是文本框而是按钮
+* 参数为所显示的文本，按钮数量（0/1或2个），各按钮文本（字符数组从0开始）
+* 返回值为所选择按钮的序号（序号从1开始），若直接退出则返回 0 
+*
+*/
+
+int ChangeDisplayMethodToMajorButton(char* inputMessage, int textNum, const char** textValue);
 
 /*
 *

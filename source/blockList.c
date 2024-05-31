@@ -59,6 +59,7 @@ void LoadBlockList(FILE* f)
 			blocklist[curPage][i].ID    = i;
 			blocklist[curPage][i].type  = blocksBuffer[i-1].type;
 			blocklist[curPage][i].align = blocksBuffer[i-1].align;
+			++blocklistLength[curPage];
 		}
 	}
 	
@@ -92,6 +93,12 @@ void ChangePageOfBlockList(int p)
 	curPage = p;
 }
 
+int GetPageOfBlockList()
+{
+	return curPage;
+}
+
+
 Block* BlockCreate(int type, void* dataptr)
 {
 	if(!curPage) return 0;
@@ -101,6 +108,13 @@ Block* BlockCreate(int type, void* dataptr)
 	blocklist[curPage][curid].type    = type;
 	blocklist[curPage][curid].dataptr = dataptr;
 	return blocklist[curPage] + curid;
+}
+
+void ClearBlockList()
+{
+	if(blocklist[curPage]) free(blocklist[curPage]);
+	blocklist[curPage] = 0;
+	blocklistLength[curPage] = blocklistSpace[curPage] = 0;
 }
 
 void BlockMove(int ID, AlignmentInfo align)

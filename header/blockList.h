@@ -26,6 +26,7 @@ void RegisterWriterMethod(int type, FileWriter func);
 //这两个函数在FileSystem初始化的时候完成注册 
 
 void ChangePageOfBlockList(int p);
+int GetPageOfBlockList();
 Block* BlockCreate(int type, void* dataptr);
 void   BlockMove(int ID, AlignmentInfo align);
 

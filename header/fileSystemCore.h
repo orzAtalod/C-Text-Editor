@@ -55,6 +55,7 @@ const char* LookupIDInColorTable(int id);
 int LookupColorNameInColorTable(const char* colorName);
 int RegisterColorTable(const char* colorName);
 int RegisterColorName(const char* colorName,double r,double g,double b);
+void ClearColorTable(); 
 
 /*
 *
@@ -76,7 +77,7 @@ void WriteFontTable(FILE* f);
 const char* LookupIDInFontTable(int id);
 int LookupFontNameInFontTable(const char* fontName);
 int RegisterFontTable(const char* fontName);
-
+void ClearFontTable();
 
 /*
 *

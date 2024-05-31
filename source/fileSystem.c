@@ -39,9 +39,13 @@ void LoadFileAtPage(int page, const char* fileName)
 {
 	FILE* f = fopen(fileName,"rb");
 	ChangePageOfColorTable(page);
+	ClearColorTable(f);
 	ReadColorTable(f, colorFunc);
 	ChangePageOfFontTable(page);
+	ClearFontTable(f);
 	ReadFontTable(f);
+	ChangePageOfBlockList(page);
+	ClearBlockList();
 	LoadBlockList(f);
 	fclose(f);
 }
@@ -53,6 +57,7 @@ void SaveFileAtPage(int page, const char* fileName)
 	WriteColorTable(f);
 	ChangePageOfFontTable(page);
 	WriteFontTable(f);
+	ChangePageOfBlockList(page);
 	SaveBlockList(f);
 	fclose(f);
 }

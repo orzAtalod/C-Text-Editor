@@ -1,4 +1,9 @@
 #include "dictionaryList.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include "graphics.h"
+#include "extgraph.h"
 
 ////////////////////////////////  基础工具  //////////////////////////// 
 
@@ -231,7 +236,7 @@ DictionaryCursor PositionizeDictionaryList(DictionaryGraphicDatas* dl, double wi
 
 //////////////////////////   创建、拷贝、销毁函数  //////////////////////// 
 #define NEW(x)  ((x*)malloc(sizeof(x)))
-#define VARR(x,len) ((x*)malloc((len)*sizeof(x)))
+#define NEWVARR(x,len) ((x*)malloc((len)*sizeof(x)))
 
 DictionaryGraphicDatas* CopyDictionaryGraphicDatas(DictionaryGraphicDatas* sorce)
 {
@@ -267,7 +272,7 @@ DictionaryItem* CreateDictionaryItem()
 	static int IDs = 0;
 	DictionaryItem* ni = NEW(DictionaryItem);
 	ni->itemID   = ++IDs;
-	ni->itemName = VARR(char, NAME_SIZE);
+	ni->itemName = NEWVARR(char, NAME_SIZE);
 	strcpy(ni->itemName, "Noname"); 
 }
 
@@ -300,7 +305,7 @@ DictionaryFolder* CreateDictionaryFolder()
 	static int IDs = 0;
 	DictionaryFolder* nf = NEW(DictionaryFolder);
 	nf->folderID   = ++IDs;
-	nf->folderName = VARR(char, NAME_SIZE);
+	nf->folderName = NEWVARR(char, NAME_SIZE);
 	strcpy(nf->folderName, "Noname");
 }
 
