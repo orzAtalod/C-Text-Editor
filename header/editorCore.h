@@ -9,19 +9,15 @@
 *
 */
 
-#define KEYBOARD_FOCUS_DOWN  1
-#define KEYBOARD_FOCUS_UP    2
-#define KEYBOARD_FOCUS_LEFT  3
-#define KEYBOARD_FOCUS_RIGHT 4
-#define KEYBOARD_FOCUS_TAB   5
+void ChangePageOfEditor(int p);
 void MouseDown(Block* blk, double x, double y);
 void MouseUp();
 void Bold();
 void Italic();
 void FontChange(const char* newFont);
 void ColorChange(const char* newColor);
-void KeyboardFocus(int keyInputType);
 void KeyboardInput(char ch);
+void KeyboardInputSpecial(char keyInputType); //1上 2下 3左 4右 5回车 6退格 7Delete
 void NewParagraph();
 
 #endif

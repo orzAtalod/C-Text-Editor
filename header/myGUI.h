@@ -1,6 +1,6 @@
 #ifndef __MY_GUI_H_INCLUDED__
 #define __MY_GUI_H_INCLUDED__
-
+ 
 /*
 *
 * interface for GUI system
@@ -23,7 +23,7 @@
 *    的毫秒数 
 *
 */ 
-
+long GetClock();
 void GUI_Start();
 
 typedef void (*ButtonEvent)();
@@ -32,7 +32,7 @@ typedef void (*AreaPaintMethod)(double,double,double,double);
 typedef double (*GetInfoMethod)(void);
 typedef void (*MouseEventMethod)(double,double);
 typedef void (*KeyboardEventMethod)(char); 
-typedef void (*ColorDefinitionMethod)(const char*,double,double,double)
+typedef void (*ColorDefinitionMethod)(const char*,double,double,double); 
 
 /*
 *
@@ -68,8 +68,8 @@ typedef void (*ColorDefinitionMethod)(const char*,double,double,double)
 *    函数。 
 * 2. 鼠标拖动信息，当鼠标指针位于编辑区并且左键被按下时，对于任何鼠标移动信息调用注册的
 *    EditorMouseLeftDown(double,double) 传入鼠标当前所处位置相对于编辑区左上角的坐标。 
-* 3. 鼠标抬起信息，当鼠标指针松开时调用 EditorMouseLeftUp() 事件（有修改，现在在鼠标移出
-*    界面后不再视为已松开鼠标） 
+* 3. 鼠标抬起信息，当鼠标指针位于编辑区并且鼠标左键松开，或者鼠标指针在左键按下的情况下
+*    从编辑区移开时，调用注册的 EditorMouseLeftUp() 函数。 
 * 4. 右键与左键相同，左右两键同时按下时视为先松开原本按着的键再按下新键
 * 5. 中键的滚动也需要被记录 
 * 4. 键盘上下左右、Enter、Backspace、Delete 信息，调用相应函数即可。 
@@ -124,9 +124,6 @@ void RegisterExplorerMouseLeftUp(ButtonEvent);
 void RegisterExplorerMouseRightDown(MouseEventMethod);
 void RegisterExplorerMouseRightUp(ButtonEvent);
 
-void RegisterRollerMouseLeftDown(MouseEventMethod);
-void RegisterRollerMouseLeftUp(ButtonEvent);
-
 /*
 *
 * 界面 2：输入界面
@@ -145,7 +142,7 @@ void ChangeDisplayMethodToInput(ButtonEventWithInput callback);
 
 /*
 *
-* 界面 3(1)：弹窗输入界面
+* 界面 3：弹窗输入界面
 * 与输入界面基本相同，区别在于输入栏以弹窗形式呈现，并移动到大编辑区中央。 
 * 弹窗应该能在输入栏的上方显示一行文本。 
 * 编辑区消息同样被禁用，同时可以不绘制编辑区内容，因为尚不清楚能否同时显示编辑区内容与
@@ -155,17 +152,6 @@ void ChangeDisplayMethodToInput(ButtonEventWithInput callback);
 */
 
 void ChangeDisplayMethodToMajorInput(char* inputMessage, ButtonEventWithInput callback);
-
-/*
-*
-* 界面 3(2)：弹窗按钮界面 
-* 与弹窗输入界面基本相同，输入方式不是文本框而是按钮
-* 参数为所显示的文本，按钮数量（0/1或2个），各按钮文本（字符数组从0开始）
-* 返回值为所选择按钮的序号（序号从1开始），若直接退出则返回 0 
-*
-*/
-
-int ChangeDisplayMethodToMajorButton(char* inputMessage, int textNum, const char** textValue);
 
 /*
 *
