@@ -25,6 +25,6 @@ typedef void (*FileBrowseFunc)(FileHeaderInfo*, int); //int ²ÎÊıÎª blocklist ¿É½
 typedef bool (*FileFilterFunc)(FileHeaderInfo*, int);
 
 void              BrowseExplorer(FileBrowseFunc, int silentp); //silentp==1 Ê±£¬±éÀúÎÄ¼şÊ±²»´ò¿ªÎÄ¼ş 
-DictionaryFolder* FilterExplorer(FileFilterFunc, int silentp);
+DictionaryFolder* FilterExplorer(FileFilterFunc, int silentp); //FileFilterFunc ·µ»Ø1Ê±É¾³ıÎÄ¼ş 
 
 #endif

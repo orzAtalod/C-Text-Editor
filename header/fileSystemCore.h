@@ -47,15 +47,16 @@
 *
 *
 */
-typedef void (*ColorDefinitionFunction)(const char*, double, double, double);
+typedef void (*ColorDefinitionTraverseFunction)(const char*, double, double, double);
 void ChangePageOfColorTable(int p);
-void ReadColorTable(FILE* f, ColorDefinitionFunction func);
+void ReadColorTable(FILE* f);
 void WriteColorTable(FILE* f);
 const char* LookupIDInColorTable(int id);
 int LookupColorNameInColorTable(const char* colorName);
 int RegisterColorTable(const char* colorName);
 int RegisterColorName(const char* colorName,double r,double g,double b);
-void ClearColorTable(); 
+void TraverseColorDifinitions(ColorDefinitionTraverseFunction);
+void ClearColorTable();
 
 /*
 *

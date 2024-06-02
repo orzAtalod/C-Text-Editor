@@ -184,7 +184,6 @@ void BuildFiles()
 	{
 		fileOnEditNum = 1;
 		fileOnBlockListPage[currentFile] = 1;
-		UpdateColorDefinitionMethod(GetEditCoreColorDefMethod());
 		LoadFileAtPage(1,files[currentFile]->filePath);
 	}
 }
@@ -244,11 +243,6 @@ void ClearBuilded()
 } 
 
 /////////////////////////////////////// 遍历访问函数  ///////////////////////////////////// 
-void silentColordef(const char* str, double r, double g, double b)
-{
-	return;
-} 
-
 void BrowseExplorer(FileBrowseFunc func, int silentp)
 {
 	const int currentBlockListPage = GetPageOfBlockList();
@@ -258,16 +252,75 @@ void BrowseExplorer(FileBrowseFunc func, int silentp)
 		if(!curPage && !silentp)
 		{
 			curPage = fileOnEditNum+1;
-			UpdateColorDefinitionMethod(silentColordef);
-			LoadFileAtPage(curPage,files[currentFile]->filePath);
+			LoadFileAtPage(curPage, files[currentFile]->filePath);
 		}
 		func(files[i], curPage);
 	}
 	ChangePageOfBlockList(currentBlockListPage);
 }
 
-// TODO
+static void filterFolder(FileFilterFunc func, DictionaryFolder* df, int silentp)
+{
+	if(df->items)
+	{
+		DictionaryItem* it = df->items;
+		while(it)
+		{
+			int curPage = fileOnBlockListPage[it->itemID];
+			if(!curPage && !silentp)
+			{
+				curPage = fileOnEditNum+1;
+				LoadFileAtPage(curPage, files[currentFile]->filePath);
+			}
+			if(func(files[it->itemID], curPage))
+			{
+				DictionaryItem* tmp = it;
+				it = it->nextItem;
+				FreeDictionaryItem(tmp);
+			}
+			else
+			{
+				it = it->nextItem;
+			}
+		}
+	}
+	
+	if(df->subFolders)
+	{
+		DictionaryFolder* it = df->subFolders;
+		while(it)
+		{
+			filterFolder(func, it, silentp);
+			if(!it->subFolders && !it->items)
+			{
+				DictionaryFolder* tmp = it;
+				it = it->nextFolder;
+				FreeDictionaryFolder(tmp);
+			}
+		}
+	}
+}
+
 DictionaryFolder* FilterExplorer(FileFilterFunc func, int silentp)
 {
-	const DictionaryFolder* newFolder = CopyDictionaryFolder(fullFolder);	
+	const DictionaryFolder* newFolder = CopyDictionaryFolder(fullFolder);
+	const int currentBlockListPage = GetPageOfBlockList();
+	filterFolder(func, newFolder, silentp);
+	ChangePageOfBlockList(currentBlockListPage);
+	return newFolder;
+}
+
+////////////////////////////////////////////////// 显示与交互  //////////////////////////////////// 
+static DictionaryGraphicDatas* showDGD;
+//TODO
+
+static void initializeDGD()
+{
+	showDGD = CreateDictionaryGraphicDatas(); 
+}
+
+void DrawExplorer(double cx, double cy, double width)
+{
+	if(!showDGD) initializeDGD();
+	DrawDictionaryList(DGD, fullFolder, cx, cy, width, 0, 1000000);
 }

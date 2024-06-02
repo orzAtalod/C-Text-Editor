@@ -176,6 +176,8 @@ double GetDictionaryListHeight(DictionaryGraphicDatas* dl, DictionaryFolder* fl,
 	return result;
 }
 
+static inline int max(int a,int b) { return a>b ? a : b; }
+
 void DrawDictionaryList(DictionaryGraphicDatas* dl, DictionaryFolder* fl, double cx, double cy, double width, double begH, double endH)
 {
 	checkInitialized();
@@ -184,9 +186,9 @@ void DrawDictionaryList(DictionaryGraphicDatas* dl, DictionaryFolder* fl, double
 	const double cyLimL = cy - begH + endH;
 	cy -= GetFontAscent();
 	
-	const double fHeight = GetFontHeight(); 
+	const double fHeight = GetFontHeight();
 	fillDrawCommands(dl, fl);
-	for(int i=-begH/fHeight+1; i<=curline; ++i)
+	for(int i=max(-begH/fHeight+1,1); i<=curline; ++i)
 	{
 		if(cy<cyLimL) break;
 		const char* outputStr = generateLimitedOutput(dicLines[i], width);

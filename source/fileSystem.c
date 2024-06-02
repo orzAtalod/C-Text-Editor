@@ -21,18 +21,10 @@ void ChangePageAtFileSystem(int page)
 	curPage = page;
 }
 
-static ColorDefinitionFunction colorFunc;
-
-void InitFileSystem(ColorDefinitionFunction func)
+void InitFileSystem()
 {
-	colorFunc = func;
 	RegisterReaderMethod(1,styleStringReader);
 	RegisterWriterMethod(1,styleStringWriter);
-}
-
-void UpdateColorDefinitionMethod(ColorDefinitionFunction func)
-{
-	colorFunc = func;
 }
 
 void LoadFileAtPage(int page, const char* fileName)
@@ -40,7 +32,7 @@ void LoadFileAtPage(int page, const char* fileName)
 	FILE* f = fopen(fileName,"rb");
 	ChangePageOfColorTable(page);
 	ClearColorTable(f);
-	ReadColorTable(f, colorFunc);
+	ReadColorTable(f);
 	ChangePageOfFontTable(page);
 	ClearFontTable(f);
 	ReadFontTable(f);

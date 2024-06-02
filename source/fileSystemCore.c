@@ -42,7 +42,7 @@ void ClearColorTable()
 	colorPage[p]->slength=0;	
 }
 
-void ReadColorTable(FILE* f, ColorDefinitionFunction func)
+void ReadColorTable(FILE* f)
 {
 	char *tempname;
 	tempname=(char *)malloc(sizeof(char)*NAME_STRING_LIMIT);
@@ -51,7 +51,6 @@ void ReadColorTable(FILE* f, ColorDefinitionFunction func)
 	fread(tempcode,sizeof(double),3,f);
 	while(strcmp(tempname,"_firstend")!=0){//firstend是结束标志  
 		RegisterColorName(tempname,tempcode[0],tempcode[1],tempcode[2]);
-		func(tempname,tempcode[0],tempcode[1],tempcode[2]);
 		fread(tempname,sizeof(char),NAME_STRING_LIMIT,f);
 		fread(tempcode,sizeof(double),3,f);
 	}
@@ -139,6 +138,16 @@ int LookupColorNameInColorTable(const char* colorName)
 	}
 	return 0;
 }
+
+void TraverseColorDifinitions(ColorDefinitionTraverseFunction func)
+{
+	struct colorTable* p = colorPage[curColorPage];
+	for(int i=1; i<=p->flength; ++i)
+	{
+		func(p->first[i].name, p->first[i].code[0], p->first[i].code[1], p->first[i].code[2]);
+	}
+}
+
 
 //font部分
 
