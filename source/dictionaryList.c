@@ -70,7 +70,7 @@ static void fillDrawCommandsItem(DictionaryGraphicDatas* dl, DictionaryItem* x, 
 	drawCommand[curline].type = 2;
 	drawCommand[curline].indent = curindent;
 	drawCommand[curline].name = x->itemName;
-	drawCommand[curline].penColor = (dl->itemColors)[x->itemEphasizeType];
+	drawCommand[curline].penColor = (dl->itemColors)[x->itemEmphasizeType];
 	drawCommand[curline].prefix = "| ";
 	drawCommand[curline].source = (void*)x;
 	fillDrawCommandsItem(dl, x->nextItem, curindent);
@@ -201,7 +201,7 @@ void DrawDictionaryList(DictionaryGraphicDatas* dl, DictionaryFolder* fl, double
 	retGraphicState(dl);
 }
 
-DictionaryCursor PositionizeDictionaryList(DictionaryGraphicDatas* dl, double width, double mX, double mY)
+DictionaryCursor PositionizeDictionaryList(DictionaryGraphicDatas* dl, DictionaryFolder* fl, double width, double mX, double mY)
 {
 	checkInitialized();
 	if(!dl) dl = &defaultDicgd;
@@ -263,7 +263,7 @@ void FreeDictionaryGraphicDatas(DictionaryGraphicDatas* dg)
 /*
 *
 * 在创建的同时设置缺省值 
-* itemEphasizeType 为 0（不强调） 
+* itemEmphasizeType 为 0（不强调） 
 * prevItem, nextItem 与 folder 均设置为 NULL
 * itemName 设置为 "Noname"
 * 
@@ -295,7 +295,7 @@ void FreeDictionaryItem(DictionaryItem* di)
 DictionaryItem* CopyDictionaryItem(DictionaryItem* sorce)
 {
 	DictionaryItem* dest = CreateDictionaryItem();
-	dest->itemEphasizeType = sorce->itemEphasizeType;
+	dest->itemEmphasizeType = sorce->itemEmphasizeType;
 	dest->itemID = sorce->itemID;
 	dest->folder = sorce->folder;
 	strcpy(dest->itemName, sorce->itemName);

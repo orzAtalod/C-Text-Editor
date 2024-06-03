@@ -5,7 +5,7 @@
 //仅定义数据结构和显示方法，不存储任何数据 
 //由于不存储数据，所以不提供遍历方法与操作方法，由下游任务自行实现遍历与操作 
 typedef struct dditemBase{
-	int itemEphasizeType;
+	int itemEmphasizeType;
 	int itemID;
 	struct dditemBase* prevItem;
 	struct dditemBase* nextItem;
@@ -38,7 +38,7 @@ typedef struct{
 /*
 *
 * 在创建的同时设置缺省值 
-* itemEphasizeType 为 0（不强调） 
+* itemEmphasizeType 为 0（不强调） 
 * prevItem, nextItem 与 folder 均设置为 NULL
 * 为 itemName 初始设置为 "Noname"
 * 为 itemID 设置一个不与其他初始值重复的初始值（从 1 开始逐个增加） 
@@ -91,6 +91,6 @@ typedef struct {
 	DictionaryItem*   pointItem; //NULL if the entry pointed is item or space
 } DictionaryCursor;
 
-DictionaryCursor PositionizeDictionaryList(DictionaryGraphicDatas* dl, double width, double mX, double mY);
+DictionaryCursor PositionizeDictionaryList(DictionaryGraphicDatas* dl, DictionaryFolder* fl, double width, double mX, double mY);
 
 #endif 

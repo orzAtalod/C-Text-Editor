@@ -16,8 +16,44 @@ static DictionaryFolder* corresDFolder[65535];
 static DictionaryFolder* corresDFile[65535];
 static DictionaryFolder* fullFolder;
 
-///////////////////////////////////////////////// 读取、写入 /////////////////////////////////////// 
+///////////////////////////////////////////////// 基础函数 //////////////////////////////////////
+static void changeCurrentFile(int newFile)
+{
+	if(currentFile)
+	{
+		corresDFile[currentFile]->itemEmphasizeType = 1;
+	}
+	currentFile = newFile;
+	corresDFile[currentFile]->itemEmphasizeType = 2;
+	ChangePageOfEditCore(fileOnBlockListPage[newFile]);
+}
 
+static int openFile(int fileID) //返回打开页码
+{
+	if(fileOnBlockListPage[fileID])
+	{
+		return fileOnBlockListPage[fileID];
+	}
+
+	const int curBLPage = GetPageOfBlockList();
+	++fileOnEditNum;
+	fileOnBlockListPage[fileID] = fileOnEditNum;
+	LoadFileAtPage(fileOnEditNum, files[currentFile]->filePath);
+	corresDFile[fileID]->itemEmphasizeType = 1;
+	changeCurrentFile(fileID);
+	
+	return fileOnEditNum;
+}
+
+static void closeFile(int fileID)
+{
+	assert(currentFile != fileID);
+	corresDFile[fileID]->itemEmphasizeType = 0;
+	if(fileOnBlockListPage[fileID] == fileOnEditNum) --fileOnEditNum;
+	fileOnBlockListPage[fileID] = 0;
+}
+
+///////////////////////////////////////////////// 读取、写入 /////////////////////////////////////// 
 static void readTags(FILE* f)
 {
 	fread(&tagStoreNum,sizeof(int),1,f);
@@ -43,7 +79,10 @@ static void readFolders(FILE* f)
 	fread(folderBuffer,sizeof(folderExchangeInfo),folderNum,f);
 	for(int i=1; i<=folderNum; ++i)
 	{
-		folders[i] = NEW(FolderHeaderInfo);
+		folders[i] = NEW(FolderHeaderInfo); //防止有parentFolder的id比自己大的情况
+	}
+	for(int i=1; i<=folderNum; ++i)
+	{
 		folders[i]->folderID = i;
 		folders[i]->folderName = NEWVARR(char, folderBuffer[i].folderNameLen+5);
 		folders[i]->parentFolder = folders[folderBuffer[i].parentFolderID];
@@ -83,8 +122,8 @@ void readFiles(FILE* f)
 void ReadSavFile(FILE* f)
 {
 	readTags(f);
-	readFiles(f);
 	readFolders(f);
+	readFiles(f);
 	fread(&userNameLen, sizeof(int), 1, f);
 	fread(userName, sizeof(char), userNameLen, f);
 	fread(&currentFile, sizeof(int), 1, f);
@@ -179,13 +218,9 @@ void BuildFiles()
 			}
 		}
 	}
-	
-	if(currentFile)
-	{
-		fileOnEditNum = 1;
-		fileOnBlockListPage[currentFile] = 1;
-		LoadFileAtPage(1,files[currentFile]->filePath);
-	}
+
+	openFile(currentFile);
+	changeCurrentFile(currentFile);
 }
 
 static void writeTags(FILE* f)
@@ -237,6 +272,16 @@ void writeFiles(FILE* f)
 	}
 }
 
+void WriteSavFile(FILE* f)
+{
+	writeTags(f);
+	writeFolders(f);
+	writeFiles(f);
+	fwrite(&userNameLen, sizeof(int), 1, f);
+	fwrite(userName, sizeof(char), userNameLen, f);
+	fwrite(&currentFile, sizeof(int), 1, f);
+}
+
 void ClearBuilded()
 {
 	FreeDictionaryFolder(fullFolder);
@@ -245,18 +290,18 @@ void ClearBuilded()
 /////////////////////////////////////// 遍历访问函数  ///////////////////////////////////// 
 void BrowseExplorer(FileBrowseFunc func, int silentp)
 {
-	const int currentBlockListPage = GetPageOfBlockList();
 	for(int i=1; i<=fileNum; ++i)
 	{
 		int curPage = fileOnBlockListPage[i];
+		int flag = 0;
 		if(!curPage && !silentp)
 		{
-			curPage = fileOnEditNum+1;
-			LoadFileAtPage(curPage, files[currentFile]->filePath);
+			curPage = openFile(i);
+			flag = 1;
 		}
 		func(files[i], curPage);
+		if(flag) closeFile(i);
 	}
-	ChangePageOfBlockList(currentBlockListPage);
 }
 
 static void filterFolder(FileFilterFunc func, DictionaryFolder* df, int silentp)
@@ -267,19 +312,22 @@ static void filterFolder(FileFilterFunc func, DictionaryFolder* df, int silentp)
 		while(it)
 		{
 			int curPage = fileOnBlockListPage[it->itemID];
+			int flag = 0;
 			if(!curPage && !silentp)
 			{
-				curPage = fileOnEditNum+1;
-				LoadFileAtPage(curPage, files[currentFile]->filePath);
+				curPage = openFile(it->itemID);
+				flag = 1;
 			}
 			if(func(files[it->itemID], curPage))
 			{
+				if(flag) closeFile(it->itemID);
 				DictionaryItem* tmp = it;
 				it = it->nextItem;
 				FreeDictionaryItem(tmp);
 			}
 			else
 			{
+				if(flag) closeFile(it->itemID);
 				it = it->nextItem;
 			}
 		}
@@ -304,23 +352,184 @@ static void filterFolder(FileFilterFunc func, DictionaryFolder* df, int silentp)
 DictionaryFolder* FilterExplorer(FileFilterFunc func, int silentp)
 {
 	const DictionaryFolder* newFolder = CopyDictionaryFolder(fullFolder);
-	const int currentBlockListPage = GetPageOfBlockList();
 	filterFolder(func, newFolder, silentp);
-	ChangePageOfBlockList(currentBlockListPage);
 	return newFolder;
 }
 
 ////////////////////////////////////////////////// 显示与交互  //////////////////////////////////// 
 static DictionaryGraphicDatas* showDGD;
-//TODO
+static double lastWidth;
 
 static void initializeDGD()
 {
 	showDGD = CreateDictionaryGraphicDatas(); 
 }
 
-void DrawExplorer(double cx, double cy, double width)
+void DrawExplorer(double cx, double cy, double width, double height)
 {
 	if(!showDGD) initializeDGD();
-	DrawDictionaryList(DGD, fullFolder, cx, cy, width, 0, 1000000);
+	lastWidth = width;
+	DrawDictionaryList(showDGD, fullFolder, cx, cy, width, 0, height);
 }
+
+static DictionaryCursor lastClickedPosition;
+static DictionaryCursor currentClickedPosition;
+
+void ExplorerLeftMouseDown(double mx, double my)
+{
+	if(!lastClickedPosition)
+	{
+		lastClickedPosition = PositionizeDictionaryList(showDGD, fullFolder, lastWidth, mx, my);
+		if(lastClickedPosition.pointEntryType)
+		{
+			if(lastClickedPosition.pointEntryType==1)
+			{
+				(lastClickedPosition.pointFolder)->folderEmphasizeType = 3;
+			}
+			else
+			{
+				(lastClickedPosition.pointItem)->itemEmphasizeType = 3;
+			}
+		}
+		return;
+	}
+	else currentClickedPosition = PositionizeDictionaryList(showDGD, fullFolder, lastWidth,mx, my);
+}
+
+void ExplorerLeftMouseUp()
+{
+	if(lastClickedPosition == currentClickedPosition) //判定为单击
+	{
+		if(!lastClickedPosition.pointEntryType) return;
+		if(lastClickedPosition.pointEntryType == 1)
+		{
+			(lastClickedPosition.pointFolder)->folderExpended = !(lastClickedPosition.pointFolder)->folderExpended;
+			(lastClickedPosition.pointFolder)->folderEmphasizeType = 0;
+		}
+		else
+		{
+			openFile((lastClickedPosition.pointItem)->itemID);
+			changeCurrentFile((lastClickedPosition.pointItem)->itemID);
+		}
+	}
+	else
+	{
+		if(!lastClickedPosition.pointEntryType) return;
+		if(!currentClickedPosition.folderIn) currentClickedPosition.folderIn = fullFolder;
+		if(lastClickedPosition.pointEntryType == 1)
+		{
+			DictionaryFolder* a = lastClickedPosition.pointFolder;
+			if(a->parent->subFolders == a)
+			{
+				a->parent->subFolders = 0;
+				if(a->prevFolder) a->parent->subFolders = a->prevFolder;
+				if(a->nextFolder) a->parent->subFolders = a->nextFolder;
+			}
+			if(a->prevFolder) a->prevFolder->nextFolder = a->nextFolder;
+			if(a->nextFolder) a->nextFolder->prevFolder = a->prevFolder;
+
+			DictionaryFolder* b = currentClickedPosition.folderIn;
+			a->parent = b;
+			if(!b->subFolders)
+			{
+				b->subFolders = a;
+			}
+			else
+			{
+				a->prevFolder = 0;
+				a->nextFolder = b->subFolders;
+				b->subFolders->prevFolder = a;
+				b->subFolders = a;
+			}
+
+			folders[a->folderID]->parentFolder = folders[b->folderID];
+		}
+		else
+		{
+			DictionaryItem* a = lastClickedPosition.pointItem;
+			if(a->folder->items == a)
+			{
+				a->folder->items = 0;
+				if(a->prevItem) a->folder->items = a->prevItem;
+				if(a->nextItem) a->folder->items = a->nextItem;
+			}
+			if(a->prevItem) a->prevItem->nextItem = a->nextItem;
+			if(a->nextItem) a->nextItem->prevItem = a->prevItem;
+
+			DictionaryItem* b = currentClickedPosition.folderIn;
+			a->folder = b;
+			if(!b->items)
+			{
+				b->items = a;
+			}
+			else
+			{
+				a->prevItem = 0;
+				a->nextItem = b->items;
+				b->items->prevItem = a;
+				b->items = a;
+			}
+
+			files[a->fileID]->folder = folders[b->folderID];
+		}
+	}
+}
+
+void ExplorerRightMouseDown(double mx, double my)
+{
+	if(!lastClickedPosition)
+	{
+		lastClickedPosition = PositionizeDictionaryList(showDGD, fullFolder, lastWidth, mx, my);
+		if(lastClickedPosition.pointEntryType)
+		{
+			if(lastClickedPosition.pointEntryType==1)
+			{
+				(lastClickedPosition.pointFolder)->folderEmphasizeType = 3;
+			}
+			else
+			{
+				(lastClickedPosition.pointItem)->itemEmphasizeType = 3;
+			}
+		}
+		return;
+	}
+	else currentClickedPosition = PositionizeDictionaryList(showDGD, fullFolder, lastWidth,mx, my);
+}
+
+static int renameType;
+static int renameID;
+static void renameCallback(const char* renameValue)
+{
+	if(!renameValue) return;
+	if(renameType == 1)
+	{
+		strcpy(folders[renameID]->folderName, renameValue);
+		folders[renameID].folderNameLen = strlen(renameValue);
+		strcpy(corresDFolder[renameID]->folderName, renameValue);
+	}
+	else
+	{
+		strcpy(files[renameID]->fileName, renameValue);
+		files[renameID].fileNameLen = strlen(renameValue);
+		strcpy(corresDFile[renameID]->fileName, renameValue);
+	}
+}
+
+void ExplorerRightMouseUp()
+{
+	if(lastClickedPosition == currentClickedPosition) //判定为单击
+	{
+		if(!lastClickedPosition.pointEntryType) return;
+		renameType = lastClickedPosition.pointEntryType;
+		renameID = lastClickedPosition.pointEntryType == 1          ? 
+						(lastClickedPosition.pointFolder)->folderID :
+						(lastClickedPosition.pointItem)->itemID；
+		ChangeDisplayMethodToMajorInput(renameCallback);
+	}
+	else //右键拖拽，为删除
+	{
+		//TODO
+	}
+}
+
+//或许可以增加一个右键双击更改路径的功能
