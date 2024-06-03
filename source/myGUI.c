@@ -256,6 +256,7 @@ void DrawSettingPage(double x, double y, double width, double height) {
 double screenHeight;
 double screenWidth;
 
+static void display();
 static void displayBegin()
 {
     // 设置背景为白色
@@ -278,6 +279,7 @@ static void displayMod0() //主界面
     DrawToolBar(WINDOW_MARGIN, screenHeight - TITLE_HEIGHT - MENU_HEIGHT - TOOL_HEIGHT - 2 * WINDOW_MARGIN, screenWidth - 2 * WINDOW_MARGIN, TOOL_HEIGHT);
     double mainAreaHeight = screenHeight - TITLE_HEIGHT - MENU_HEIGHT - TOOL_HEIGHT - 3 * WINDOW_MARGIN;
     DrawMainArea(WINDOW_MARGIN, WINDOW_MARGIN, screenWidth - 2 * WINDOW_MARGIN, mainAreaHeight);
+    if(inputMode!=0) display();
 }
 
 static void displayMod1() //输入框界面
@@ -287,6 +289,7 @@ static void displayMod1() //输入框界面
     double mainAreaHeight = screenHeight - TITLE_HEIGHT - MENU_HEIGHT - TOOL_HEIGHT - INPUT_BAR_HEIGHT - 4 * WINDOW_MARGIN;
     DrawMainArea(WINDOW_MARGIN, WINDOW_MARGIN + INPUT_BAR_HEIGHT + WINDOW_MARGIN, screenWidth - 2 * WINDOW_MARGIN, mainAreaHeight);
     DrawInputBar(WINDOW_MARGIN, WINDOW_MARGIN, screenWidth - 2 * WINDOW_MARGIN, INPUT_BAR_HEIGHT);
+    if(inputMode!=1) display();
 }
 
 static void displayMod2() //弹窗界面
@@ -338,6 +341,7 @@ static void displayMod2() //弹窗界面
         keyboardCancelled = 0;
         ChangeDisplayMethodToMain();
     }
+    if(inputMode!=2) display();
 }
 
 static void displayMod3() //搜索界面
@@ -356,6 +360,7 @@ static void displayMod3() //搜索界面
     if (searchResultDraw) {
         searchResultDraw(WINDOW_MARGIN, WINDOW_MARGIN, screenWidth - 2 * WINDOW_MARGIN, searchInputYStart - 2 * WINDOW_MARGIN);
     }
+    if(inputMode!=3) display();
 }
 
 static void displayMod4() //统计界面
@@ -371,6 +376,7 @@ static void displayMod4() //统计界面
     if (button(GenUIID(2), screenWidth / 2 - BUTTON_WIDTH / 2, WINDOW_MARGIN, BUTTON_WIDTH, INPUT_BAR_HEIGHT, "退出")) {
         ChangeDisplayMethodToMain();
     }
+    if(inputMode!=4) display();
 }
 
 static void displayMod5() //设置界面
@@ -381,6 +387,7 @@ static void displayMod5() //设置界面
     double settingWidth = screenWidth - 2 * WINDOW_MARGIN;
     double settingHeight = screenHeight - TITLE_HEIGHT - MENU_HEIGHT - TOOL_HEIGHT - 4 * WINDOW_MARGIN;
     DrawSettingPage(WINDOW_MARGIN, settingYStart, settingWidth, settingHeight);
+    if(inputMode!=5) display();
 }
 
 typedef void (*displayFunction)();
