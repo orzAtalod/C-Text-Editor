@@ -4,8 +4,8 @@
 CPP      = g++.exe
 CC       = gcc.exe
 WINDRES  = windres.exe
-OBJ      = ../outputs/main.o ../outputs/exceptio.o ../outputs/genlib.o ../outputs/graphics.o ../outputs/linkedlist.o ../outputs/random.o ../outputs/simpio.o ../outputs/strlib.o ../outputs/textStructure.o ../outputs/fileSystem.o ../outputs/blockList.o ../outputs/fileSystemCore.o
-LINKOBJ  = ../outputs/main.o ../outputs/exceptio.o ../outputs/genlib.o ../outputs/graphics.o ../outputs/linkedlist.o ../outputs/random.o ../outputs/simpio.o ../outputs/strlib.o ../outputs/textStructure.o ../outputs/fileSystem.o ../outputs/blockList.o ../outputs/fileSystemCore.o
+OBJ      = ../outputs/main.o ../outputs/exceptio.o ../outputs/genlib.o ../outputs/graphics.o ../outputs/linkedlist.o ../outputs/random.o ../outputs/simpio.o ../outputs/strlib.o ../outputs/textStructure.o ../outputs/fileSystem.o ../outputs/blockList.o ../outputs/fileSystemCore.o ../outputs/explorerCore.o ../outputs/dictionaryList.o
+LINKOBJ  = ../outputs/main.o ../outputs/exceptio.o ../outputs/genlib.o ../outputs/graphics.o ../outputs/linkedlist.o ../outputs/random.o ../outputs/simpio.o ../outputs/strlib.o ../outputs/textStructure.o ../outputs/fileSystem.o ../outputs/blockList.o ../outputs/fileSystemCore.o ../outputs/explorerCore.o ../outputs/dictionaryList.o
 LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib" -L"C:/Program Files (x86)/Dev-Cpp/MinGW32/mingw32/lib" -static-libstdc++ -static-libgcc -mwindows
 INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include" -I"../libgraphics"
 CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib/gcc/mingw32/4.7.2/include/c++" -I"../libgraphics"
@@ -59,3 +59,9 @@ $(BIN): $(OBJ)
 
 ../outputs/fileSystemCore.o: ../source/fileSystemCore.c
 	$(CC) -c ../source/fileSystemCore.c -o ../outputs/fileSystemCore.o $(CFLAGS)
+
+../outputs/explorerCore.o: ../source/explorerCore.c
+	$(CC) -c ../source/explorerCore.c -o ../outputs/explorerCore.o $(CFLAGS)
+
+../outputs/dictionaryList.o: ../source/dictionaryList.c
+	$(CC) -c ../source/dictionaryList.c -o ../outputs/dictionaryList.o $(CFLAGS)

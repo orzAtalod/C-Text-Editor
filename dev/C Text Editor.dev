@@ -29,7 +29,7 @@ IncludeVersionInfo=0
 SupportXPThemes=0
 CompilerSet=0
 CompilerSettings=0000000000000000000000000
-UnitCount=39
+UnitCount=40
 
 [VersionInfo]
 Major=1
@@ -403,7 +403,7 @@ BuildCmd=
 [Unit37]
 FileName=..\header\dictionaryList.h
 CompileCpp=0
-Folder=
+Folder=header
 Compile=1
 Link=1
 Priority=1000
@@ -413,7 +413,7 @@ BuildCmd=
 [Unit34]
 FileName=..\header\myGUI.h
 CompileCpp=0
-Folder=
+Folder=header
 Compile=1
 Link=1
 Priority=1000
@@ -423,7 +423,7 @@ BuildCmd=
 [Unit38]
 FileName=..\source\explorerCore.c
 CompileCpp=0
-Folder=BlockChain Editor
+Folder=
 Compile=1
 Link=1
 Priority=1000
@@ -433,7 +433,17 @@ BuildCmd=
 [Unit39]
 FileName=..\source\dictionaryList.c
 CompileCpp=0
-Folder=BlockChain Editor
+Folder=source
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit40]
+FileName=..\source\myGUI.c
+CompileCpp=0
+Folder=source
 Compile=1
 Link=1
 Priority=1000
