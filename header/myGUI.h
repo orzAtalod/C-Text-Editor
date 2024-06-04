@@ -123,6 +123,8 @@ void RegisterExplorerMouseLeftDown(MouseEventMethod);
 void RegisterExplorerMouseLeftUp(ButtonEvent);
 void RegisterExplorerMouseRightDown(MouseEventMethod);
 void RegisterExplorerMouseRightUp(ButtonEvent);
+void RegisterRollerMouseLeftDown(MouseEventMethod);
+void RegisterRollerMouseLeftUp(ButtonEvent);
 
 /*
 *

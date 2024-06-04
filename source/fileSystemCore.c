@@ -4,7 +4,7 @@
 #include<string.h>
 #include<assert.h>
 
-#define NAME_STRING_LIMIT 20 
+#define NAME_STRING_LIMIT 30 
 
 //先写color，再写font；先读color，再读font 
 typedef struct{

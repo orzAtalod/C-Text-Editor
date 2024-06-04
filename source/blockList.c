@@ -98,7 +98,6 @@ int GetPageOfBlockList()
 	return curPage;
 }
 
-
 Block* BlockCreate(int type, void* dataptr)
 {
 	if(!curPage) return 0;
@@ -143,6 +142,11 @@ void* AccumlateBlockList(BlockListAccumlateFunc func, void* beginValue)
 		beginValue = func(beginValue, blocklist[curPage]+i);
 	}
 	return beginValue;
+}
+
+Block* GetBlock(int blockID)
+{
+	return blocklist[curPage]+blockID;
 }
 
 static GetHeightFunc heightFunc[255];

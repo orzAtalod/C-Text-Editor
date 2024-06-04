@@ -25,6 +25,8 @@ static AreaPaintMethod explorerDraw                   = NULL;
 static AreaPaintMethod editorGraphicDraw              = NULL;
 static GetInfoMethod   rollerUpperBoundDraw           = NULL;
 static GetInfoMethod   rollerLowerBoundDraw           = NULL;
+static SetValueMethod  setRollerHeight                = NULL;
+static SetValueMethod  setEditorWidth                 = NULL;
 
 static ButtonEvent          editorMouseMiddleRollup   = NULL;
 static ButtonEvent          editorMouseMiddleRolldown = NULL;
@@ -638,20 +640,6 @@ void KeyboardEventProcess(int key, int event) {
     display();
 }
 
-////////////////////////////////////////////////// 启动与初始化逻辑 /////////////////////////////////////
-void GUI_Start() {
-    InitGraphics();
-    startTime = clock();
-
-    setMenuColors("Black", "Black", "Red", "Red", 0);
-    setButtonColors("Black", "Black", "Red", "Red", 0);
-    SetPenColor("Black");
-
-    registerMouseEvent(MouseEventProcess);
-    registerKeyboardEvent(KeyboardEventProcess);
-	registerCharEvent(CharEventProcess);
-}
-
 //////////////////////////////////////////////// 界面切换函数 //////////////////////////////////////////
 
 // 实现界面更改时的各种逻辑
@@ -672,12 +660,16 @@ static void clearInputBuffers()
 // 主界面
 void ChangeDisplayMethodToMain() {
     changeDisplayMethodProcess();
+    double mainAreaHeight = screenHeight - TITLE_HEIGHT - MENU_HEIGHT - TOOL_HEIGHT - 3 * WINDOW_MARGIN;
+    setRollerHeight(mainAreaHeight);
     inputMode = 0;
 }
 
 // 小输入界面
 void ChangeDisplayMethodToInput(ButtonEventWithInput callback) {
     changeDisplayMethodProcess();
+    double mainAreaHeight = screenHeight - TITLE_HEIGHT - MENU_HEIGHT - TOOL_HEIGHT - INPUT_BAR_HEIGHT - 4 * WINDOW_MARGIN
+    setRollerHeight(mainAreaHeight);
     inputMode = 1;
     inputConfirmedCallback = callback;
     clearInputBuffers();
@@ -686,6 +678,8 @@ void ChangeDisplayMethodToInput(ButtonEventWithInput callback) {
 // 弹窗输入界面
 void ChangeDisplayMethodToMajorInput(char* inputMessage, ButtonEventWithInput callback) {
     changeDisplayMethodProcess();
+    double mainAreaHeight = screenHeight - TITLE_HEIGHT - MENU_HEIGHT - TOOL_HEIGHT - 3 * WINDOW_MARGIN;
+    setRollerHeight(mainAreaHeight);
     inputMode = 2;
     inputConfirmedCallback = callback;
     clearInputBuffers();
@@ -713,14 +707,33 @@ void ChangeDisplayMethodToSetting() {
     inputMode = 5;
 }
 
+////////////////////////////////////////////////// 启动与初始化逻辑 /////////////////////////////////////
+void GUI_Start() {
+    InitGraphics();
+    startTime = clock();
+    setEditorWidth((2.0 * (GetWindowWidth() - 2 * WINDOW_MARGIN) / 3.0) - BUTTON_GAP - SCROLLBAR_WIDTH);
+
+    setMenuColors("Black", "Black", "Red", "Red", 0);
+    setButtonColors("Black", "Black", "Red", "Red", 0);
+    SetPenColor("Black");
+
+    ChangeDisplayMethodToMain();
+    registerMouseEvent(MouseEventProcess);
+    registerKeyboardEvent(KeyboardEventProcess);
+    registerCharEvent(CharEventProcess);
+}
+
+
 //////////////////////////////////////////////// 实现注册函数 //////////////////////////////////////////
 //Display 或 Draw 函数
-void RegisterExplorerDraw(AreaPaintMethod cb)        { explorerDraw = cb; }
-void RegisterEditorGraphicDraw(AreaPaintMethod cb)   { editorGraphicDraw = cb; }
-void RegisterRollerUpperBoundDraw(GetInfoMethod cb)  { rollerUpperBoundDraw = cb; }
-void RegisterRollerLowerBoundDraw(GetInfoMethod cb)  { rollerLowerBoundDraw = cb; }
-void RegisterSearchDisplayMethod(AreaPaintMethod cb) { searchResultDraw = cb; }
-void RegisterStatDisplayMethod(AreaPaintMethod cb)   { statDisplayDraw = cb; }
+void RegisterExplorerDraw(AreaPaintMethod cb)         { explorerDraw = cb; }
+void RegisterEditorGraphicDraw(AreaPaintMethod cb)    { editorGraphicDraw = cb; }
+void RegisterRollerUpperBoundDraw(GetInfoMethod cb)   { rollerUpperBoundDraw = cb; }
+void RegisterRollerLowerBoundDraw(GetInfoMethod cb)   { rollerLowerBoundDraw = cb; }
+void RegisterSearchDisplayMethod(AreaPaintMethod cb)  { searchResultDraw = cb; }
+void RegisterStatDisplayMethod(AreaPaintMethod cb)    { statDisplayDraw = cb; }
+void RegisterSetRollerHeightMethod(SetValueMethod cb) { setRollerHeight = cb; }
+void RegisterSetEditorWidth(SetValueMethod cb)        { setEditorWidth = cb; }
 
 //鼠标响应函数
 //NULL, left, right ; NULL, editor, explorer, roller, search

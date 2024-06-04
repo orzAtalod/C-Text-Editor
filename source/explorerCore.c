@@ -362,7 +362,7 @@ static double lastWidth;
 
 static void initializeDGD()
 {
-	showDGD = CreateDictionaryGraphicDatas(); 
+	showDGD = CreateDictionaryGraphicDatas();
 }
 
 void DrawExplorer(double cx, double cy, double width, double height)

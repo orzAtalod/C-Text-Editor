@@ -8,11 +8,11 @@ typedef void (*DrawFunc)(void*,double,double,double,double,double);
 typedef struct {
 	int column;
 	int alignType; //0:head 1:middle 2:end
-	int alignBlockID;
 	double alignArgument;
+	int alignBlockID;
 } AlignmentInfo;
 
-typedef struct {
+typedef struct blockBase {
 	int ID;
 	int type;
 	void* dataptr;
@@ -29,6 +29,7 @@ void ChangePageOfBlockList(int p);
 int GetPageOfBlockList();
 Block* BlockCreate(int type, void* dataptr);
 void   BlockMove(int ID, AlignmentInfo align);
+void   BlockDelete(Block* blk);  //TODO
 
 void LoadBlockList(FILE* f);
 void SaveBlockList(FILE* f);
@@ -37,6 +38,11 @@ typedef void  (BlockListTraverseFunc)(Block*);
 typedef void* (BlockListAccumlateFunc)(void*, Block*);
 void  TraverseBlockList(BlockListTraverseFunc func);
 void* AccumlateBlockList(BlockListAccumlateFunc func, void* beginValue);
+Block* GetBlock(int blockID);
+
+int GetPositionFromRelativeXY(Block* b, double width, double rx, double ry);
+double GetRelativeXFromPosition(Block* b, double width, int position);
+double GetRelativeYFromPosition(Block* b, double width, int position);
 
 void RegisterGetHeightFunc(int type, GetHeightFunc func);
 double GetHeight(Block*, double);

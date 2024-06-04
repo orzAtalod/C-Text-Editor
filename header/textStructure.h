@@ -15,18 +15,18 @@
 */
 
 typedef struct{
-	char context;
+	char content;
 	char style; //0 for nothing, 1 for Bold, 2 for Italic, 3 for Bold+Italic
 } StyleChar;
 
 typedef struct{
 	int pointSize;
 	int indent;
-	int contextLen;
-	int contextSpace;
-	const char* color;
-	const char* font;
-	StyleChar* context;
+	int contentLen;
+	int contentSpace;
+	StyleChar* content;
+	const* char color;
+	const* char font;
 } StyleString;
 
 /* 
@@ -40,19 +40,30 @@ void WriteStyleString(StyleString* str, FILE* f);
 /*
 *
 * GetStyleStringHeight函数通过数据内容指针和宽度直接计算出高度
-* 传入的一切单位都是英寸 
+* 传入的一切单位都是英寸，高度为负数值
 *
 */
-void GetStyleStringHeight(StyleString* str, double width);
+double GetStyleStringHeight(StyleString* str, double width);
 
 /*
 *
 * Draw函数通过libgraphics库，直接在(cx, cy)为**左上角**的区域中绘制相应内容
 * 绘制内容宽度为 width，需要绘制高度介于 beginHeight 和 endHeight 之间的部分 
-* 也就是说，绘制内容右下角为(dx+width, dy+endHeight-beginHeight) 
-* 传入的一切单位都是英寸 
+* 也就是说，绘制内容右下角为(dx+width, dy-beginHeight+endHeight) 
+* 传入的一切单位都是英寸，高度为负数值
 *
 */
 void DrawStyleString(StyleString* str, double cx, double cy, double width, double beginHeight, double endHeight);
+
+/*
+*
+* position是一个表示块内位置的整型变量，对于textString为光标在哪一个字符之前
+* 返回的RelativeXY为相应字符左上角的位置
+*
+*/
+
+int GetPositionFromRelativeXY_StyleString(StyleString* str, double width, double rx, double ry);
+double GetRelativeXFromPosition_StyleString(StyleString* str, double width, int position);
+double GetRelativeYFromPosition_StyleString(StyleString* str, double width, int position);
 
 #endif
