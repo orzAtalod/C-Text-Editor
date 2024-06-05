@@ -29,6 +29,7 @@ static void changeCurrentFileByID(int newFile)
 
 static int openFile(int fileID) //返回打开页码
 {
+	if(!fileID) return 0;
 	if(fileOnBlockListPage[fileID])
 	{
 		return fileOnBlockListPage[fileID];
@@ -37,7 +38,7 @@ static int openFile(int fileID) //返回打开页码
 	const int curBLPage = GetPageOfBlockList();
 	++fileOnEditNum;
 	fileOnBlockListPage[fileID] = fileOnEditNum;
-	LoadFileAtPage(fileOnEditNum, files[currentFile]->filePath);
+	LoadFileAtPage(fileOnEditNum, files[fileID]->filePath);
 	corresDFile[fileID]->itemEmphasizeType = 1;
 	changeCurrentFileByID(fileID);
 	
@@ -609,5 +610,5 @@ void ExplorerRightMouseUp()
 
 void SaveCurrentFile()
 {
-	SaveFileAtPage(fileOnBlockListPage[currentFile], files[currentFile]->filePath);
+	if(currentFile) SaveFileAtPage(fileOnBlockListPage[currentFile], files[currentFile]->filePath);
 }
