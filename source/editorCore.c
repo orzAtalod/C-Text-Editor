@@ -135,7 +135,7 @@ static double screenBeginHeight; // all negative
 //used as callback
 static void changeScreenHeight(double newScreenHeight) { screenHeight = -newScreenHeight; }
 
-static double getRollerBegin() { return screenBeginHeight/fullHeight; }
+static double getRollerBegin() { return screenBeginHeight>0 ? 0 : screenBeginHeight/fullHeight; }
 static double getRollerEnd()   { return screenBeginHeight+screenHeight<=fullHeight ? 1 : (screenBeginHeight+screenHeight)/fullHeight; }
 
 static double rollerRollUp()   { if(screenBeginHeight<0) screenBeginHeight+=ROLLER_STEP; }
@@ -163,7 +163,7 @@ static void printCursor(double wx, double wy, double width, double begH, double 
 		const double rx = GetRelativeXFromPosition(cursor1.blockVal, cw, cursor1.position);
 		const double ry = GetRelativeYFromPosition(cursor1.blockVal, cw, cursor1.position);
 		double lH = GetElementHeight(cursor1.blockVal);
-		double Ax = width*columnWidthPosition[cursor1.blockVal->align.column] + rx;
+		double Ax = width*columnWidthPosition[cursor1.blockVal->align.column-1] + rx;
 		double Ay = ry + blockBeginHeight[cursor1.blockVal->ID];
 		if(Ay<=begH && Ay>=endH)
 		{
@@ -200,7 +200,7 @@ cursorMsg getCursorPosition(double Ax, double Ay, double width)
 		nc.position = GetPositionFromRelativeXY(
 			corrBlockChain[i]->curr,
 			columnWidth[curcol]*width, 
-			Ax-columnWidthPosition[curcol],
+			Ax-columnWidthPosition[curcol-1]*width,
 			Ay-blockBeginHeight[i]);
 	
 		return nc;
@@ -216,20 +216,204 @@ static int mouseup = 1;
 // TODO
 // µ¥»÷½öÐè¿¼ÂÇÒ»´Î LeftDown ÂíÉÏ½Ó LeftUp
 
+static void mergeCursorFrontward()
+{
+	if(priorierThan(cursor2, cursor1))
+	{
+		cursor1.blockVal = cursor2.blockVal;
+		cursor1.position = cursor2.position;
+	}
+	cursor2.blockVal = 0;
+	cursor2.position = 0;
+	cursorType = 1;
+}
+
+static void mergeCursorBackward()
+{
+	if(!priorierThan(cursor2, cursor1))
+	{
+		cursor1.blockVal = cursor2.blockVal;
+		cursor1.position = cursor2.position;
+	}
+	cursor2.blockVal = 0;
+	cursor2.position = 0;
+	cursorType = 1;
+}
+
+static void cursor1ToTail(blockChain* bc)
+{
+	if(!bc)
+	{
+		cursor1.position = 0;
+	}
+	else
+	{
+		cursor1.blockVal = bc->curr;
+		cursor1.position = bc->curr->type==1 ? ((StyleString*)(bc->curr->dataptr))->contentLen : 1;
+	}
+}
+
+static void cursor1ToHead(blockChain* bc)
+{
+	if(!bc)
+	{
+		cursor1.position = cursor1.blockVal->type==1 ? ((StyleString*)(cursor1.blockVal->dataptr))->contentLen : 1;
+		
+	}
+	else
+	{
+		cursor1.blockVal = bc->curr;
+		cursor1.position = 0;
+	}
+}
+
 static void keyboardUp()
 {
-	if()
+	if(cursorType == 0) return;
+	if(cursorType == 2) mergeCursorFrontward();
+
+	if(cursor1.blockVal->type==2) //imageStructure
+	{
+		cursor1ToTail(getPre(corrBlockChain[cursor1.blockVal->ID]));
+	}
+	else
+	{
+		const double cw = width*columnWidth[cursor1.blockVal->align.column];
+		const double rx = GetRelativeXFromPosition(cursor1.blockVal, cw, cursor1.position);
+		const double ry = GetRelativeYFromPosition(cursor1.blockVal, cw, cursor1.position);
+		const double cw = width*columnWidth[cursor1.blockVal->align.column];
+		if(ry>-1E-5 && ry<1E-5)
+		{
+			cursor1ToTail(getPre(corrBlockChain[cursor1.blockVal->ID]));
+			return;
+		}
+		for(int px=0; px<=cursor1.position; ++px)
+		{
+			const double newrx = GetRelativeXFromPosition(cursor1.blockVal, cw, cursor1.position-px);
+			const double newry = GetRelativeYFromPosition(cursor1.blockVal, cw, cursor1.position-px);
+			if(newry<ry-1E-5 && newrx<rx+1E-5)
+			{
+				cursor1.position -= px;
+				return;
+			}
+		}
+		cursor1.position = 0;
+	}
 }
 
 static void keyboardDown()
+{
+	if(cursorType == 0) return;
+	if(cursorType == 2) mergeCursorBackward();
+
+	if(cursor1.blockVal->type==2) //imageStructure
+	{
+		cursor1ToHead(corrBlockChain[cursor1.blockVal->ID]->next);
+	}
+	else
+	{
+		const double cw = width*columnWidth[cursor1.blockVal->align.column];
+		const double rx = GetRelativeXFromPosition(cursor1.blockVal, cw, cursor1.position);
+		const double ry = GetRelativeYFromPosition(cursor1.blockVal, cw, cursor1.position);
+		const int sLen = (StyleString*)(cursor1.blockVal->dataptr)->contentLen;
+		for(int px=0; px+cursor1.position<=sLen; ++px)
+		{
+			const double newrx = GetRelativeXFromPosition(cursor1.blockVal, cw, cursor1.position-px);
+			const double newry = GetRelativeYFromPosition(cursor1.blockVal, cw, cursor1.position-px);
+			if(newry>ry+1E-5 && newrx<rx+1E-5)
+			{
+				cursor1.position += px;
+				return;
+			}
+		}
+		cursor1ToHead(corrBlockChain[cursor1.blockVal->ID]->next);
+	}
+}
 
 static void keyboardLeft()
+{
+	if(cursorType == 0) return;
+	if(cursorType == 2) mergeCursorFrontward();
+
+	if(cursor1.position)
+	{
+		--cursor1.position;
+	}
+	else
+	{
+		cursor1ToTail(getPre(corrBlockChain[cursor1.blockVal->ID]));
+	}
+}
 
 static void keyboardRight()
+{
+	if(cursorType == 0) return;
+	if(cursorType == 2) mergeCursorBackward();
+
+	if(cursor1.position < (cursor1.blockVal->type==1 ? ((StyleString*)(cursor1.blockVal->dataptr))->contentLen : 1))
+	{
+		++cursor1.position;
+	}
+	else
+	{
+		cursor1ToHead(corrBlockChain[cursor1.blockVal->ID].next);
+	}
+}
+
+static void mouseUped = 1;
+static double beginAx;
+static double beginAy;
+static double endAx;
+static double endAy;
 
 static void mouseLeftDownOnMain(double rx, double ry)
+{
+	const double Ay = ry + screenBeginHeight;
+	if(mouseUped)
+	{
+		cursorType = 1;
+		cursor1 = getCursorPosition(rx, Ay);
+		beginAx = rx;
+		beginAy = Ay;
+		mouseUped = 0;
+		if(!cursor1.blockVal)
+		{
+			cursorType = 0;
+		}
+	}
+	else
+	{
+		if(!cursorType) return;
+		if(!cursor2.blockVal) cursor2.blockVal = cursor1.blockVal;
+		blockChain* pre = getPre(corrBlockChain[cursor2.blockVal->ID]);
+		blockChain* nxt = corrBlockChain[cursor2.blockVal->ID].next;
+		if(pre && blockBeginHeight[pre->curr->ID]+blockHeight[pre->curr->ID] < Ay)
+		{
+			cursor2.blockVal = pre;
+		}
+		if(nxt && blockBeginHeight[nxt->curr->ID] > Ay)
+		{
+			cursor2.blockVal = nxt;
+		}
+		endAx = rx;
+		endAy = Ay;
+		cursorType = 2;
+	}
+}
 
 static void mouseLeftUpOnMain()
+{
+	if(cursorType == 2)
+	{
+		const int curcol = cursor2.blockVal->align.column;
+		cursor2.position = GetPositionFromRelativeXY(
+			cursor2.blockVal, 
+			columnWidth[curcol]*screenWidth, 
+			endAx-columnWidthPosition[curcol-1]*screenWidth, 
+			endAy-blockBeginHeight);
+	}
+	mouseUped = 1;
+}
 
 //////////////////////////////////////////////// ¿éÒÆ¶¯´¦Àí /////////////////////////////
 
@@ -256,27 +440,34 @@ StyleString* newStyleString()
 	return newss;	
 }
 
-static void createBlockAfterChain(blockChain* pre)
+static blockChain* createBlock()
 {
-	assert(pre);
 	++blockNum;
 
 	Block* newBlock = BlockCreate();
 	newBlock->type = 1;
 	newBlock->dataptr = (void*)newStyleString();
 
+	corrBlockChain[newBlock->ID] = (blockChain*)malloc(sizeof(blockChain));
+	corrBlockChain[newBlock->ID]->curr = newBlock;
+	corrBlockChain[newBlock->ID]->next = 0;
+	return corrBlockChain[newBlock->ID];
+}
+
+static void createBlockAfterChain(blockChain* pre)
+{
+	assert(pre);
+	blockChain* newBlockChain = createBlock();
+
 	AlignmentInfo ali;
 	ali.alignBlockID = pre->curr->ID;
 	ali.alignType = 2;
 	ali.alignArgument = NEWLINE_MARGIN;
 	ali.column = pre->curr->align.column;
-	BlockMove(newBlock->ID, ali);
+	BlockMove(newBlockChain->curr->ID, ali);
 
-	corrBlockChain[newBlock->ID] = (blockChain*)malloc(sizeof(blockChain));
-	corrBlockChain[newBlock->ID]->curr = newBlock;
-	corrBlockChain[newBlock->ID]->next = pre->next;
-	if(pre->next) pre->next->curr->align.alignBlockID = newBlock->ID;
-	pre->next = corrBlockChain[newBlock->ID];
+	if(pre->next) pre->next->curr->align.alignBlockID = newBlockChain->curr->ID;
+	pre->next = newBlockChain;
 }
 
 static blockChain* getTail(blockChain* x)
@@ -339,8 +530,14 @@ static void deleteBlockChain(blockChain* x)
 }
 
 static void mouseRightDownOnMain(double rx, double ry)
+{
+	// TODO
+}
 
 static void mouseRightUpOnMain()
+{
+	// TODO
+}
 
 //////////////////////////////////////////////// ÁÐÂß¼­ ////////////////////////////////
 
@@ -370,7 +567,7 @@ static void createColumn(double colPos)
 		--i;
 	}
 	++columnNum; ++i
-	columnWidthPosition[columnNum+1] = 1;
+	columnWidthPosition[columnNum] = 1;
 	columnWidthPosition[i] = colPos;
 	columnWidth[i] = colPos - columnWidthPosition[i-1];
 	columnWidth[i+1] = columnWidthPosition[i+1] - colPos;
@@ -410,11 +607,11 @@ static void deleteColumn(int colID)
 static void leftclickOnRowRuler(double rx, double ry)
 {
 	const double curClickWidth = rx/screenWidth;
-	for(int i=2; i<=columnNum; ++i)
+	for(int i=1; i<columnNum; ++i)
 	{
 		if(columnWidthPosition[i]-clickError<rx && columnWidthPosition[i]+clickError>rx)
 		{
-			swapColumn(i-1, i);
+			swapColumn(i, i+1);
 			return;
 		}
 	}
@@ -439,11 +636,27 @@ static void rightClickOnRowRuler(double rx, double ry)
 static int defaultStyle;
 typedef void (*blockOperatorFunc)(Block*)
 
-static void mergeCursor() //Ö»½«cursor»¹Ô­³ÉcursorType==1£¨Ö»±£Áô¿¿ÏÂµÄÒ»¸öcursor£©£¬²»½øÐÐÈÎºÎ²Ù×÷
+static void checkPriorier() //±£Ö¤cursor2¸ü¿¿ÉÏ
+{
+	if(priorierThan(cursor1, cursor2))
+	{
+		Block* ptr = cursor1.blockVal;
+		cursor1.blockVal = cursor2.blockVal;
+		cursor2.blockVal = ptr;
+		int potr = cursor1.position;
+		cursor1.position = cursor2.position;
+		cursor2.position = potr;
+	}	
+}
 
-static void deleteTroughCursor() //»¹Ô­³É cursorType=1 µÄ×´Ì¬
+static void deleteTroughCursor() //Ë³±ã»¹Ô­³É cursorType=1 µÄ×´Ì¬
 {
 	if(cursorType!=2) return;
+	checkPriorier();
+	if(cursor1.blockVal == cursor2.blockVal)
+	{
+		//TODO
+	}
 }
 
 static void applyBlocksTroughCursor(blockOperatorFunc b) //»¹Ô­³É cursorType=1 µÄ×´Ì¬
@@ -543,10 +756,28 @@ static void keyboardInput(char ch)
 	++cursor1.position;
 }
 
+static int getColumnFromX(double x)
+{
+	for(int i=1; i<=columnNum; ++i)
+	{
+		if(columnWidthPosition[i]>x-1E-5) return i;
+	}
+}
+
 static void newLine() //Enter
 {
 	if(cursorType == 2) deleteTroughCursor();
-	if(!cursorType || !cursor1.blockVal) return;
+
+	if(!cursorType || !cursor1.blockVal)
+	{
+		blockChain* nbc = createBlock();
+		AlignmentInfo ali;
+		ali.alignBlockID = 0;
+		ali.alignArgument = beginAy;
+		ali.column = getColumnFromX(Ax);
+		BlockMove(nbc->curr->ID, ali);
+	}
+
 	createBlockAfterChain(corrBlockChain[cursor1.blockVal->ID]);
 	const Block* oldBlk = cursor1.blockVal;
 	const Block* newBlk = corrBlockChain[cursor1.blockVal->ID]->next->curr;
@@ -605,7 +836,14 @@ static void backSpace()
 	if(!cursorType || !cursor1.blockVal) return;
 	if(cursor1.position == 0)
 	{
-		mergeTextStr(getPre(corrBlockChain[cursor1.blockVal->ID]), corrBlockChain[cursor1.blockVal->ID]);
+		if(cursor1.blockVal->type==1 && (StyleString*)(cursor1.blockVal->dataptr)->contentLen==0)
+		{
+			deleteBlockChain(corrBlockChain[cursor1.blockVal->ID]);
+		}
+		else
+		{
+			mergeTextStr(getPre(corrBlockChain[cursor1.blockVal->ID]), corrBlockChain[cursor1.blockVal->ID]);
+		}
 	}
 	else
 	{
@@ -664,7 +902,7 @@ static void keyboardDelete()
 
 static void newParagraph() //Ctrl+Enter
 {
-	if(cursorType == 2) mergeCursor();
+	if(cursorType == 2) mergeCursorBackward();
 	createBlockAfterChain(corrBlockChain[cursor1.blockVal->ID]);
 	cursor1.blockVal = corrBlockChain[cursor1.blockVal->ID]->next->curr;
 	cursor1.position = 0;
@@ -682,7 +920,7 @@ static void keyboardInputSpecial(char keyInputType) //1ÉÏ 2ÏÂ 3×ó 4ÓÒ 5»Ø³µ 6ÍË¸
 
 static void mouseLeftDown(double rx,double ry)
 {
-	
+
 }
 
 static void mouseLeftUp()

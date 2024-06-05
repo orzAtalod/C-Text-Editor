@@ -9,5 +9,6 @@ void LoadFileAtPage(int page, const char* fileName);
 void SaveFileAtPage(int page, const char* fileName);
 void LoadFile(const char* fileName);
 void SaveFile(const char* fileName);
+void ClearAllItemsOnPage(int page);
 
 #endif

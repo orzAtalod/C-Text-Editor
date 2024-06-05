@@ -10,7 +10,6 @@ static FileHeaderInfo*   files[65535];    static int fileNum;
 static int fileOnBlockListPage[65535];    static int fileOnEditNum;
 static char userName[255];                static int userNameLen;
 static int currentFile;
-static int editPage[65535];
 
 static DictionaryFolder* corresDFolder[65535];
 static DictionaryFolder* corresDFile[65535];
@@ -53,6 +52,59 @@ static void closeFile(int fileID)
 	fileOnBlockListPage[fileID] = 0;
 }
 
+void ReloadCurrentFile()
+{
+	if(currentFile) ChangePageOfEditCore(fileOnBlockListPage[currentFile]);
+}
+
+FileHeaderInfo* GetCurrentFileHeaderInfo()
+{
+	if(currentFile) return files[currentFile];
+	else return 0;
+}
+
+int CreateEmptyFile(); //新建一页，返回新建的那一页
+{
+	files[++fileNum] = (FileHeaderInfo*)malloc(sizeof(FileHeaderInfo));
+	files[fileNum]->editTime = 0;
+	files[fileNum]->tagNum = 0;
+	files[fileNum]->tags = (int*)malloc(5*sizeof(int));
+	files[fileNum]->fileName = (char*)malloc(20*sizeof(char));
+	strcpy(files[fileNum]->fileName, "Noname");
+	files[fileNum]->filePath = (char*)malloc(20*sizeof(char));
+	files[fileNum]->folder = 0;
+
+	DictionaryItem* newFileDic = CreateDictionaryItem();
+	newFileDic->itemID = fileNum;
+	newFileDic->folder = fullFolder;
+	newFileDic->nextItem = fullFolder->items;
+	if(fullFolder->items) fullFolder->items->prevItem = newFileDic;
+	fullFolder->items = newFileDic;
+	corresDFile[fileNum] = newFileDic;
+
+	++fileOnEditNum;
+	fileOnBlockListPage[fileNum] = fileOnEditNum;
+	ClearAllItemsOnPage(fileOnEditNum);
+	return changeCurrentFileByID(fileNum);
+}
+
+static void createEmptyFolder()
+{
+	folders[++folderNum] = (FolderHeaderInfo*)malloc(sizeof(FolderHeaderInfo));
+	folders[folderNum]->folderID = folderNum;
+	folders[folderNum]->folderName = (FolderHeaderInfo*)malloc(20*sizeof(char));
+	strcpy(folders[folderNum]->folderName, "Noname");
+	folders[folderNum]->parentFolder = 0;
+
+	DictionaryItem* newFolder = CreateDictionaryFolder();
+	newFolder->folderID = folderNum;
+	newFolder->parent = fullFolder;
+	newFolder->nextFolder = fullFolder->subFolders;
+	if(fullFolder->subFolders) fullFolder->subFolders->prevFolder = newFolder;
+	fullFolder->subFolders = newFolder;
+	corresDFolder[folderNum] = newFolder;
+}
+
 ///////////////////////////////////////////////// 读取、写入 /////////////////////////////////////// 
 static void readTags(FILE* f)
 {
@@ -76,7 +128,7 @@ folderExchangeInfo folderBuffer[65535];
 static void readFolders(FILE* f)
 {
 	fread(&folderNum,sizeof(int),1,f);
-	fread(folderBuffer,sizeof(folderExchangeInfo),folderNum,f);
+	fread(folderBuffer+1,sizeof(folderExchangeInfo),folderNum,f);
 	for(int i=1; i<=folderNum; ++i)
 	{
 		folders[i] = NEW(FolderHeaderInfo); //防止有parentFolder的id比自己大的情况
@@ -103,7 +155,7 @@ fileExchangeInfo fileBuffer[65535];
 void readFiles(FILE* f)
 {
 	fread(&fileNum, sizeof(int), 1, f);
-	fread(fileBuffer, sizeof(fileExchangeInfo), fileNum, f);
+	fread(fileBuffer+1, sizeof(fileExchangeInfo), fileNum, f);
 	for(int i=1; i<=fileNum; ++i)
 	{
 		files[i] = NEW(FileHeaderInfo);
@@ -243,7 +295,7 @@ static void writeFolders(FILE* f)
 	}
 	
 	fwrite(&folderNum,sizeof(int),1,f);
-	fwrite(folderBuffer,sizeof(folderExchangeInfo),folderNum,f);
+	fwrite(folderBuffer+1,sizeof(folderExchangeInfo),folderNum,f);
 	
 	for(int i=1; i<=folderNum; ++i)
 	{
@@ -263,7 +315,7 @@ void writeFiles(FILE* f)
 	}
 
 	fwrite(&fileNum, sizeof(int), 1, f);
-	fwrite(fileBuffer, sizeof(fileExchangeInfo), fileNum, f);
+	fwrite(fileBuffer+1, sizeof(fileExchangeInfo), fileNum, f);
 	for(int i=1; i<=fileNum; ++i)
 	{
 		fwrite(files[i]->fileName, sizeof(char), fileBuffer[i].fileNameLen, f);
@@ -372,13 +424,16 @@ void DrawExplorer(double cx, double cy, double width, double height)
 	DrawDictionaryList(showDGD, fullFolder, cx, cy, width, 0, height);
 }
 
+static int lastClicked;
+static int currentClicked;
 static DictionaryCursor lastClickedPosition;
 static DictionaryCursor currentClickedPosition;
 
 void ExplorerLeftMouseDown(double mx, double my)
 {
-	if(!lastClickedPosition)
+	if(!lastClicked)
 	{
+		lastClicked = 1;
 		lastClickedPosition = PositionizeDictionaryList(showDGD, fullFolder, lastWidth, mx, my);
 		if(lastClickedPosition.pointEntryType)
 		{
@@ -393,12 +448,16 @@ void ExplorerLeftMouseDown(double mx, double my)
 		}
 		return;
 	}
-	else currentClickedPosition = PositionizeDictionaryList(showDGD, fullFolder, lastWidth,mx, my);
+	else
+	{
+		currentClickedPosition = PositionizeDictionaryList(showDGD, fullFolder, lastWidth,mx, my);
+		currentClicked = 1;
+	}
 }
 
 void ExplorerLeftMouseUp()
 {
-	if(lastClickedPosition == currentClickedPosition) //判定为单击
+	if(lastClicked && !currentClicked) //判定为单击
 	{
 		if(!lastClickedPosition.pointEntryType) return;
 		if(lastClickedPosition.pointEntryType == 1)
@@ -473,12 +532,14 @@ void ExplorerLeftMouseUp()
 			files[a->fileID]->folder = folders[b->folderID];
 		}
 	}
+	lastClicked = currentClicked = 0;
 }
 
 void ExplorerRightMouseDown(double mx, double my)
 {
-	if(!lastClickedPosition)
+	if(!lastClicked)
 	{
+		lastClicked = 1;
 		lastClickedPosition = PositionizeDictionaryList(showDGD, fullFolder, lastWidth, mx, my);
 		if(lastClickedPosition.pointEntryType)
 		{
@@ -493,7 +554,11 @@ void ExplorerRightMouseDown(double mx, double my)
 		}
 		return;
 	}
-	else currentClickedPosition = PositionizeDictionaryList(showDGD, fullFolder, lastWidth,mx, my);
+	else
+	{
+		currentClickedPosition = PositionizeDictionaryList(showDGD, fullFolder, lastWidth,mx, my);
+		currentClicked = 1;
+	}
 }
 
 static int renameType;
@@ -517,19 +582,26 @@ static void renameCallback(const char* renameValue)
 
 void ExplorerRightMouseUp()
 {
-	if(lastClickedPosition == currentClickedPosition) //判定为单击
+	if(lastClicked && !currentClicked) //判定为单击
 	{
-		if(!lastClickedPosition.pointEntryType) return;
-		renameType = lastClickedPosition.pointEntryType;
-		renameID = lastClickedPosition.pointEntryType == 1          ? 
-						(lastClickedPosition.pointFolder)->folderID :
-						(lastClickedPosition.pointItem)->itemID；
-		ChangeDisplayMethodToMajorInput(renameCallback);
+		if(!lastClickedPosition.pointEntryType)
+		{
+			createEmptyFolder();
+		}
+		else
+		{
+			renameType = lastClickedPosition.pointEntryType;
+			renameID = lastClickedPosition.pointEntryType == 1          ? 
+							(lastClickedPosition.pointFolder)->folderID :
+							(lastClickedPosition.pointItem)->itemID；
+			ChangeDisplayMethodToMajorInput(renameCallback);
+		}
 	}
 	else //右键拖拽，为删除
 	{
 		//TODO
 	}
+	lastClicked = currentClicked = 0;
 }
 
 //或许可以增加一个右键双击更改路径的功能

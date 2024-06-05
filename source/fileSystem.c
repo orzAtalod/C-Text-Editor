@@ -27,7 +27,7 @@ void InitFileSystem()
 	RegisterWriterMethod(1,styleStringWriter);
 }
 
-int LoadFileAtPage(int page, const char* fileName)
+void ClearAllItemsOnPage(int page)
 {
 	ChangePageOfColorTable(page);
 	ClearColorTable();
@@ -35,6 +35,11 @@ int LoadFileAtPage(int page, const char* fileName)
 	ClearFontTable();
 	ChangePageOfBlockList(page);
 	ClearBlockList();
+}
+
+int LoadFileAtPage(int page, const char* fileName)
+{
+	ClearAllItemsOnPage(page);
 	FILE* f = fopen(fileName,"rb");
 	if(!f) return 1;
 	ReadColorTable(f);

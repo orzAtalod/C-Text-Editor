@@ -60,8 +60,9 @@ static void newFile() //Ctrl+N
 static void saveAsFilePath(const char* path)
 {
 	if(!path) return;
-	setPath(GetCurrentFileHeaderInfo(), path);
-	SaveCurrentFile();
+	FileHeaderInfo* cf = GetCurrentFileHeaderInfo();
+	if(!cf) ChangeDisplayMethodToMajorInput("当前无文件！", emptyFunc);
+	else { setPath(GetCurrentFileHeaderInfo(), path); SaveCurrentFile(); }
 }
 
 static void saveAs()
