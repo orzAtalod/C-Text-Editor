@@ -4,11 +4,6 @@
 
 /*
 *
-* document: 24/5/21 林景行 
-* program: 24/5/21 林景行 
-* last change: 24/5/21 林景行 
-* details in github history
-*
 * 定义结构体StyleChar和StyleString，用于文件操作、编辑逻辑和显示逻辑。
 * 现支持读写 
 *
