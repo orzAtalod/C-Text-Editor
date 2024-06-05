@@ -17,7 +17,7 @@ static DictionaryFolder* corresDFile[65535];
 static DictionaryFolder* fullFolder;
 
 ///////////////////////////////////////////////// 基础函数 //////////////////////////////////////
-static void changeCurrentFile(int newFile)
+static void changeCurrentFileByID(int newFile)
 {
 	if(currentFile)
 	{
@@ -40,7 +40,7 @@ static int openFile(int fileID) //返回打开页码
 	fileOnBlockListPage[fileID] = fileOnEditNum;
 	LoadFileAtPage(fileOnEditNum, files[currentFile]->filePath);
 	corresDFile[fileID]->itemEmphasizeType = 1;
-	changeCurrentFile(fileID);
+	changeCurrentFileByID(fileID);
 	
 	return fileOnEditNum;
 }
@@ -220,7 +220,7 @@ void BuildFiles()
 	}
 
 	openFile(currentFile);
-	changeCurrentFile(currentFile);
+	changeCurrentFileByID(currentFile);
 }
 
 static void writeTags(FILE* f)
@@ -409,7 +409,7 @@ void ExplorerLeftMouseUp()
 		else
 		{
 			openFile((lastClickedPosition.pointItem)->itemID);
-			changeCurrentFile((lastClickedPosition.pointItem)->itemID);
+			changeCurrentFileByID((lastClickedPosition.pointItem)->itemID);
 		}
 	}
 	else
@@ -533,3 +533,9 @@ void ExplorerRightMouseUp()
 }
 
 //或许可以增加一个右键双击更改路径的功能
+////////////////////////////////////////////// 其他由 explorer 负责的杂类函数 //////////////////////////
+
+void SaveCurrentFile()
+{
+	SaveFileAtPage(fileOnBlockListPage[currentFile], files[currentFile]->filePath);
+}

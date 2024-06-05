@@ -40,14 +40,24 @@ void  TraverseBlockList(BlockListTraverseFunc func);
 void* AccumlateBlockList(BlockListAccumlateFunc func, void* beginValue);
 Block* GetBlock(int blockID);
 
+//位置相关
+typedef int (*GetPositionFunc)(Block*,double,double,double);
+typedef double (*GetRelativeXYFunc)(Block*,double,int);
+void RegisterGetPositionFunc(int type, GetPositionFunc func);
+void RegisterGetRelativeXYFunc(int type, GetRelativeXYFunc fx, GetRelativeXYFunc fy)
 int GetPositionFromRelativeXY(Block* b, double width, double rx, double ry);
 double GetRelativeXFromPosition(Block* b, double width, int position);
 double GetRelativeYFromPosition(Block* b, double width, int position);
 
+//绘制相关
 void RegisterGetHeightFunc(int type, GetHeightFunc func);
 double GetHeight(Block*, double);
 void RegisterDrawFunc(int type, DrawFunc func);
 void DrawBlock(Block*, double cx, double cy, double width, double begH, double endH);
-//这个函数在Editor初始化的时候完成注册 
+
+//列相关
+void SetColumnInfo(int columnNum, double* columns); 
+int GetColumnNum(void);
+double GetColumnWidth(int);
 
 #endif

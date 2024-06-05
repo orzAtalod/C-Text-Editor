@@ -27,19 +27,21 @@ void InitFileSystem()
 	RegisterWriterMethod(1,styleStringWriter);
 }
 
-void LoadFileAtPage(int page, const char* fileName)
+int LoadFileAtPage(int page, const char* fileName)
 {
-	FILE* f = fopen(fileName,"rb");
 	ChangePageOfColorTable(page);
-	ClearColorTable(f);
-	ReadColorTable(f);
+	ClearColorTable();
 	ChangePageOfFontTable(page);
-	ClearFontTable(f);
-	ReadFontTable(f);
+	ClearFontTable();
 	ChangePageOfBlockList(page);
 	ClearBlockList();
+	FILE* f = fopen(fileName,"rb");
+	if(!f) return 1;
+	ReadColorTable(f);
+	ReadFontTable(f);
 	LoadBlockList(f);
 	fclose(f);
+	return 0;
 }
 
 void SaveFileAtPage(int page, const char* fileName)

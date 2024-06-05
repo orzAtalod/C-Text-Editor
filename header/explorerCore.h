@@ -27,4 +27,8 @@ typedef bool (*FileFilterFunc)(FileHeaderInfo*, int);
 void              BrowseExplorer(FileBrowseFunc, int silentp); //silentp==1 时，遍历文件时不打开文件 
 DictionaryFolder* FilterExplorer(FileFilterFunc, int silentp); //FileFilterFunc 返回1时删除文件 
 
+void SaveCurrentFile();
+int CreateEmptyFile(); //不修改当前页，返回文件ID
+void ChangeCurrentFile(int fileID);
+
 #endif
