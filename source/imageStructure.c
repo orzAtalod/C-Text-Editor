@@ -12,7 +12,7 @@ int ReadBMP(int count,FILE* f)
     int i,target=0;
     fread(temp,1,count,f);//每个字节数据需要单独处理
     for(i=0;i<count;i++){
-        target=target+(temp[i]<<(8*i*));//低地址存低位数据，高地址存高位数据
+        target=target+(temp[i]<<(8*i));//低地址存低位数据，高地址存高位数据
     }
     return target;
 }
