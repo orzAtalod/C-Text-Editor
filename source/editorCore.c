@@ -131,9 +131,10 @@ static void calculateHeight()
 static double screenHeight;
 static double screenBeginHeight; // all negative
 #define ROLLER_STEP 0.1
+#define CULUMN_CURSOR_HEGIHT 0.1
 
 //used as callback
-static void changeScreenHeight(double newScreenHeight) { screenHeight = -newScreenHeight; }
+static void changeScreenHeight(double newScreenHeight) { screenHeight = -(newScreenHeight-CULUMN_CURSOR_HEGIHT); }
 
 static double getRollerBegin() { return screenBeginHeight>0 ? 0 : screenBeginHeight/fullHeight; }
 static double getRollerEnd()   { return screenBeginHeight+screenHeight<=fullHeight ? 1 : (screenBeginHeight+screenHeight)/fullHeight; }
@@ -155,11 +156,30 @@ static int cursorType; //¹â±êÊýÁ¿
 static cursorMsg cursor1, cursor2; //Ë³Ðò²»ÏÞ
 #define CURSOR_DENSITY 0.2
 
+static int priorierThan(corsorMsg cursor1, corsorMsg cursor2)
+{
+	if(cursor1.blockVal != cursor2.blockVal) return blockBeginHeight[cursor1.blockVal->ID] > blockBeginHeight[cursor2.blockVal->ID];
+	return c1.position < cursor2.position;
+}
+
+static void checkPriorier() //±£Ö¤cursor2¸ü¿¿ÉÏ
+{
+	if(priorierThan(cursor1, cursor2))
+	{
+		Block* ptr = cursor1.blockVal;
+		cursor1.blockVal = cursor2.blockVal;
+		cursor2.blockVal = ptr;
+		int potr = cursor1.position;
+		cursor1.position = cursor2.position;
+		cursor2.position = potr;
+	}	
+}
+
 static void printCursor(double wx, double wy, double width, double begH, double endH)
 {
+	const double cw = width*columnWidth(cursor1.blockVal->align.column);
 	if(cursorType == 1) //single cursor
 	{
-		const double cw = width*columnWidth[cursor1.blockVal->align.column];
 		const double rx = GetRelativeXFromPosition(cursor1.blockVal, cw, cursor1.position);
 		const double ry = GetRelativeYFromPosition(cursor1.blockVal, cw, cursor1.position);
 		double lH = GetElementHeight(cursor1.blockVal);
@@ -173,7 +193,7 @@ static void printCursor(double wx, double wy, double width, double begH, double 
 	}
 	else
 	{
-		StartFilledRegion(CURSOR_DENSITY);
+		checkPriorier();
 		//TODO
 		//1. ÌØÅÐÁ½¸öÖ¸ÕëÊÇ·ñ´¦ÔÚÍ¬Ò»¸ö¿éÖÐ
 		//2. »æÖÆ¿¿ÉÏµÄ¿ªÊ¼¿é
@@ -525,7 +545,7 @@ static void deleteBlockChain(blockChain* x)
 	}
 
 	x->curr->align.alignBlockID = 0;
-	x->curr->align.alignArgument = 0;
+	x->curr->align.alignArgument = 99999;
 	BlockDelete(x->curr);
 }
 
@@ -603,13 +623,13 @@ static void deleteColumn(int colID)
 	SetColumnInfo(columnNum, columnWidth);
 }
 
-#define clickError 0.01
+#define COLUMN_CURSOR_CLICK_ERROR 0.01
 static void leftclickOnRowRuler(double rx, double ry)
 {
 	const double curClickWidth = rx/screenWidth;
 	for(int i=1; i<columnNum; ++i)
 	{
-		if(columnWidthPosition[i]-clickError<rx && columnWidthPosition[i]+clickError>rx)
+		if(columnWidthPosition[i]-COLUMN_CURSOR_CLICK_ERROR<rx && columnWidthPosition[i]+COLUMN_CURSOR_CLICK_ERROR>rx)
 		{
 			swapColumn(i, i+1);
 			return;
@@ -623,7 +643,7 @@ static void rightClickOnRowRuler(double rx, double ry)
 	const double curClickWidth = rx/screenWidth;
 	for(int i=2; i<=columnNum; ++i)
 	{
-		if(columnWidthPosition[i]-clickError<rx && columnWidthPosition[i]+clickError>rx)
+		if(columnWidthPosition[i]-COLUMN_CURSOR_CLICK_ERROR<rx && columnWidthPosition[i]+COLUMN_CURSOR_CLICK_ERROR>rx)
 		{
 			deleteColumn(i);
 			return;
@@ -634,19 +654,20 @@ static void rightClickOnRowRuler(double rx, double ry)
 //////////////////////////////////////////////// ±à¼­ //////////////////////////////////
 
 static int defaultStyle;
-typedef void (*blockOperatorFunc)(Block*)
+typedef void (*blockOperatorFunc)(Block*);
 
-static void checkPriorier() //±£Ö¤cursor2¸ü¿¿ÉÏ
+static void mergeTextStr(blockChain* pre, blockChain* nxt)
 {
-	if(priorierThan(cursor1, cursor2))
+	if(!pre || !nxt || pre->curr->type!=1 || nxt->curr->type!=1) return;
+	StyleString* press = (StyleString*)pre->curr->dataptr;
+	StyleString* nowss = (StyleString*)nxt->curr->dataptr;
+	if(press->contentLen+nowss->contentLen >= press->contentSpace)
 	{
-		Block* ptr = cursor1.blockVal;
-		cursor1.blockVal = cursor2.blockVal;
-		cursor2.blockVal = ptr;
-		int potr = cursor1.position;
-		cursor1.position = cursor2.position;
-		cursor2.position = potr;
-	}	
+		press->contentSpace = 2 * (press->contentLen+nowss->contentLen);
+		press->content = (StyleChar*)realloc(press->content, 2*(press->contentLen+nowss->contentLen)*sizeof(StyleChar));
+	}
+	memcpy(press->content+press->contentLen, nowss->content, sizeof(StyleChar)*nowss->contentLen);
+	deleteBlockChain(nxt);
 }
 
 static void deleteTroughCursor() //Ë³±ã»¹Ô­³É cursorType=1 µÄ×´Ì¬
@@ -655,20 +676,173 @@ static void deleteTroughCursor() //Ë³±ã»¹Ô­³É cursorType=1 µÄ×´Ì¬
 	checkPriorier();
 	if(cursor1.blockVal == cursor2.blockVal)
 	{
-		//TODO
+		if(cursor1.blockVal->type == 2)
+		{
+			if(cursor1.position!=cursor2.position)
+			{
+				FreeImageStructure(cursor1.blockVal->dataptr);
+				cursor1.blockVal->type = 1;
+				cursor1.blockVal->dataptr = (void*)newStyleString();
+			} //else do nothing
+		}
+		else
+		{
+			const int delNum = cursor1.position - cursor2.position;
+			StyleString* nowss = (StyleString*)cursor1.blockVal->dataptr;
+			for(int i=cursor2.position; i+delNum<=nowss->contentLen; ++i)
+			{
+				nowss->content[i] = nowss->content[i+delNum];
+			}
+			nowss->contentLen -= delNum;
+			cursor1.position -= delNum;
+		}
 	}
+	else
+	{
+		blockChain* beg = corrBlockChain[cursor2.blockVal->ID];
+		blockChain* now = corrBlockChain[cursor2.blockVal->ID];
+		blockChain* nxt = now->next;
+		int begDeleted = 0;
+		if(cursor2.blockVal->type == 2)
+		{
+			if(cursor2.position == 0)
+			{
+				deleteBlockChain(now);
+				begDeleted = 1;
+			}
+		}
+		else
+		{
+			if(cursor2.position == 0)
+			{
+				deleteBlockChain(now);
+				begDeleted = 1;
+			}
+			else
+			{
+				((StyleString*)(cursor2.blockVal->dataptr))->contentLen = cursor2.position;
+			}
+		}
+
+		now = nxt;
+		nxt = now->next;
+		while(now->curr != cursor1.blockVal)
+		{
+			deleteBlockChain(now);
+			now = nxt;
+			nxt = now->next;
+		}
+
+		if(cursor1.blockVal->type == 2)
+		{
+			if(cursor1.position == 1)
+			{
+				if(begDeleted)
+				{
+					FreeImageStructure(cursor1.blockVal->dataptr);
+					cursor1.blockVal->type = 1;
+					cursor1.blockVal->dataptr = (void*)newStyleString();
+					cursor1.position = 0;
+				}
+				else
+				{
+					deleteBlockChain(now);
+					cursor1.blockVal = cursor2.blockVal;
+					cursor1.position = cursor2.position;
+				}
+			}
+			else
+			{
+				if(begDeleted)
+				{
+					StyleString* nowss = (StyleString*)cursor1.blockVal->dataptr;
+					for(int i=cursor1.position; i<=nowss->contentLen; ++i)
+					{
+						nowss->content[i-cursor1.position] = nowss->content[i];
+					}
+					nowss->contentLen -= cursor1.position;
+					cursor1.position = 0;
+				}
+				else
+				{
+					mergeTextStr(beg, now);
+				}
+			}
+		}
+	}
+	cursorType = 1;
+	cursor2.blockVal = 0;
+	cursor2.position = 0;
 }
 
-static void applyBlocksTroughCursor(blockOperatorFunc b) //»¹Ô­³É cursorType=1 µÄ×´Ì¬
+static void applyBlocksTroughCursor(blockOperatorFunc bop) //»¹Ô­³É cursorType=1 µÄ×´Ì¬
 {
 	if(cursorType!=2) return;
+	checkPriorier();
+	if(cursor1.blockVal == cursor2.blockVal)
+	{
+		bop(cursor1.blockVal);
+	}
+	else
+	{
+		bop(cursor2.blockVal);
+		blockChain* now = corrBlockChain[cursor2.blockVal->ID]->next;
+		blockChain* nxt = now->next;
+		while(now->curr != cursor1.blockVal)
+		{
+			bop(now->curr);
+		}
+		bop(cursor1.blockVal);
+	}
+	cursorType = 1;
+	cursor2.blockVal = 0;
+	cursor2.position = 0;
 }
 
 static void changeStyleTroughCursor(int newStyle)
 {
 	if(cursorType!=2) return;
-}
+	checkPriorier();
+	if(cursor1.blockVal == c2.blockVal)
+	{
+		if(cursor1.blockVal->type == 1)
+		{
+			StyleString* nowss = (StyleString*)(cursor1.blockVal->dataptr)
+			for(int i=cursor2.position; i<cursor1.position; ++i)
+			{
+				nowss->content[i].style ^= newStyle;
+			}
+		}
+	}
+	else
+	{
+		StyleString* nowss = (StyleString*)(cursor2.blockVal->dataptr);
+		for(int i=cursor2.position; i<nowss->contentLen; ++i)
+		{
+			nowss->content[i].style ^= newStyle;
+		}
 
+		blockChain* now = corrBlockChain[cursor2.blockVal->ID]->next;
+		blockChain* nxt = now->next;
+		while(now->curr != cursor1.blockVal)
+		{
+			nowss = (StyleString*)(now->curr->dataptr);
+			for(int i=0; i<nowss->contentLen; ++i)
+			{
+				nowss->content[i].style ^= newStyle;
+			}
+		}
+
+		nowss = cursor1.blockVal->dataptr;
+		for(int i=0; i<cursor1.position; ++i)
+		{
+			nowss->content[i].style ^= newStyle;
+		}
+	}
+	cursorType = 1;
+	cursor2.blockVal = 0;
+	cursor2.position = 0;
+}
 
 static void bold()
 {
@@ -711,8 +885,17 @@ static void colorChangeForSingleBlock(Block* blk)
 	}
 }
 
+static void pointsizeChangeForSingleBlock(Block* blk)
+{
+	if(blk->type == 1)
+	{
+		((StyleString*)(blk->dataptr))->pointSize = defaultPointSize;
+	}
+}
+
 static void fontChange(const char* newFont)
 {
+	if(!newFont) return;
 	const int fontID = LookupFontNameInFontTable(newFont);
 	if(!fontID) fontID = RegisterFontTable(newFont);
 	const char* nowDefault = defaultFont;
@@ -726,6 +909,7 @@ static void fontChange(const char* newFont)
 
 static void colorChange(const char* newColor)
 {
+	if(!newColor) return;
 	const int colorID = LookupColorNameInColorTable(newColor);
 	if(!colorID) colorID = RegisterColorTable(newColor);
 	const char const* nowDefault = defaultColor;
@@ -734,6 +918,23 @@ static void colorChange(const char* newColor)
 	{
 		applyBlocksTroughCursor(colorChangeForSingleBlock)
 		defaultColor = nowDefault;
+	}
+}
+
+static void pointSizeChange(const char* newPS)
+{
+	if(!newPS) return;
+	int tmp = 0;
+	sscanf(newPS,"%d",&tmp);
+	if(tmp>0)
+	{
+		const int nowDefault = defaultPointSize;
+		defaultPointSize = tmp;
+		if(cursorType==2)
+		{
+			applyBlocksTroughCursor(pointsizeChangeForSingleBlock);
+			defaultPointSize = nowDefault;
+		}
 	}
 }
 
@@ -812,20 +1013,6 @@ static void newLine() //Enter
 	}
 }
 
-static void mergeTextStr(blockChain* pre, blockChain* nxt)
-{
-	if(!pre || !nxt || pre->curr->type!=1 || nxt->curr->type!=1) return;
-	StyleString* press = (StyleString*)pre->curr->dataptr;
-	StyleString* nowss = (StyleString*)nxt->curr->dataptr;
-	if(press->contentLen+nowss->contentLen >= press->contentSpace)
-	{
-		press->contentSpace = 2 * (press->contentLen+nowss->contentLen);
-		press->content = (StyleChar*)realloc(press->content, 2*(press->contentLen+nowss->contentLen)*sizeof(StyleChar));
-	}
-	memcpy(press->content+press->contentLen, nowss->content, sizeof(StyleChar)*nowss->contentLen);
-	deleteBlockChain(nxt);
-}
-
 static void backSpace()
 {
 	if(cursorType == 2)
@@ -861,6 +1048,7 @@ static void backSpace()
 				nowss->content[i-1] = nowss->content[i];
 			}
 			--nowss->contentLen;
+			--cursor1.position;
 		}
 	}
 }
@@ -884,7 +1072,7 @@ static void keyboardDelete()
 	}
 	else
 	{
-		if(cursor1.position == ((StyleString*)c1.blockVal->dataptr)->contentLen)
+		if(cursor1.position == ((StyleString*)cursor1.blockVal->dataptr)->contentLen)
 		{
 			mergeTextStr(corrBlockChain[cursor1.blockVal->ID], corrBlockChain[cursor1.blockVal->ID]->next);			
 		}
@@ -916,24 +1104,177 @@ static void keyboardInputSpecial(char keyInputType) //1ÉÏ 2ÏÂ 3×ó 4ÓÒ 5»Ø³µ 6ÍË¸
 	keyboardspc[keyInputType]();
 }
 
-#define CULUMN_CURSOR_HEGIHT 0.1
-
+int preClick = 0;
 static void mouseLeftDown(double rx,double ry)
 {
-
+	if(!preClick)
+	{
+		if(-ry <= CULUMN_CURSOR_HEGIHT)
+		{
+			leftclickOnRowRuler(rx,ry);
+			preClick = 1;
+		}
+		else
+		{
+			mouseLeftDownOnMain(rx,ry+CULUMN_CURSOR_HEGIHT);
+			preClick = 2;
+		}
+	}
+	else
+	{
+		if(preClick==1) leftclickOnRowRuler(rx,ry);
+		else mouseLeftDownOnMain(rx,ry+CULUMN_CURSOR_HEGIHT);
+	}
 }
 
 static void mouseLeftUp()
+{
+	if(preClick==2) mouseLeftUpOnMain();
+	preClick = 0;
+}
 
 static void mouseRightDown(double rx,double ry)
+{
+	if(!preClick)
+	{
+		if(-ry <= CULUMN_CURSOR_HEGIHT)
+		{
+			rightclickOnRowRuler(rx,ry);
+			preClick = 1;
+		}
+		else
+		{
+			mouseRightDownOnMain(rx,ry+CULUMN_CURSOR_HEGIHT);
+			preClick = 2;
+		}
+	}
+	else
+	{
+		if(preClick==1) rightclickOnRowRuler(rx,ry);
+		else mouseRightDownOnMain(rx,ry+CULUMN_CURSOR_HEGIHT);
+	}
+}
 
 static void mouseRightUp()
+{
+	if(preClick==2) mouseRightUpOnMain();
+	preClick = 0;
+}
 
-static void drawMainEdit()
+static void drawCulumnCursor(double cx,double cy,double width)
+{
+	MovePen(cx,cy);
+	DrawLine( width,0);
+	DrawLine(0,-CULUMN_CURSOR_HEGIHT);
+	DrawLine(-width,0);
+	DrawLine(0, CULUMN_CURSOR_HEGIHT);
+	for(int i=1; i<columnNum; ++i)
+	{
+		MovePen(columnWidthPosition[i]*width+cx-COLUMN_CURSOR_CLICK_ERROR, cy);
+		StartFilledRegion(1);
+		DrawLine( 2*COLUMN_CURSOR_CLICK_ERROR, 0);
+		DrawLine(0,-CULUMN_CURSOR_HEGIHT);
+		DrawLine(-2*COLUMN_CURSOR_CLICK_ERROR, 0);
+		DrawLine(0, CULUMN_CURSOR_HEGIHT);
+		EndFilledRegion();
+	}
+}
+
+static void drawMainEdit(double cx,double cy,double dx,double dy)
+{
+	calculateHeight();
+	drawCulumnCursor(cx,cy,dx-cx);
+	cy -= CULUMN_CURSOR_HEGIHT;
+	double AyBeg = screenBeginHeight;
+	double AyEnd = screenBeginHeight - (cy-dy);
+	printCursor(cx,cy,screenWidth,blockBeginHeight,screenBeginHeight+screenHeight);
+	for(int i=1; i<=blockNum; ++i)
+	{
+		const int curcol = corrBlockChain[i]->curr->align.column;
+		if(blockBeginHeight[i]>=AyBeg && blockBeginHeight[i]+blockHeight[i]<AyBeg)
+		{
+			if(blockBeginHeight[i]+blockHeight[i] > AyEnd)
+			{
+				MovePen(cx+columnWidthPosition[curcol-1]*(dx-cx),cy);
+				DrawLine(0,-AyBeg+blockBeginHeight[i]+blockHeight[i]);
+				DrawLine(columnWidth[curcol]*(dx-cx),0);
+				DrawLine(0, AyBeg-blockBeginHeight[i]-blockHeight[i]);
+				DrawBlock(corrBlockChain[i]->curr,
+					cx+columnWidthPosition[curcol-1]*(dx-cx),
+					cy,
+					columnWidth[curcol]*(dx-cx);
+					AyBeg-blockBeginHeight[i],
+					blockHeight[i]);
+			}
+			else
+			{
+				MovePen(cx+columnWidthPosition[curcol-1]*(dx-cx),cy);
+				DrawLine(0,AyEnd-AyBeg);
+				MovePen(cx+columnWidthPosition[curcol]*(dx-cx),cy);
+				DrawLine(0,AyEnd-AyBeg);
+				DrawBlock(corrBlockChain[i]->curr,
+					cx+columnWidthPosition[curcol-1]*(dx-cx),
+					cy,
+					columnWidth[curcol]*(dx-cx);
+					AyBeg-blockBeginHeight[i],
+					AyEnd-blockBeginHeight[i]);
+			}
+		}
+		else if(blockBeginHeight[i]<AyBeg && blockBeginHeight[i]>=AyEnd)
+		{
+			if(blockBeginHeight[i]+blockHeight[i] > AyEnd)
+			{
+				MovePen(cx+columnWidthPosition[curcol-1]*(dx-cx), cy+blockBeginHeight[i]-AyBeg);
+				DrawLine( columnWidth[curcol]*(dx-cx), 0);
+				DrawLine(0, blockHeight[i]);
+				DrawLine(-columnWidth[curcol]*(dx-cx), 0);
+				DrawLine(0,-blockHeight[i]);
+				DrawBlock(corrBlockChain[i]->curr,
+					cx+columnWidthPosition[curcol-1]*(dx-cx),
+					cy+blockBeginHeight[i]-AyBeg,
+					columnWidth[curcol]*(dx-cx);
+					0,
+					blockHeight[i]);
+			}
+			else
+			{
+				MovePen(cx+columnWidthPosition[curcol-1]*(dx-cx), cy+blockBeginHeight[i]-AyBeg);
+				DrawLine(columnWidth[curcol]*(dx-cx), 0);
+				DrawLine(0, AyEnd-blockBeginHeight[i]);
+				MovePen(cx+columnWidthPosition[curcol-1]*(dx-cx), cy+blockBeginHeight[i]-AyBeg);
+				DrawLine(0, AyEnd-blockBeginHeight[i]);
+				DrawBlock(corrBlockChain[i]->curr,
+					cx+columnWidthPosition[curcol-1]*(dx-cx),
+					cy+blockBeginHeight[i]-AyBeg,
+					columnWidth[curcol]*(dx-cx);
+					0,
+					AyEnd-blockBeginHeight[i]);
+			}
+		}
+	}
+}
 
 //////////////////////////////////////////////// ³õÊ¼»¯½Ó¿Ú ////////////////////////////
 
 void EditorCoreInitCallbacks()
 {
-	
+	RegisterColorMethod(colorChange);
+	RegisterBoldMethod(bold);
+	RegisterItalicMethod(italic);
+	RegisterPointSizeMethod(pointSizeChange);
+	RegisterFontMethod(fontChange);
+
+	RegisterEditorGraphicDraw(drawMainEdit);
+	RegisterRollerUpperBoundDraw(getRollerBegin());
+	RegisterRollerLowerBoundDraw(getRollerEnd());
+
+	RegisterEditorMouseLeftDown(mouseLeftDown);
+	RegisterEditorMouseLeftUp(mouseLeftUp);
+	RegisterEditorMouseRightDown(mouseRightDown);
+	RegisterEditorMouseRightUp(mouseRightUp);
+	RegisterEditorMouseMiddleRollup(rollerRollUp);
+	RegisterEditorMouseMiddleRolldown(rollerRollDown);
+	RegisterEditorKeyboard(keyboardInput);
+	RegisterEditorKeyboardSpecial(keyboardInputSpecial);
+	RegisterRollerMouseLeftDown(rollerLeftDown);
 }
