@@ -4,15 +4,15 @@
 #include <stdlib.h>
 #include <math.h>
 
-//pixelListÖĞµÄrgbÖµ¶¼ÊÇÕûÊı£¬ÔÙsimpleGUIÖĞÊ¹ÓÃĞèÒª³ıÒÔ255.0
-static int (*colorPalette)[3];//´æ´¢µ÷É«°å
+//pixelListä¸­çš„rgbå€¼éƒ½æ˜¯æ•´æ•°ï¼Œå†simpleGUIä¸­ä½¿ç”¨éœ€è¦é™¤ä»¥255.0
+static int (*colorPalette)[3];//å­˜å‚¨è°ƒè‰²æ¿
 int ReadBMP(int count,FILE* f)
 {
     char temp[5]={0};
     int i,target=0;
-    fread(temp,1,count,f);//Ã¿¸ö×Ö½ÚÊı¾İĞèÒªµ¥¶À´¦Àí
+    fread(temp,1,count,f);//æ¯ä¸ªå­—èŠ‚æ•°æ®éœ€è¦å•ç‹¬å¤„ç†
     for(i=0;i<count;i++){
-        target=target+(temp[i]<<(8*i));//µÍµØÖ·´æµÍÎ»Êı¾İ£¬¸ßµØÖ·´æ¸ßÎ»Êı¾İ
+        target=target+(temp[i]<<(8*i));//ä½åœ°å€å­˜ä½ä½æ•°æ®ï¼Œé«˜åœ°å€å­˜é«˜ä½æ•°æ®
     }
     return target;
 }
@@ -25,18 +25,18 @@ ImageInfo* OpenImage(FILE* f)
 
     fread(tempchar,sizeof(char),2,f);
     tempchar[2]='\0';
-    if(strcmp(tempchar,"BM")!=0){//ÅĞ¶¨Í¼Æ¬ÊÇ·ñÊÇBMP
-        assert(!"imagType is false");//ÓÉÓÚ´æ´¢µÄÌØĞÔ£¬ËùÒÔ×ÖÄ¸·´ÁËÒ»ÏÂ
+    if(strcmp(tempchar,"BM")!=0){//åˆ¤å®šå›¾ç‰‡æ˜¯å¦æ˜¯BMP
+        assert(!"imagType is false");//ç”±äºå­˜å‚¨çš„ç‰¹æ€§ï¼Œæ‰€ä»¥å­—æ¯åäº†ä¸€ä¸‹
     }
     fseek(f,30,SEEK_SET);
 
-    biCompression=ReadBMP(4,f);//»ñÈ¡BMPÑ¹Ëõ·½Ê½
+    biCompression=ReadBMP(4,f);//è·å–BMPå‹ç¼©æ–¹å¼
     if(biCompression!=0){
         assert(!"imageType is false");
     }
 
     fseek(f,10,SEEK_SET);
-    bfOffBits=ReadBMP(4,f);//»ñÈ¡´ÓÎÄ¼ş¿ªÍ·µ½bitmap informationµÄ×Ö½ÚÆ«ÒÆÁ¿£¬ºóÃæÒªÓÃ
+    bfOffBits=ReadBMP(4,f);//è·å–ä»æ–‡ä»¶å¼€å¤´åˆ°bitmap informationçš„å­—èŠ‚åç§»é‡ï¼Œåé¢è¦ç”¨
 
     ptr=(ImageInfo*)malloc(sizeof(ImageInfo));
     fseek(f,18,SEEK_SET);
@@ -44,10 +44,10 @@ ImageInfo* OpenImage(FILE* f)
     ptr->biHeight=ReadBMP(4,f);
     fseek(f,28,SEEK_SET);
     ptr->biBitCount=ReadBMP(2,f);
-    if(ptr->biBitCount<24){//¸ù¾İÃ¿¸öÏñËØËùĞè±ÈÌØÎ»µÄ²»Í¬²ÉÓÃ²»Í¬µÄ±àÂë·½Ê½
+    if(ptr->biBitCount<24){//æ ¹æ®æ¯ä¸ªåƒç´ æ‰€éœ€æ¯”ç‰¹ä½çš„ä¸åŒé‡‡ç”¨ä¸åŒçš„ç¼–ç æ–¹å¼
         fseek(f,46,SEEK_SET);
-        ptr->biClrUsed=ReadBMP(4,f);//»ñÈ¡ËùÓÃµ½µÄÑÕÉ«Ë÷ÒıÊı
-        if(ptr->biClrUsed==0) ptr->biClrUsed=pow(2,ptr->biBitCount);//Èç¹û¶Áµ½µÄÊÇ0ËµÃ÷Ê¹ÓÃËùÓĞ¿ÉÄÜÑÕÉ« 
+        ptr->biClrUsed=ReadBMP(4,f);//è·å–æ‰€ç”¨åˆ°çš„é¢œè‰²ç´¢å¼•æ•°
+        if(ptr->biClrUsed==0) ptr->biClrUsed=pow(2,ptr->biBitCount);//å¦‚æœè¯»åˆ°çš„æ˜¯0è¯´æ˜ä½¿ç”¨æ‰€æœ‰å¯èƒ½é¢œè‰² 
         colorPalette=(int(*)[3])malloc(sizeof(int)*ptr->biClrUsed*3);
         int i,j,colorId;
         int tempColorCode[4];
@@ -56,7 +56,7 @@ ImageInfo* OpenImage(FILE* f)
 		fread(&biSize,1,4,f);
 		
 		fseek(f,14+biSize,SEEK_SET);
-        for(i=0;i<ptr->biClrUsed;i++){//¶ÁÈ¡µ÷É«°å
+        for(i=0;i<ptr->biClrUsed;i++){//è¯»å–è°ƒè‰²æ¿
             fread(tempColorCode,1,1,f);
             fread(tempColorCode+1,1,1,f);
             fread(tempColorCode+2,1,1,f);
@@ -68,17 +68,17 @@ ImageInfo* OpenImage(FILE* f)
 
         ptr->pixelList=(int(*)[3])malloc(sizeof(int)*ptr->biHeight*ptr->biWidth*3);
         fseek(f,bfOffBits,SEEK_SET);
-        for(i=0;i<abs(ptr->biHeight);i++){//ÎªÃ¿¸öÏñËØµã¸³ÓèrgbÖµ
+        for(i=0;i<abs(ptr->biHeight);i++){//ä¸ºæ¯ä¸ªåƒç´ ç‚¹èµ‹äºˆrgbå€¼
             for(j=0;j<ptr->biWidth;j++){
                 colorId=ReadBMP(1,f);
                 *(ptr->pixelList+i*ptr->biWidth+j)[0]=*(colorPalette+colorId)[0];
                 *(ptr->pixelList+i*ptr->biWidth+j)[1]=*(colorPalette+colorId)[1];
                 *(ptr->pixelList+i*ptr->biWidth+j)[2]=*(colorPalette+colorId)[2];
             }
-            fseek(f,4-((ptr->biWidth*ptr->biBitCount)>>3)&3,SEEK_CUR);//Ìø¹ıÎŞÒâÒåµÄÌî³ä
+            fseek(f,4-((ptr->biWidth*ptr->biBitCount)>>3)&3,SEEK_CUR);//è·³è¿‡æ— æ„ä¹‰çš„å¡«å……
         }
     }
-    else{//´ËÊ±Ã»ÓĞµ÷É«°å
+    else{//æ­¤æ—¶æ²¡æœ‰è°ƒè‰²æ¿
         int i,j;
         int tempColorCode[4]={0};
 
@@ -105,7 +105,6 @@ ImageInfo* ReadImage(FILE* f)
     ImageInfo* ptr;
     int temp[5];
     ptr=(ImageInfo*)malloc(sizeof(ImageInfo));
-    fseek(f,0,SEEK_SET);
     fread(temp,sizeof(int),4,f);
     ptr->biWidth=temp[0];
     ptr->biHeight=temp[1];
