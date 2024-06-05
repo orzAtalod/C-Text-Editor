@@ -8,8 +8,9 @@
 static int (*colorPalette)[3];//存储调色板
 int ReadBMP(int count,FILE* f)
 {
-    int temp[5]={0},i,target=0;
-    fread(temp,1,count,f);//size其实默认是1，因为每个字节数据需要单独处理，一个字节的二进制码可以正确转成int吗？
+    char temp[5]={0};
+    int i,target=0;
+    fread(temp,1,count,f);//每个字节数据需要单独处理
     for(i=0;i<count;i++){
         target=target+temp[i]*pow(16,i*2);//低地址存低位数据，高地址存高位数据
     }
