@@ -6,26 +6,30 @@
 
 #define NAME_STRING_LIMIT 30 
 
-//ÏÈĞ´color£¬ÔÙĞ´font£»ÏÈ¶Ácolor£¬ÔÙ¶Áfont 
+//å…ˆå†™colorï¼Œå†å†™fontï¼›å…ˆè¯»colorï¼Œå†è¯»font
+
 typedef struct{
 	char name[NAME_STRING_LIMIT];
-	double code[3];//ÈıÔ­É«Öµ 
+	double code[3];//ä¸‰åŸè‰²å€¼ 
 }colorInfo;
 struct colorTable{
-	int flength;//firstÓĞ¶àÉÙÊı¾İÏî 
-	int slength;//secondÓĞ¶àÉÙÊı¾İÏî 
-	char *second[255];//µÚ¶ş²¿·Ö 
-	colorInfo first[255];//µÚÒ»²¿·Ö 
+	int flength;//firstæœ‰å¤šå°‘æ•°æ®é¡¹ 
+	int slength;//secondæœ‰å¤šå°‘æ•°æ®é¡¹ 
+	char *second[255];//ç¬¬äºŒéƒ¨åˆ† 
+	colorInfo first[255];//ç¬¬ä¸€éƒ¨åˆ† 
 };
+
 static struct colorTable* colorPage[255]; 
-static int curColorPage=0;//µ±Ç°ÔÚÄÄÒ»Ò³ 
+static int curColorPage=0;//å½“å‰åœ¨å“ªä¸€é¡µ 
 static unsigned long long colorPageExsists[4];
 
-void ChangePageOfColorTable(int p)//²»½öÊÇ×ª»»Ò³£¬Ò²ÊÇ´´½¨Ò»¸öÒ³£¬ËùÒÔµÚÒ»´Îµ÷ÓÃcolorÊı¾İ½á¹¹Ê±£¬ĞèÒªÏÈÓÃÕâ¸öº¯Êı´´½¨Ò»¸öÒ³ 
+////////////////////////////////////////////////////////color éƒ¨åˆ†//////////////////////////////////////////////////
+
+void ChangePageOfColorTable(int p)//ä¸ä»…æ˜¯è½¬æ¢é¡µï¼Œä¹Ÿæ˜¯åˆ›å»ºä¸€ä¸ªé¡µï¼Œæ‰€ä»¥ç¬¬ä¸€æ¬¡è°ƒç”¨coloræ•°æ®ç»“æ„æ—¶ï¼Œéœ€è¦å…ˆç”¨è¿™ä¸ªå‡½æ•°åˆ›å»ºä¸€ä¸ªé¡µ 
 {
 	if(colorPageExsists[p%64] | (1LLU<<(p/64))){
-		curColorPage=p;//ÕâÒ»Ò³ÒÑ¾­´æÔÚ£¬Ö±½Ó×ª»» 
-	}else{//´´½¨Ò³ 
+		curColorPage=p;//è¿™ä¸€é¡µå·²ç»å­˜åœ¨ï¼Œç›´æ¥è½¬æ¢ 
+	}else{//åˆ›å»ºé¡µ 
 		colorPageExsists[p%64] |= 1LLU<<(p/64);
 		curColorPage=p;
 		colorPage[p]=(struct colorTable*)malloc(sizeof(struct colorTable));
@@ -44,18 +48,18 @@ void ClearColorTable()
 
 void ReadColorTable(FILE* f)
 {
-	char *tempname;
+	char* tempname;
 	tempname=(char *)malloc(sizeof(char)*NAME_STRING_LIMIT);
 	double tempcode[3];
 	fread(tempname,sizeof(char),NAME_STRING_LIMIT,f);
 	fread(tempcode,sizeof(double),3,f);
-	while(strcmp(tempname,"_firstend")!=0){//firstendÊÇ½áÊø±êÖ¾  
+	while(strcmp(tempname,"_firstend")!=0){//firstendæ˜¯ç»“æŸæ ‡å¿—  
 		RegisterColorName(tempname,tempcode[0],tempcode[1],tempcode[2]);
 		fread(tempname,sizeof(char),NAME_STRING_LIMIT,f);
 		fread(tempcode,sizeof(double),3,f);
 	}
 	fread(tempname,sizeof(char),NAME_STRING_LIMIT,f);
-	while(strcmp(tempname,"_secondend")!=0){//secondendÊÇ½áÊø±êÖ¾  
+	while(strcmp(tempname,"_secondend")!=0){//secondendæ˜¯ç»“æŸæ ‡å¿—  
 		(void)RegisterColorTable(tempname); //make complier happy
 		fread(tempname,sizeof(char),NAME_STRING_LIMIT,f);
 	}
@@ -63,7 +67,7 @@ void ReadColorTable(FILE* f)
 
 void WriteColorTable(FILE* f)
 {
-	struct colorTable* p=colorPage[curColorPage];//Ö¸Ïòµ±Ç°Ò³ 
+	struct colorTable* p=colorPage[curColorPage];//æŒ‡å‘å½“å‰é¡µ 
 	int firstl=p->flength;
 	int secondl=p->slength;
 	int i;
@@ -71,7 +75,7 @@ void WriteColorTable(FILE* f)
 		fwrite(p->first[i].name,sizeof(char),NAME_STRING_LIMIT,f);
 		fwrite(p->first[i].code,sizeof(double),3,f);
 	}
-	char endchar[NAME_STRING_LIMIT]="_firstend";//×îºóĞ´Èë½áÊø±êÖ¾ 
+	char endchar[NAME_STRING_LIMIT]="_firstend";//æœ€åå†™å…¥ç»“æŸæ ‡å¿— 
 	double enddouble[3]={0,0,0};
 	fwrite(endchar,sizeof(char),NAME_STRING_LIMIT,f);
 	fwrite(enddouble,sizeof(double),3,f);
@@ -88,10 +92,10 @@ int RegisterColorTable(const char* colorName)
 	struct colorTable* p=colorPage[curColorPage];
 	int l=p->slength;
 	int i;
-	if(l!=0){//colorTableÀïÊÇ·ñÓĞÔªËØ 
+	if(l!=0){//colorTableé‡Œæ˜¯å¦æœ‰å…ƒç´  
 		for(i=1;i<=l;i++){
 			if(strcmp(colorName,p->second[i])==0){
-				return i;//Èç¹ûÒÑ¾­ÔÚÀïÃæ¾Í·µ»Øid 
+				return i;//å¦‚æœå·²ç»åœ¨é‡Œé¢å°±è¿”å›id 
 			}
 		}
 	}
@@ -111,7 +115,7 @@ int RegisterColorName(const char* colorName,double r,double g,double b)
 			return 1;
 		}
 	}
-	strcpy(p->first[l+1].name,colorName);//´æÈëÑÕÉ«Ãû
+	strcpy(p->first[l+1].name,colorName);//å­˜å…¥é¢œè‰²å
 	p->first[l+1].code[0]=r;
 	p->first[l+1].code[0]=g;
 	p->first[l+1].code[0]=b;
@@ -133,7 +137,7 @@ int LookupColorNameInColorTable(const char* colorName)
 	int i;
 	for(i=1;i<=l;i++){
 		if(strcmp(colorName,p->second[i])==0){
-			return i;//Èç¹ûÒÑ¾­ÔÚÀïÃæ¾Í·µ»Øid 
+			return i;//å¦‚æœå·²ç»åœ¨é‡Œé¢å°±è¿”å›id 
 		}
 	}
 	return 0;
@@ -149,15 +153,15 @@ void TraverseColorDifinitions(ColorDefinitionTraverseFunction func)
 }
 
 
-//font²¿·Ö
+/////////////////////////////////////////////////////fontéƒ¨åˆ†///////////////////////////////////
 
 
 struct fontTable{
-	int length;//ÓĞ¶àÉÙÊı¾İÏî 
-	char *second[255];
+	int length;//æœ‰å¤šå°‘æ•°æ®é¡¹ 
+	char* second[255];
 };
 static struct fontTable* fontPage[255];
-static int curFontPage=0;//µ±Ç°ÔÚÄÄÒ»Ò³ 
+static int curFontPage=0;//å½“å‰åœ¨å“ªä¸€é¡µ 
 static unsigned long long fontPageExsists[4];
 
 
@@ -182,10 +186,10 @@ void ClearFontTable()
 
 void ReadFontTable(FILE* f)
 {
-	char *tempname;
+	char* tempname;
 	tempname=(char *)malloc(sizeof(char)*NAME_STRING_LIMIT);
 	fread(tempname,sizeof(char),NAME_STRING_LIMIT,f);
-	while(strcmp(tempname,"_fontend")!=0){//fontendÊÇ½áÊø±êÖ¾ 
+	while(strcmp(tempname,"_fontend")!=0){//fontendæ˜¯ç»“æŸæ ‡å¿— 
 		(void)RegisterFontTable(tempname); //make complier happy
 		fread(tempname,sizeof(char),NAME_STRING_LIMIT,f);
 	}
@@ -199,7 +203,7 @@ void WriteFontTable(FILE* f)
 	for(i=1;i<=l;i++){
 		fwrite(p->second[i],sizeof(char),NAME_STRING_LIMIT,f);
 	}
-	char endchar[NAME_STRING_LIMIT]="_fontend";//×îºóĞ´Èë½áÊø±êÖ¾ 
+	char endchar[NAME_STRING_LIMIT]="_fontend";//æœ€åå†™å…¥ç»“æŸæ ‡å¿— 
 	fwrite(endchar,sizeof(char),NAME_STRING_LIMIT,f);
 }
 
@@ -211,7 +215,7 @@ int RegisterFontTable(const char* fontName)
 	if(l!=0){
 		for(i=1;i<=l;i++){
 			if(strcmp(fontName,p->second[i])==0){
-				return i;//Èç¹ûÒÑ¾­ÔÚÀïÃæ¾Í·µ»Øid 
+				return i;//å¦‚æœå·²ç»åœ¨é‡Œé¢å°±è¿”å›id 
 			}
 		}
 	} 
@@ -235,7 +239,7 @@ int LookupFontNameInFontTable(const char* fontName)
 	int i;
 	for(i=1;i<=l;i++){
 		if(strcmp(fontName,p->second[i])==0){
-			return i;//Èç¹ûÒÑ¾­ÔÚÀïÃæ¾Í·µ»Øid 
+			return i;//å¦‚æœå·²ç»åœ¨é‡Œé¢å°±è¿”å›id 
 		}
 	}
 	return 0;
