@@ -8,7 +8,7 @@
 static int (*colorPalette)[3];//存储调色板
 int ReadBMP(int count,FILE* f)
 {
-    char temp[5]={0};
+    int temp[5]={0};
     int i,target=0;
     fread(temp,1,count,f);//每个字节数据需要单独处理
     for(i=0;i<count;i++){
@@ -128,3 +128,34 @@ void WriteImage(ImageInfo* ptr,FILE* f)
     fwrite(ptr->pixelList,sizeof(int)*3,ptr->biHeight*ptr->biWidth,f);
 }
 
+double GetImageHeight(ImageInfo* ptr,double GivenWidth)
+{
+	double Width=ptr->biWidth/GetXResolution();
+	double Height=ptr->biHeight/GetYResolution();
+	return -Height*GivenWidth/Width;//实际图像缩放后高度取负 
+}
+
+void DisplayImage(ImageInfo* ptr,double cx,double cy,double GivenWidth)//把graphic window画崩溃了
+{
+	int flag,i,j;
+	SetPenSize(1);
+	if(ptr->biHeight>0){
+		flag=1;
+		MovePen(cx,GetWindowHeight()+cy+GetImageHeight(ptr,GivenWidth));
+	}
+	else{
+		flag=-1;
+		MovePen(cx,GetWindowHeight()+cy);
+	}
+	for(i=0;i<abs(ptr->biHeight);i++){
+		for(j=0;j<ptr->biWidth;j++){
+			double r=*(ptr->pixelList+i*ptr->biWidth+j)[0]/255.0;
+			double g=*(ptr->pixelList+i*ptr->biWidth+j)[1]/255.0;
+			double b=*(ptr->pixelList+i*ptr->biWidth+j)[2]/255.0;
+			DefineColor("temp",r,g,b);
+			SetPenColor("temp");
+			DrawLine(1.0/GetXResolution(),0);
+		}
+		MovePen(cx,GetCurrentY()+flag*1.0/GetYResolution());
+	} 
+}
