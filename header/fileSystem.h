@@ -11,4 +11,8 @@ void LoadFile(const char* fileName);
 void SaveFile(const char* fileName);
 void ClearAllItemsOnPage(int page);
 
+void RegisterSavFilePath(const char* savFilePath);
+void LoadSavFile();
+void StoreSavFile();
+
 #endif

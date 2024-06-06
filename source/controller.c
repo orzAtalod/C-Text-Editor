@@ -16,6 +16,7 @@ static void emptyFunc(const char* str) {;}
 static void save() //Ctrl+S
 {
 	SaveCurrentFile();
+	StoreSavFile();
 }
 
 static void setPath(FileHeaderInfo* fh, const char* path)
@@ -46,6 +47,7 @@ static void openFilePath(const char* path)
 	LoadFileAtPage(page, path);
 	ReloadCurrentFile();
 	setPath(GetCurrentFileHeaderInfo(), path);
+	StoreSavFile();
 }
 
 char tmp[105];
@@ -55,6 +57,7 @@ static void newFile() //Ctrl+N
 	CreateEmptyFile();
 	sprintf(tmp,"note%04d.note",rand()%1000);
 	setPath(GetCurrentFileHeaderInfo(), tmp);
+	StoreSavFile();
 }
 
 static void saveAsFilePath(const char* path)
@@ -62,7 +65,7 @@ static void saveAsFilePath(const char* path)
 	if(!path) return;
 	FileHeaderInfo* cf = GetCurrentFileHeaderInfo();
 	if(!cf) ChangeDisplayMethodToMajorInput("当前无文件！", emptyFunc);
-	else { setPath(GetCurrentFileHeaderInfo(), path); SaveCurrentFile(); }
+	else { setPath(GetCurrentFileHeaderInfo(), path); SaveCurrentFile(); StoreSavFile(); }
 }
 
 static void saveAs()
@@ -101,7 +104,24 @@ static void help()
 	system("help.txt");
 }
 
-void Error()
+static void exit()
 {
+	StoreSavFile();
+	exit(0);
+}
 
+void ControllerInitCallbacks()
+{
+	RegisterSaveMethod(save);
+	RegisterOpenMethod(open);
+	RegisterCreateMethod(newFile);
+	RegisterSaveasMethod(saveAs);
+	RegisterCloseMethod(close);
+
+	RegisterStatMethod(stats);
+	RegisterSearchMethod(search);
+	RegisterExploreMethod(browse);
+
+	RegisterSettingMethod(settings);
+	RegisterHelpMethod(help);
 }

@@ -4,27 +4,11 @@
 #include "textStructure.h"
 #include "fileSystemCore.h"
 
-static void* styleStringReader(FILE* f)
-{
-	return (void*)ReadStyleString(f);
-}
-
-static void styleStringWriter(void* str, FILE* f)
-{
-	WriteStyleString((StyleString*)str, f);
-}
-
 static int curPage;
 
 void ChangePageAtFileSystem(int page)
 {
 	curPage = page;
-}
-
-void InitFileSystem()
-{
-	RegisterReaderMethod(1,styleStringReader);
-	RegisterWriterMethod(1,styleStringWriter);
 }
 
 void ClearAllItemsOnPage(int page)
@@ -69,4 +53,30 @@ void LoadFile(const char* fileName)
 void SaveFile(const char* fileName)
 {
 	SaveFileAtPage(curPage, fileName);
+}
+
+char savFilePathstore[255];
+void RegisterSavFilePath(const char* savFilePath)
+{
+	memcpy(savFilePathstore, savFilePath);
+}
+
+void LoadSavFile()
+{
+	FILE* f = fopen(savFilePathstore, "rb");
+	if(f)
+	{
+		ReadSavFile(f);
+		fclose(f);
+	}
+}
+
+void StoreSavFile()
+{
+	FILE* f = fopen(savFilePathstore, "wb");
+	if(f)
+	{
+		WriteSavFile(f);
+		fclose(f);
+	}
 }

@@ -272,8 +272,15 @@ void BuildFiles()
 		}
 	}
 
-	openFile(currentFile);
-	changeCurrentFileByID(currentFile);
+	if(currentFile)
+	{
+		openFile(currentFile);
+		changeCurrentFileByID(currentFile);
+	}
+	else
+	{
+		CreateEmptyFile();
+	}
 }
 
 static void writeTags(FILE* f)
@@ -330,6 +337,8 @@ void WriteSavFile(FILE* f)
 	writeTags(f);
 	writeFolders(f);
 	writeFiles(f);
+	userNameLen = strlen(fullFolder->folderName);
+	strcpy(userNameLen, fullFolder->folderName);
 	fwrite(&userNameLen, sizeof(int), 1, f);
 	fwrite(userName, sizeof(char), userNameLen, f);
 	fwrite(&currentFile, sizeof(int), 1, f);
@@ -611,4 +620,22 @@ void ExplorerRightMouseUp()
 void SaveCurrentFile()
 {
 	if(currentFile) SaveFileAtPage(fileOnBlockListPage[currentFile], files[currentFile]->filePath);
+}
+
+void CloseCurrentFile()
+{
+	const int nowCurr = currentFile;
+	if(currentFile)
+	{
+		for(int i=1; i<=fileNum; ++i)
+		{
+			if(i!=currentFile && fileOnBlockListPage[i])
+			{
+				changeCurrentFileByID(i);
+				break;
+			}
+		}
+		if(currentFile == nowCurr) CreateEmptyFile();
+		closeFile(nowCurr);
+	}
 }

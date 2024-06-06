@@ -150,10 +150,8 @@ double GetRelativeXFromPosition_StyleString(StyleString* str, double width, int 
 {
 	SetPointSize(str->pointSize);
 	SetFont(str->font);
-	const double lineHeight = GetFontHeight();
 
 	int curIndex = 0;
-	double curHeight = lineHeight;
 	for(int i=0; i<=str->indent; ++i)
 	{
 		tmp[curIndex++] = ' ';
@@ -167,7 +165,6 @@ double GetRelativeXFromPosition_StyleString(StyleString* str, double width, int 
 			tmp[0] = str->contentLen[i].content;
 			tmp[1] = '\0';
 			curIndex = 1;
-			curHeight += lineHeight;
 		} 
 	}
 

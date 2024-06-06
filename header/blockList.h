@@ -44,7 +44,7 @@ Block* GetBlock(int blockID);
 typedef int (*GetPositionFunc)(Block*,double,double,double);
 typedef double (*GetRelativeXYFunc)(Block*,double,int);
 void RegisterGetPositionFunc(int type, GetPositionFunc func);
-void RegisterGetRelativeXYFunc(int type, GetRelativeXYFunc fx, GetRelativeXYFunc fy)
+void RegisterGetRelativeXYFunc(int type, GetRelativeXYFunc fx, GetRelativeXYFunc fy);
 int GetPositionFromRelativeXY(Block* b, double width, double rx, double ry);
 double GetRelativeXFromPosition(Block* b, double width, int position);
 double GetRelativeYFromPosition(Block* b, double width, int position);
