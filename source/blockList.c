@@ -209,6 +209,7 @@ void RegisterGetHeightFunc(int type, GetHeightFunc func)
 
 double GetHeight(Block* blk, double width)
 {
+	if(blockDeleted[blk->ID]) return 0;
 	return heightFunc[blk->type](blk->dataptr, width);
 }
 
@@ -222,7 +223,10 @@ void RegisterDrawFunc(int type, DrawFunc func)
 
 void DrawBlock(Block* b, double cx, double cy, double width, double begH, double endH)
 {
+	if(blockDeleted[b->ID]) return;
 	drawfunc[b->type](b->dataptr, cx, cy, width, begH, endH);
+	SetPenColor("Black");
+	SetPenSize(3);
 }
 
 GetPositionFunc   posFunci[255];
@@ -242,15 +246,18 @@ void RegisterGetRelativeXYFunc(int type, GetRelativeXYFunc fx, GetRelativeXYFunc
 
 int GetPositionFromRelativeXY(Block* b, double width, double rx, double ry)
 {
+	if(blockDeleted[b->ID]) return 0;
 	return posFunci[b->type](b->dataptr, width, rx, ry);
 }
 
 double GetRelativeXFromPosition(Block* b, double width, int position)
 {
+	if(blockDeleted[b->ID]) return 0;
 	return relFuncX[b->type](b->dataptr, width, position);
 }
 
 double GetRelativeYFromPosition(Block* b, double width, int position)
 {
+	if(blockDeleted[b->ID]) return 0;
 	return relFuncY[b->type](b->dataptr, width, position);
 }

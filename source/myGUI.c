@@ -134,7 +134,7 @@ void DrawToolBar(double x, double y, double width, double height) {
     }
     if (button(buttonId++, buttonX + 6 * (buttonWidth + BUTTON_GAP), buttonY, buttonWidth, buttonHeight, "Image")) {
         ChangeDisplayMethodToMain();
-        imageButton();
+        if(imageButton) imageButton();
     }
 }
 
@@ -397,6 +397,8 @@ static displayFunction displayArr[] = {displayMod0,displayMod1,displayMod2,displ
 
 static void display()
 {
+    SetPenColor("Black");
+    SetPenSize(3);
     screenWidth = GetWindowWidth();
     screenHeight = GetWindowHeight();
     displayBegin();
