@@ -8,7 +8,7 @@
 static int (*colorPalette)[3];//存储调色板
 int ReadBMP(int count,FILE* f)
 {
-    char temp[5]={0};
+    int temp[5]={0};
     int i,target=0;
     fread(temp,1,count,f);//每个字节数据需要单独处理
     for(i=0;i<count;i++){
