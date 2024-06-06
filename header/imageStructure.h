@@ -66,6 +66,9 @@ int ReadBMP(int count, FILE* f);
 /*根据传入的结构计算图片高度，像素到英寸的转换*/
 double GetImageHeight(ImageInfo* ptr,double GivenWidth);
 
+/*显示图片位置*/
+void FakeDraw(ImageInfo* ptr,double cx,double cy,double GivenWidth)
+
 void FreeImageStructure(ImageInfo* ptr);
 
 #endif

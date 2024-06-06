@@ -29,7 +29,7 @@ ImageInfo* OpenImage(FILE* f)
     fread(tempchar,sizeof(char),2,f);
     tempchar[2]='\0';
     if(strcmp(tempchar,"BM")!=0){//判定图片是否是BMP
-        assert(!"imagType is false");//由于存储的特性，所以字母反了一下
+        assert(!"imagType is false");
     }
     fseek(f,30,SEEK_SET);
 
@@ -161,6 +161,16 @@ void DisplayImage(ImageInfo* ptr,double cx,double cy,double GivenWidth)//把grap
 		}
 		MovePen(cx,GetCurrentY()+flag*1.0/GetYResolution());
 	} 
+}
+
+void FakeDraw(ImageInfo* ptr,double cx,double cy,double GivenWidth)
+{
+	double x,y,w,h;
+	x=cx;
+	y=GetWindowHeight()+cy+GetImageHeight(ptr,GivenWidth);
+    	w=GivenWidth;
+   	h=-GetImageHeight(ptr,GivenWidth);
+    	drawBox(x,y,w,h,0,"Image is here","L","Red");//simpleGUI中
 }
 
 void FreeImageStructure(ImageInfo* ptr)
