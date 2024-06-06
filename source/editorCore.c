@@ -42,6 +42,7 @@ static void buildColumns()
 		columnWidth[i] = GetColumnWidth(i);
 		columnWidthPosition[i] = columnWidthPosition[i-1] + columnWidth[i];
 	}
+	columnWidth[0] = 0;
 }
 
 static void buildBlock(Block* blk)
@@ -110,15 +111,15 @@ static void calculateBlockHeight(blockChain* bc)
 static double fullHeight;
 static void getfullHeight()
 {
-	double screenHeight = 0;
+	double fH = 0;
 	for(int i=1; i<=blockNum; ++i)
 	{
-		if(blockBeginHeight[i]+blockHeight[i] < screenHeight)
+		if(blockBeginHeight[i]+blockHeight[i] < fullHeight)
 		{
-			screenHeight = blockBeginHeight[i] + blockHeight[i];
+			fH = blockBeginHeight[i] + blockHeight[i];
 		}
 	}
-	fullHeight = screenHeight;
+	fullHeight = fH;
 }
 
 static void calculateHeight()
@@ -183,6 +184,7 @@ static void checkPriorier() //保证cursor2更靠上
 
 static void printCursor(double wx, double wy, double width, double begH, double endH)
 {
+	if(!cursorType) return;
 	const double cw = width*columnWidth[cursor1.blockVal->align.column];
 	if(cursorType == 1) //single cursor
 	{
@@ -193,8 +195,10 @@ static void printCursor(double wx, double wy, double width, double begH, double 
 		double Ay = ry + blockBeginHeight[cursor1.blockVal->ID];
 		if(Ay<=begH && Ay>=endH)
 		{
+			SetPenSize(3);
 			MovePen(wx+Ax, wy+Ay-begH);
 			DrawLine(0,lH);
+			SetPenSize(1);
 		}
 	}
 	else
@@ -444,9 +448,9 @@ static void mouseLeftUpOnMain()
 // mouseRightUp
 // 单击仅需考虑一次 RightDown 马上接 RightUp
 
-#define NEWLINE_MARGIN 0.1
+#define NEWLINE_MARGIN -0.3
 #define INDENT 4
-static int defaultPointSize = 5;
+static int defaultPointSize = 15;
 static const char* defaultColor = "Black"; // 这两个字符串保存在静态段，不会被修改
 static const char* defaultFont = "Times";
 
@@ -947,13 +951,14 @@ static void keyboardInput(char ch)
 	{
 		sstr->content = (StyleChar*)realloc(sstr->content, 2*sstr->contentSpace*sizeof(StyleChar));
 		sstr->contentSpace *= 2;
-	}
+	} 
 	for(int i=sstr->contentLen; i>=cursor1.position; --i)
 	{
 		sstr->content[i+1] = sstr->content[i];
 	}
 	++sstr->contentLen;
 	sstr->content[cursor1.position].content = ch;
+	sstr->content[cursor1.position].style = defaultStyle;
 	++cursor1.position;
 }
 
@@ -978,6 +983,10 @@ static void newLine() //Enter
 		ali.alignArgument = beginAy;
 		ali.column = getColumnFromX(beginAx);
 		BlockMove(nbc->curr->ID, ali);
+		cursor1.blockVal = nbc->curr;
+		cursor1.position = 0;
+		cursorType = 1;
+		return;
 	}
 
 	createBlockAfterChain(corrBlockChain[cursor1.blockVal->ID]);
@@ -1164,6 +1173,7 @@ static void mouseRightUp()
 
 static void drawCulumnCursor(double cx,double cy,double width)
 {
+	SetPenColor("Red");
 	MovePen(cx,cy);
 	DrawLine( width,0);
 	DrawLine(0,-CULUMN_CURSOR_HEGIHT);
@@ -1179,6 +1189,7 @@ static void drawCulumnCursor(double cx,double cy,double width)
 		DrawLine(0, CULUMN_CURSOR_HEGIHT);
 		EndFilledRegion();
 	}
+	SetPenColor("Black");
 }
 
 static void drawMainEdit(double cx,double cy,double dx,double dy)
@@ -1196,6 +1207,7 @@ static void drawMainEdit(double cx,double cy,double dx,double dy)
 		{
 			if(blockBeginHeight[i]+blockHeight[i] > AyEnd)
 			{
+				SetPenSize(1);
 				MovePen(cx+columnWidthPosition[curcol-1]*(dx-cx),cy);
 				DrawLine(0,-AyBeg+blockBeginHeight[i]+blockHeight[i]);
 				DrawLine(columnWidth[curcol]*(dx-cx),0);
@@ -1209,6 +1221,7 @@ static void drawMainEdit(double cx,double cy,double dx,double dy)
 			}
 			else
 			{
+				SetPenSize(1);
 				MovePen(cx+columnWidthPosition[curcol-1]*(dx-cx),cy);
 				DrawLine(0,AyEnd-AyBeg);
 				MovePen(cx+columnWidthPosition[curcol]*(dx-cx),cy);
@@ -1225,6 +1238,7 @@ static void drawMainEdit(double cx,double cy,double dx,double dy)
 		{
 			if(blockBeginHeight[i]+blockHeight[i] > AyEnd)
 			{
+				SetPenSize(1);
 				MovePen(cx+columnWidthPosition[curcol-1]*(dx-cx), cy+blockBeginHeight[i]-AyBeg);
 				DrawLine( columnWidth[curcol]*(dx-cx), 0);
 				DrawLine(0, blockHeight[i]);
@@ -1240,6 +1254,7 @@ static void drawMainEdit(double cx,double cy,double dx,double dy)
 			}
 			else
 			{
+				SetPenSize(1);
 				MovePen(cx+columnWidthPosition[curcol-1]*(dx-cx), cy+blockBeginHeight[i]-AyBeg);
 				DrawLine(columnWidth[curcol]*(dx-cx), 0);
 				DrawLine(0, AyEnd-blockBeginHeight[i]);

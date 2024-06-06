@@ -148,7 +148,7 @@ void DrawMainArea(double x, double y, double width, double height) {
     SetPenColor("Black");
     drawRectangle(x, y, browserWidth, height, 0);
     if (explorerDraw) {
-        explorerDraw(x, y, browserWidth, height);
+        explorerDraw(x, y+height, x+browserWidth, y);
     } else {
         drawLabel(x + 0.1, y + height - 0.2, "Browser Area");
     }
@@ -157,7 +157,7 @@ void DrawMainArea(double x, double y, double width, double height) {
     SetPenColor("Black");
     drawRectangle(x + browserWidth + BUTTON_GAP, y, editorWidth, height, 0);
     if (editorGraphicDraw) {
-        editorGraphicDraw(x + browserWidth + BUTTON_GAP, y, editorWidth, height);
+        editorGraphicDraw(x + browserWidth + BUTTON_GAP, y+height, x + browserWidth + BUTTON_GAP + editorWidth, y);
     } else {
         drawLabel(x + browserWidth + BUTTON_GAP + 0.1, y + height - 0.2, "Editing Area");
     }
@@ -394,11 +394,17 @@ static void displayMod5() //设置界面
 
 typedef void (*displayFunction)();
 static displayFunction displayArr[] = {displayMod0,displayMod1,displayMod2,displayMod3,displayMod4,displayMod5};
+static char defaultPenFont[25];
+static int defaultPointSize;
 
 static void display()
 {
+	DisplayClear();
     SetPenColor("Black");
-    SetPenSize(3);
+    SetPenSize(1);
+    SetPointSize(defaultPointSize);
+    SetFont(defaultPenFont);
+    SetStyle(0);
     screenWidth = GetWindowWidth();
     screenHeight = GetWindowHeight();
     displayBegin();
@@ -451,7 +457,7 @@ static void mouseMoveProcess(double mx, double my)
         mouseDownFuncs[nowButton][mouseFocusID](mx-mouseActivatedDx, my-mouseActivatedDy);
 }
 
-void MouseEventProcess(int x, int y, int button, int event) {
+void myMouseEventProcess(int x, int y, int button, int event) {
     DisplayClear();
     uiGetMouse(x, y, button, event);
 
@@ -472,7 +478,7 @@ void MouseEventProcess(int x, int y, int button, int event) {
     double editorXStart = browserWidth + BUTTON_GAP;
     double scrollbarX   = screenWidth - SCROLLBAR_WIDTH;
 
-    if (event==BUTTON_UP && button!=MIDDLE_BUTTON) mouseUpProcess(button==1 ? 1 : 2);
+    if (event==BUTTON_UP && (button==LEFT_BUTTON || button==RIGHT_BUTTON)) mouseUpProcess(button==1 ? 1 : 2);
     if (event==MOUSEMOVE) mouseMoveProcess(xd,yd);
     if (event==ROLL_UP || event==ROLL_DOWN)
     {
@@ -484,9 +490,9 @@ void MouseEventProcess(int x, int y, int button, int event) {
                 editorMouseMiddleRolldown();
         }
     }
-    if (event==BUTTON_DOWN && button!=MIDDLE_BUTTON)
+    if (event==BUTTON_DOWN && (button==LEFT_BUTTON || button==RIGHT_BUTTON))
     {
-        if(button==3) button = 2;
+        if(button==RIGHT_BUTTON) button = 2;
         if (inputMode == 0)
         {
             mouseDownProcess(xd, yd, button, 0,            toolYStart, editorXStart, mainAreaYEnd, 2);
@@ -507,9 +513,9 @@ void MouseEventProcess(int x, int y, int button, int event) {
 #define KEYSTATE_ALT      4
 static int UIKeyState;
 
-static int GetCtrlKeyState()  { return UIKeyState | KEYSTATE_CONTROL; }
-static int GetShiftKeyState() { return UIKeyState | KEYSTATE_SHIFT;   }
-static int GetAltKeyState()   { return UIKeyState | KEYSTATE_ALT;     }
+static int GetCtrlKeyState()  { return UIKeyState & KEYSTATE_CONTROL; }
+static int GetShiftKeyState() { return UIKeyState & KEYSTATE_SHIFT;   }
+static int GetAltKeyState()   { return UIKeyState & KEYSTATE_ALT;     }
 
 char* madeupHotkeyCode(char ch)
 {
@@ -518,10 +524,16 @@ char* madeupHotkeyCode(char ch)
     return keyTmp;
 }
 
-void CharEventProcess(char ch) {
+int isChr(char ch)
+{
+	return ch!='\r' && ch!='\b';
+}
+
+void myCharEventProcess(char ch) 
+{
     DisplayClear();
     uiGetChar(ch);
-    if(!GetCtrlKeyState() && !GetAltKeyState())
+    if(!GetCtrlKeyState() && !GetAltKeyState() && isChr(ch))
     {
         if(inputMode == 0) //主界面
         {
@@ -565,7 +577,8 @@ static char charize(int key)
     return key;
 }
 
-void KeyboardEventProcess(int key, int event) {
+void myKeyboardEventProcess(int key, int event) 
+{
     DisplayClear();
     uiGetKeyboard(key,event);
 
@@ -585,7 +598,7 @@ void KeyboardEventProcess(int key, int event) {
         if(event == KEY_DOWN) UIKeyState |=   KEYSTATE_SHIFT;
         else                  UIKeyState &= 7-KEYSTATE_SHIFT;
     }
-    if(key==KEYBOARD_CTRL || key==KEYSTATE_ALT || key==KEYSTATE_SHIFT || inputMode>=4)
+    if(key==KEYBOARD_CTRL || key==KEYBOARD_ALT || key==KEYBOARD_SHIFT || inputMode>=4)
     {
         display();
         return;
@@ -605,7 +618,7 @@ void KeyboardEventProcess(int key, int event) {
     }
 
     //传入特殊字符
-    if(!GetCtrlKeyState() && !GetAltKeyState() && !GetShiftKeyState() && inputMode==0)
+    if(event==KEY_DOWN && !GetCtrlKeyState() && !GetAltKeyState() && !GetShiftKeyState())
     {
         if(inputMode == 0)
         {
@@ -659,7 +672,7 @@ static void clearInputBuffers()
 // 主界面
 void ChangeDisplayMethodToMain() {
     changeDisplayMethodProcess();
-    double mainAreaHeight = screenHeight - TITLE_HEIGHT - MENU_HEIGHT - TOOL_HEIGHT - 3 * WINDOW_MARGIN;
+    double mainAreaHeight = GetWindowHeight() - TITLE_HEIGHT - MENU_HEIGHT - TOOL_HEIGHT - 3 * WINDOW_MARGIN;
     setRollerHeight(mainAreaHeight);
     inputMode = 0;
 }
@@ -667,7 +680,7 @@ void ChangeDisplayMethodToMain() {
 // 小输入界面
 void ChangeDisplayMethodToInput(ButtonEventWithInput callback) {
     changeDisplayMethodProcess();
-    double mainAreaHeight = screenHeight - TITLE_HEIGHT - MENU_HEIGHT - TOOL_HEIGHT - INPUT_BAR_HEIGHT - 4 * WINDOW_MARGIN;
+    double mainAreaHeight = GetWindowHeight() - TITLE_HEIGHT - MENU_HEIGHT - TOOL_HEIGHT - INPUT_BAR_HEIGHT - 4 * WINDOW_MARGIN;
     setRollerHeight(mainAreaHeight);
     inputMode = 1;
     inputConfirmedCallback = callback;
@@ -677,7 +690,7 @@ void ChangeDisplayMethodToInput(ButtonEventWithInput callback) {
 // 弹窗输入界面
 void ChangeDisplayMethodToMajorInput(char* inputMessage, ButtonEventWithInput callback) {
     changeDisplayMethodProcess();
-    double mainAreaHeight = screenHeight - TITLE_HEIGHT - MENU_HEIGHT - TOOL_HEIGHT - 3 * WINDOW_MARGIN;
+    double mainAreaHeight = GetWindowHeight() - TITLE_HEIGHT - MENU_HEIGHT - TOOL_HEIGHT - 3 * WINDOW_MARGIN;
     setRollerHeight(mainAreaHeight);
     inputMode = 2;
     inputConfirmedCallback = callback;
@@ -715,13 +728,15 @@ void GUI_Start() {
     setMenuColors("Black", "Black", "Red", "Red", 0);
     setButtonColors("Black", "Black", "Red", "Red", 0);
     SetPenColor("Black");
+    
+    strcpy(defaultPenFont, GetFont());
+    defaultPointSize = GetPointSize();
 
+    registerMouseEvent(myMouseEventProcess);
+    registerKeyboardEvent(myKeyboardEventProcess);
+    registerCharEvent(myCharEventProcess);
     ChangeDisplayMethodToMain();
-    registerMouseEvent(MouseEventProcess);
-    registerKeyboardEvent(KeyboardEventProcess);
-    registerCharEvent(CharEventProcess);
 }
-
 
 //////////////////////////////////////////////// 实现注册函数 //////////////////////////////////////////
 //Display 或 Draw 函数

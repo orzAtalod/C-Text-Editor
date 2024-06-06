@@ -6,12 +6,12 @@ CC       = gcc.exe
 WINDRES  = windres.exe
 OBJ      = ../outputs/main.o ../outputs/exceptio.o ../outputs/genlib.o ../outputs/graphics.o ../outputs/linkedlist.o ../outputs/random.o ../outputs/simpio.o ../outputs/strlib.o ../outputs/textStructure.o ../outputs/fileSystem.o ../outputs/blockList.o ../outputs/fileSystemCore.o ../outputs/explorerCore.o ../outputs/dictionaryList.o ../outputs/myGUI.o ../outputs/blocklistInitor.o ../outputs/controller.o ../outputs/editorCore.o ../outputs/imageStructure.o ../outputs/imgui.o
 LINKOBJ  = ../outputs/main.o ../outputs/exceptio.o ../outputs/genlib.o ../outputs/graphics.o ../outputs/linkedlist.o ../outputs/random.o ../outputs/simpio.o ../outputs/strlib.o ../outputs/textStructure.o ../outputs/fileSystem.o ../outputs/blockList.o ../outputs/fileSystemCore.o ../outputs/explorerCore.o ../outputs/dictionaryList.o ../outputs/myGUI.o ../outputs/blocklistInitor.o ../outputs/controller.o ../outputs/editorCore.o ../outputs/imageStructure.o ../outputs/imgui.o
-LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib" -L"C:/Program Files (x86)/Dev-Cpp/MinGW32/mingw32/lib" -static-libstdc++ -static-libgcc -mwindows
+LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib" -L"C:/Program Files (x86)/Dev-Cpp/MinGW32/mingw32/lib" -static-libstdc++ -static-libgcc -mwindows -g3
 INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include" -I"../libgraphics" -I"../header" -I"../simpleGUI"
 CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib/gcc/mingw32/4.7.2/include/c++" -I"../libgraphics" -I"../header" -I"../simpleGUI"
 BIN      = "../C Text Editor.exe"
-CXXFLAGS = $(CXXINCS) -Wall
-CFLAGS   = $(INCS) -Wall -std=c99
+CXXFLAGS = $(CXXINCS) -g3 -Wall
+CFLAGS   = $(INCS) -g3 -Wall -std=c99
 RM       = rm -f
 
 .PHONY: all all-before all-after clean clean-custom

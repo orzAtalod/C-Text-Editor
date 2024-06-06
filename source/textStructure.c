@@ -101,7 +101,7 @@ void DrawStyleString(StyleString* str, double cx, double cy, double width, doubl
 		tmp[curIndex] = '\0';
 		if(TextStringWidth(tmp) > width-2*TEXT_STRING_MARGIN)
 		{
-			if(nowH>=begH-1E-5 && nowH<=endH+1E-5)
+			if(nowH<=begH+1E-5 && nowH>=endH-1E-5)
 			{
 				MovePen(cx+TEXT_STRING_MARGIN,cy-nowH+begH-GetFontAscent());
 				drawStrings(str,preIndex,i-1);
@@ -113,6 +113,8 @@ void DrawStyleString(StyleString* str, double cx, double cy, double width, doubl
 			nowH += lineHeight;
 		}
 	}
+	MovePen(cx+TEXT_STRING_MARGIN, cy-nowH+begH-GetFontAscent());
+	drawStrings(str, preIndex, str->contentLen-1);
 }
 
 int GetPositionFromRelativeXY_StyleString(StyleString* str, double width, double rx, double ry)
@@ -158,6 +160,7 @@ double GetRelativeXFromPosition_StyleString(StyleString* str, double width, int 
 	{
 		tmp[curIndex++] = ' ';
 	}
+	tmp[curIndex] = '\0';
 	for(int i=0; i<position; ++i)
 	{
 		tmp[curIndex++] = str->content[i].content;
@@ -185,6 +188,7 @@ double GetRelativeYFromPosition_StyleString(StyleString* str, double width, int 
 	{
 		tmp[curIndex++] = ' ';
 	}
+	tmp[curIndex] = '\0';
 	for(int i=0; i<position; ++i)
 	{
 		tmp[curIndex++] = str->content[i].content;

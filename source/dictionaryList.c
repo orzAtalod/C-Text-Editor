@@ -244,6 +244,7 @@ DictionaryCursor PositionizeDictionaryList(DictionaryGraphicDatas* dl, Dictionar
 //////////////////////////   创建、拷贝、销毁函数  //////////////////////// 
 #define NEW(x)  ((x*)malloc(sizeof(x)))
 #define NEWVARR(x,len) ((x*)malloc((len)*sizeof(x)))
+#define CNEW(x)  ((x*)calloc(1,sizeof(x)))
 
 DictionaryGraphicDatas* CopyDictionaryGraphicDatas(DictionaryGraphicDatas* sorce)
 {
@@ -277,7 +278,7 @@ void FreeDictionaryGraphicDatas(DictionaryGraphicDatas* dg)
 DictionaryItem* CreateDictionaryItem()
 {
 	static int IDs = 0;
-	DictionaryItem* ni = NEW(DictionaryItem);
+	DictionaryItem* ni = CNEW(DictionaryItem);
 	ni->itemID   = ++IDs;
 	ni->itemName = NEWVARR(char, NAME_SIZE);
 	strcpy(ni->itemName, "Noname"); 
@@ -311,10 +312,11 @@ DictionaryItem* CopyDictionaryItem(DictionaryItem* sorce)
 DictionaryFolder* CreateDictionaryFolder()
 {
 	static int IDs = 0;
-	DictionaryFolder* nf = NEW(DictionaryFolder);
+	DictionaryFolder* nf = CNEW(DictionaryFolder);
 	nf->folderID   = ++IDs;
 	nf->folderName = NEWVARR(char, NAME_SIZE);
 	strcpy(nf->folderName, "Noname");
+	 
 	return nf;
 }
 

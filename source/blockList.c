@@ -22,6 +22,8 @@ static void ensureListSpace()
 		blocklist[curPage] = (Block*)malloc(BLOCKLIST_FIRST_SHARE_SPACE*sizeof(Block));
 		blockDeleted[curPage] = (int*)malloc(BLOCKLIST_FIRST_SHARE_SPACE*sizeof(int));
 		blockDeleteNum[curPage] = (int*)malloc(BLOCKLIST_FIRST_SHARE_SPACE*sizeof(int));
+		memset(blockDeleted[curPage],0,BLOCKLIST_FIRST_SHARE_SPACE*sizeof(int));
+		memset(blockDeleteNum[curPage],0,BLOCKLIST_FIRST_SHARE_SPACE*sizeof(int)); 
 		return;
 	}
 	if(blocklistSpace[curPage] == blocklistLength[curPage])
@@ -54,28 +56,53 @@ typedef struct {
 
 blockExchangeStruct blocksBuffer[65535];
 
-static double columnsW[255];  static int colNum;
+static double* columnsW[255];  static int colNum[255];
 
 void SetColumnInfo(int columnNum, double* columns)
 {
-	colNum = columnNum;
-	memcpy(columnsW, columns, (colNum+1)*sizeof(double));
+	colNum[curPage] = columnNum;
+	free(columnsW[curPage]);
+	columnsW[curPage] = (double*)malloc((columnNum+5)*sizeof(double));
+	memcpy(columnsW[curPage], columns, (colNum[curPage]+1)*sizeof(double));
 }
 
 int GetColumnNum(void)
 {
-	return colNum;
+	return colNum[curPage];
 }
 
 double GetColumnWidth(int cID)
 {
-	return columnsW[cID];
+	return columnsW[curPage][cID];
+}
+
+void readColumns(FILE* f)
+{
+	fread(colNum+curPage, sizeof(int), 1, f);
+	free(columnsW[curPage]);
+	columnsW[curPage] = (double*)malloc((colNum[curPage]+5)*sizeof(double));
+	fread(columnsW[curPage]+1, sizeof(double), colNum[curPage], f);
+	columnsW[curPage][0] = 0;
+}
+
+void writeColumns(FILE* f)
+{
+	fwrite(colNum+curPage, sizeof(int), 1, f);
+	fwrite(columnsW[curPage]+1, sizeof(double), colNum[curPage], f);
+}
+
+static void clearCulumnInfo()
+{
+	if(columnsW[curPage]) free(columnsW[curPage]);
+	columnsW[curPage] = (double*)malloc(2*sizeof(double));
+	columnsW[curPage][0] = 0;
+	columnsW[curPage][1] = 1;
+	colNum[curPage] = 1;
 }
 
 void LoadBlockList(FILE* f)
 {
-	fread(&colNum, sizeof(int), 1, f);
-	fread(columnsW, sizeof(double), colNum+1, f);
+	readColumns(f);
 
 	int blocknum;
 	fread(&blocknum, sizeof(int), 1, f);
@@ -106,8 +133,7 @@ void LoadBlockList(FILE* f)
 void SaveBlockList(FILE* f)
 {
 	assert(curPage);
-	fwrite(&colNum, sizeof(int), 1, f);
-	fwrite(columnsW, sizeof(double), colNum+1, f);
+	writeColumns(f);
 	const int blocknum = blocklistLength[curPage];
 	for(int i=1; i<=blocknum; ++i)
 	{
@@ -167,6 +193,7 @@ void ClearBlockList()
 	if(blocklist[curPage]) free(blocklist[curPage]);
 	if(blockDeleted[curPage]) free(blockDeleted[curPage]);
 	if(blockDeleteNum[curPage]) free(blockDeleteNum[curPage]);
+	clearCulumnInfo();
 	blocklist[curPage] = NULL;
 	blockDeleted[curPage] = NULL;
 	blockDeleteNum[curPage] = NULL;

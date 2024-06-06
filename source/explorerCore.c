@@ -277,6 +277,21 @@ void BuildFiles()
 			}
 		}
 	}
+	
+	if(fullFolder->subFolders)
+	{
+		while(fullFolder->subFolders->prevFolder)
+		{
+			fullFolder->subFolders = fullFolder->subFolders->prevFolder;
+		}
+	}
+	if(fullFolder->items)
+	{
+		while(fullFolder->items->prevItem)
+		{
+			fullFolder->items = fullFolder->items->prevItem;
+		}
+	}
 
 	if(currentFile)
 	{
@@ -324,7 +339,7 @@ void writeFiles(FILE* f)
 		fileBuffer[i].editTime = files[i]->editTime;
 		fileBuffer[i].fileNameLen = strlen(files[i]->fileName);
 		fileBuffer[i].filePathLen = strlen(files[i]->filePath);
-		fileBuffer[i].folderID = files[i]->folder->folderID;
+		fileBuffer[i].folderID = files[i]->folder ? files[i]->folder->folderID : 0;
 		fileBuffer[i].tagNum = files[i]->tagNum;
 	}
 
@@ -433,11 +448,11 @@ static void initializeDGD()
 	showDGD = CreateDictionaryGraphicDatas();
 }
 
-void DrawExplorer(double cx, double cy, double width, double height)
+void DrawExplorer(double cx, double cy, double dx, double dy)
 {
 	if(!showDGD) initializeDGD();
-	lastWidth = width;
-	DrawDictionaryList(showDGD, fullFolder, cx, cy, width, 0, height);
+	lastWidth = dx-cx;
+	DrawDictionaryList(showDGD, fullFolder, cx, cy, dx-cx, 0, cy-dy);
 }
 
 void guiDrawExplorer(double cx,double cy,double dx,double dy)
