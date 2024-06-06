@@ -2,10 +2,9 @@
 #define __FILE_SYSTEM_H_INCLUDED__
 #include "fileSystemCore.h"
 
-void InitFileSystem(ColorDefinitionFunction func);
-void UpdateColorDefinitionMethod(ColorDefinitionFunction func);
+void InitFileSystem();
 void ChangePageAtFileSystem(int page);
-void LoadFileAtPage(int page, const char* fileName);
+int  LoadFileAtPage(int page, const char* fileName); //return 1 when failed
 void SaveFileAtPage(int page, const char* fileName);
 void LoadFile(const char* fileName);
 void SaveFile(const char* fileName);

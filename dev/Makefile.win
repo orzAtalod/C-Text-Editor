@@ -4,11 +4,11 @@
 CPP      = g++.exe
 CC       = gcc.exe
 WINDRES  = windres.exe
-OBJ      = ../outputs/main.o ../outputs/exceptio.o ../outputs/genlib.o ../outputs/graphics.o ../outputs/linkedlist.o ../outputs/random.o ../outputs/simpio.o ../outputs/strlib.o ../outputs/textStructure.o ../outputs/fileSystem.o ../outputs/blockList.o ../outputs/fileSystemCore.o ../outputs/explorerCore.o ../outputs/dictionaryList.o
-LINKOBJ  = ../outputs/main.o ../outputs/exceptio.o ../outputs/genlib.o ../outputs/graphics.o ../outputs/linkedlist.o ../outputs/random.o ../outputs/simpio.o ../outputs/strlib.o ../outputs/textStructure.o ../outputs/fileSystem.o ../outputs/blockList.o ../outputs/fileSystemCore.o ../outputs/explorerCore.o ../outputs/dictionaryList.o
+OBJ      = ../outputs/main.o ../outputs/exceptio.o ../outputs/genlib.o ../outputs/graphics.o ../outputs/linkedlist.o ../outputs/random.o ../outputs/simpio.o ../outputs/strlib.o ../outputs/textStructure.o ../outputs/fileSystem.o ../outputs/blockList.o ../outputs/fileSystemCore.o ../outputs/explorerCore.o ../outputs/dictionaryList.o ../outputs/myGUI.o ../outputs/blocklistInitor.o ../outputs/controller.o ../outputs/editorCore.o ../outputs/imageStructure.o ../outputs/imgui.o
+LINKOBJ  = ../outputs/main.o ../outputs/exceptio.o ../outputs/genlib.o ../outputs/graphics.o ../outputs/linkedlist.o ../outputs/random.o ../outputs/simpio.o ../outputs/strlib.o ../outputs/textStructure.o ../outputs/fileSystem.o ../outputs/blockList.o ../outputs/fileSystemCore.o ../outputs/explorerCore.o ../outputs/dictionaryList.o ../outputs/myGUI.o ../outputs/blocklistInitor.o ../outputs/controller.o ../outputs/editorCore.o ../outputs/imageStructure.o ../outputs/imgui.o
 LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib" -L"C:/Program Files (x86)/Dev-Cpp/MinGW32/mingw32/lib" -static-libstdc++ -static-libgcc -mwindows
-INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include" -I"../libgraphics"
-CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib/gcc/mingw32/4.7.2/include/c++" -I"../libgraphics"
+INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include" -I"../libgraphics" -I"../header" -I"../simpleGUI"
+CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib/gcc/mingw32/4.7.2/include/c++" -I"../libgraphics" -I"../header" -I"../simpleGUI"
 BIN      = "../C Text Editor.exe"
 CXXFLAGS = $(CXXINCS) -Wall
 CFLAGS   = $(INCS) -Wall -std=c99
@@ -65,3 +65,21 @@ $(BIN): $(OBJ)
 
 ../outputs/dictionaryList.o: ../source/dictionaryList.c
 	$(CC) -c ../source/dictionaryList.c -o ../outputs/dictionaryList.o $(CFLAGS)
+
+../outputs/myGUI.o: ../source/myGUI.c
+	$(CC) -c ../source/myGUI.c -o ../outputs/myGUI.o $(CFLAGS)
+
+../outputs/blocklistInitor.o: ../source/blocklistInitor.c
+	$(CC) -c ../source/blocklistInitor.c -o ../outputs/blocklistInitor.o $(CFLAGS)
+
+../outputs/controller.o: ../source/controller.c
+	$(CC) -c ../source/controller.c -o ../outputs/controller.o $(CFLAGS)
+
+../outputs/editorCore.o: ../source/editorCore.c
+	$(CC) -c ../source/editorCore.c -o ../outputs/editorCore.o $(CFLAGS)
+
+../outputs/imageStructure.o: ../source/imageStructure.c
+	$(CC) -c ../source/imageStructure.c -o ../outputs/imageStructure.o $(CFLAGS)
+
+../outputs/imgui.o: ../simpleGUI/imgui.c
+	$(CC) -c ../simpleGUI/imgui.c -o ../outputs/imgui.o $(CFLAGS)

@@ -1,6 +1,7 @@
 #include "textStructure.h"
 #include "fileSystemCore.h"
 #include <stdlib.h>
+#include "extgraph.h"
 
 static int bufferInt[255];
 
@@ -10,11 +11,12 @@ StyleString* ReadStyleString(FILE* f)
 	fread(bufferInt, sizeof(int), 5, f);
 	res->pointSize = bufferInt[0];
 	res->indent    = bufferInt[1];
-	res->color     = LookupIDInColorTable(bufferInt[2]);
-	res->font      = LookupIDInFontTable(bufferInt[3]);
+	res->color     = (char*)LookupIDInColorTable(bufferInt[2]);
+	res->font      = (char*)LookupIDInFontTable(bufferInt[3]);
 	res->contentLen = res->contentSpace = bufferInt[4];
 	res->content   = (StyleChar*)malloc(res->contentSpace*sizeof(StyleChar));
 	fread(res->content, sizeof(StyleChar), res->contentLen, f);
+	return res;
 }
 
 
@@ -29,7 +31,7 @@ void WriteStyleString(StyleString* str, FILE* f)
 	fwrite(str->content, sizeof(StyleChar), str->contentLen, f);
 }
 
-static char* tmp[255];
+static char tmp[255];
 #define TEXT_STRING_MARGIN 0.01
 double GetStyleStringHeight(StyleString* str, double width)
 {
@@ -45,11 +47,11 @@ double GetStyleStringHeight(StyleString* str, double width)
 	}
 	for(int i=0; i<str->contentLen; ++i)
 	{
-		tmp[curIndex++] = str->contentLen[i].content;
+		tmp[curIndex++] = str->content[i].content;
 		tmp[curIndex] = '\0';
 		if(TextStringWidth(tmp) > width-2*TEXT_STRING_MARGIN)
 		{
-			tmp[0] = str->contentLen[i].content;
+			tmp[0] = str->content[i].content;
 			tmp[1] = '\0';
 			curIndex = 1;
 			curHeight += lineHeight;
@@ -86,8 +88,8 @@ void DrawStyleString(StyleString* str, double cx, double cy, double width, doubl
 	SetPenColor(str->color);
 	const double lineHeight = GetFontHeight();
 
-	int curIndex = 0;
 	int preIndex = -1;
+	int curIndex = 0;
 	double nowH = 0;
 	for(int i=0; i<=str->indent; ++i)
 	{
@@ -95,17 +97,17 @@ void DrawStyleString(StyleString* str, double cx, double cy, double width, doubl
 	}
 	for(int i=0; i<str->contentLen; ++i)
 	{
-		tmp[curIndex++] = str->contentLen[i].content;
+		tmp[curIndex++] = str->content[i].content;
 		tmp[curIndex] = '\0';
 		if(TextStringWidth(tmp) > width-2*TEXT_STRING_MARGIN)
 		{
 			if(nowH>=begH-1E-5 && nowH<=endH+1E-5)
 			{
-				MovePen(cx+TEXT_STRING_MARGIN,cy-nowH+begH-GetFontAscent())
+				MovePen(cx+TEXT_STRING_MARGIN,cy-nowH+begH-GetFontAscent());
 				drawStrings(str,preIndex,i-1);
 			}
 			preIndex = i;
-			tmp[0] = str->contentLen[i].content;
+			tmp[0] = str->content[i].content;
 			tmp[1] = '\0';
 			curIndex = 1;
 			nowH += lineHeight;
@@ -128,7 +130,7 @@ int GetPositionFromRelativeXY_StyleString(StyleString* str, double width, double
 	}
 	for(int i=0; i<str->contentLen; ++i)
 	{
-		tmp[curIndex++] = str->contentLen[i].content;
+		tmp[curIndex++] = str->content[i].content;
 		tmp[curIndex] = '\0';
 		if(!lineN)
 		{
@@ -137,7 +139,7 @@ int GetPositionFromRelativeXY_StyleString(StyleString* str, double width, double
 		if(TextStringWidth(tmp) > width-2*TEXT_STRING_MARGIN)
 		{
 			if(!lineN) return i+1;
-			tmp[0] = str->contentLen[i].content;
+			tmp[0] = str->content[i].content;
 			tmp[1] = '\0';
 			curIndex = 1;
 			--lineN;
@@ -158,11 +160,11 @@ double GetRelativeXFromPosition_StyleString(StyleString* str, double width, int 
 	}
 	for(int i=0; i<position; ++i)
 	{
-		tmp[curIndex++] = str->contentLen[i].content;
+		tmp[curIndex++] = str->content[i].content;
 		tmp[curIndex] = '\0';
 		if(TextStringWidth(tmp) > width-2*TEXT_STRING_MARGIN)
 		{
-			tmp[0] = str->contentLen[i].content;
+			tmp[0] = str->content[i].content;
 			tmp[1] = '\0';
 			curIndex = 1;
 		} 
@@ -185,11 +187,11 @@ double GetRelativeYFromPosition_StyleString(StyleString* str, double width, int 
 	}
 	for(int i=0; i<position; ++i)
 	{
-		tmp[curIndex++] = str->contentLen[i].content;
+		tmp[curIndex++] = str->content[i].content;
 		tmp[curIndex] = '\0';
 		if(TextStringWidth(tmp) > width-2*TEXT_STRING_MARGIN)
 		{
-			tmp[0] = str->contentLen[i].content;
+			tmp[0] = str->content[i].content;
 			tmp[1] = '\0';
 			curIndex = 1;
 			curHeight += lineHeight;
@@ -197,4 +199,11 @@ double GetRelativeYFromPosition_StyleString(StyleString* str, double width, int 
 	}
 
 	return -curHeight;
+}
+
+double GetStyleStringElementHeight(StyleString* str)
+{
+	SetPointSize(str->pointSize);
+	SetFont(str->font);
+	return GetFontHeight();
 }

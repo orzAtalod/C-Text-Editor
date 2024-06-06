@@ -20,8 +20,8 @@ typedef struct{
 	int contentLen;
 	int contentSpace;
 	StyleChar* content;
-	const* char color;
-	const* char font;
+	const char* color;
+	const char* font;
 } StyleString;
 
 /* 
@@ -60,5 +60,7 @@ void DrawStyleString(StyleString* str, double cx, double cy, double width, doubl
 int GetPositionFromRelativeXY_StyleString(StyleString* str, double width, double rx, double ry);
 double GetRelativeXFromPosition_StyleString(StyleString* str, double width, int position);
 double GetRelativeYFromPosition_StyleString(StyleString* str, double width, int position);
+
+double GetStyleStringElementHeight(StyleString* str);
 
 #endif

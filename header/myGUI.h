@@ -33,6 +33,7 @@ typedef double (*GetInfoMethod)(void);
 typedef void (*MouseEventMethod)(double,double);
 typedef void (*KeyboardEventMethod)(char); 
 typedef void (*ColorDefinitionMethod)(const char*,double,double,double); 
+typedef void (*SetValueMethod)(double);
 
 /*
 *
@@ -82,6 +83,8 @@ typedef void (*ColorDefinitionMethod)(const char*,double,double,double);
 */
 
 void ChangeDisplayMethodToMain();
+void RegisterSetRollerHeightMethod(SetValueMethod cb);
+void RegisterSetEditorWidth(SetValueMethod cb);
 
 void RegisterSaveMethod(ButtonEvent);
 void RegisterOpenMethod(ButtonEvent);

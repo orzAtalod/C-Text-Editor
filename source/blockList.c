@@ -1,6 +1,9 @@
 #include "blockList.h"
 #include <stdlib.h>
 #include <assert.h>
+#include <stdlib.h>
+#include <string.h>
+#include "extgraph.h"
 
 #define BLOCKLIST_FIRST_SHARE_SPACE 100
 static Block* blocklist[255];
@@ -24,8 +27,8 @@ static void ensureListSpace()
 	if(blocklistSpace[curPage] == blocklistLength[curPage])
 	{
 		blocklist[curPage] = (Block*)realloc(blocklist[curPage], 2*blocklistSpace[curPage]*sizeof(Block));
-		blockDeleted[curPage] = (int*)ralloc(blockDeleted, 2*blocklistSpace[curPage]*sizeof(int));
-		blockDeleteNum[curPage] = (int*)ralloc(blockDeleteNum, 2*blocklistSpace[curPage]*sizeof(int));
+		blockDeleted[curPage] = (int*)realloc(blockDeleted, 2*blocklistSpace[curPage]*sizeof(int));
+		blockDeleteNum[curPage] = (int*)realloc(blockDeleteNum, 2*blocklistSpace[curPage]*sizeof(int));
 		blocklistSpace[curPage] *= 2;
 		return;
 	}
@@ -86,6 +89,8 @@ void LoadBlockList(FILE* f)
 			blocklist[curPage][i].ID    = i;
 			blocklist[curPage][i].type  = blocksBuffer[i-1].type;
 			blocklist[curPage][i].align = blocksBuffer[i-1].align;
+			blockDeleted[curPage][i] = 0;
+			blockDeleteNum[curPage][i] = 0;
 			++blocklistLength[curPage];
 		}
 	}
@@ -106,18 +111,18 @@ void SaveBlockList(FILE* f)
 	const int blocknum = blocklistLength[curPage];
 	for(int i=1; i<=blocknum; ++i)
 	{
-		if(blockDeleted[i]) continue;
+		if(blockDeleted[curPage][i]) continue;
 		const int abid = blocklist[curPage][i].align.alignBlockID;
-		blocksBuffer[i-1-blockDeleteNum[i]].type  = blocklist[curPage][i].type;
-		blocksBuffer[i-1-blockDeleteNum[i]].align = blocklist[curPage][i].align;
-		blocksBuffer[i-1-blockDeleteNum[i]].align.alignBlockID -= blockDeleteNum[abid];
+		blocksBuffer[i-1-blockDeleteNum[curPage][i]].type  = blocklist[curPage][i].type;
+		blocksBuffer[i-1-blockDeleteNum[curPage][i]].align = blocklist[curPage][i].align;
+		blocksBuffer[i-1-blockDeleteNum[curPage][i]].align.alignBlockID -= blockDeleteNum[curPage][abid];
 	}
-	const int realBlkNum = blocknum - blockDeleteNum[blocknum];
+	const int realBlkNum = blocknum - blockDeleteNum[curPage][blocknum];
 	fwrite(&realBlkNum, sizeof(int), 1, f);
 	fwrite(blocksBuffer, sizeof(blockExchangeStruct), realBlkNum, f);
 	for(int i=1; i<=blocknum; ++i)
 	{
-		if(!blockDeleted[i])
+		if(!blockDeleted[curPage][i])
 		{
 			(writers[blocklist[curPage][i].type])(blocklist[curPage][i].dataptr, f);
 		}
@@ -149,11 +154,11 @@ Block* BlockCreate(int type, void* dataptr)
 
 void BlockDelete(Block* blk)
 {
-	blockDeleted[blk->ID] = 1;
+	blockDeleted[curPage][blk->ID] = 1;
 	const int blockNum = blocklistLength[curPage];
 	for(int i=blk->ID; i<=blockNum; ++i)
 	{
-		++blockDeleteNum[i];
+		++blockDeleteNum[curPage][i];
 	}
 }
 
@@ -162,7 +167,9 @@ void ClearBlockList()
 	if(blocklist[curPage]) free(blocklist[curPage]);
 	if(blockDeleted[curPage]) free(blockDeleted[curPage]);
 	if(blockDeleteNum[curPage]) free(blockDeleteNum[curPage]);
-	blocklist[curPage] = 0;
+	blocklist[curPage] = NULL;
+	blockDeleted[curPage] = NULL;
+	blockDeleteNum[curPage] = NULL;
 	blocklistLength[curPage] = blocklistSpace[curPage] = 0;
 }
 
@@ -194,7 +201,7 @@ void* AccumlateBlockList(BlockListAccumlateFunc func, void* beginValue)
 	return beginValue;
 }
 
-Block* GetBlock(int blockID)
+Block* GetBlockFromIDInBlockList(int blockID)
 {
 	return blocklist[curPage]+blockID;
 }
@@ -209,7 +216,7 @@ void RegisterGetHeightFunc(int type, GetHeightFunc func)
 
 double GetHeight(Block* blk, double width)
 {
-	if(blockDeleted[blk->ID]) return 0;
+	if(blockDeleted[curPage][blk->ID]) return 0;
 	return heightFunc[blk->type](blk->dataptr, width);
 }
 
@@ -221,9 +228,9 @@ void RegisterDrawFunc(int type, DrawFunc func)
 	drawfunc[type] = func;
 }
 
-void DrawBlock(Block* b, double cx, double cy, double width, double begH, double endH)
+void DrawBlockInBlockList(Block* b, double cx, double cy, double width, double begH, double endH)
 {
-	if(blockDeleted[b->ID]) return;
+	if(blockDeleted[curPage][b->ID]) return;
 	drawfunc[b->type](b->dataptr, cx, cy, width, begH, endH);
 	SetPenColor("Black");
 	SetPenSize(3);
@@ -246,18 +253,31 @@ void RegisterGetRelativeXYFunc(int type, GetRelativeXYFunc fx, GetRelativeXYFunc
 
 int GetPositionFromRelativeXY(Block* b, double width, double rx, double ry)
 {
-	if(blockDeleted[b->ID]) return 0;
+	if(blockDeleted[curPage][b->ID]) return 0;
 	return posFunci[b->type](b->dataptr, width, rx, ry);
 }
 
 double GetRelativeXFromPosition(Block* b, double width, int position)
 {
-	if(blockDeleted[b->ID]) return 0;
+	if(blockDeleted[curPage][b->ID]) return 0;
 	return relFuncX[b->type](b->dataptr, width, position);
 }
 
 double GetRelativeYFromPosition(Block* b, double width, int position)
 {
-	if(blockDeleted[b->ID]) return 0;
+	if(blockDeleted[curPage][b->ID]) return 0;
 	return relFuncY[b->type](b->dataptr, width, position);
 }
+
+GetEleHeightFunc gehf[255];
+
+void RegisterGetEleHeightFunc(int type, GetEleHeightFunc func)
+{
+	gehf[type] = func;
+}
+
+double GetElementHeight(Block* b)
+{
+	return gehf[b->type](b->dataptr);
+}
+

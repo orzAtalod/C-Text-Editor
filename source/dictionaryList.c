@@ -4,6 +4,7 @@
 #include <string.h>
 #include "graphics.h"
 #include "extgraph.h"
+#include <assert.h>
 
 ////////////////////////////////  »ù´¡¹¤¾ß  //////////////////////////// 
 
@@ -33,7 +34,7 @@ static const char* generateLimitedOutput(drawCommand dc, double width)
 		return outputBuffer;
 	}
 
-	outputBuffer[offset] = outputBuffer[outset+1] = '.';
+	outputBuffer[offset] = outputBuffer[offset+1] = '.';
 	outputBuffer[offset+2] = '\0';
 	if(TextStringWidth(outputBuffer) > width)
 	{
@@ -67,12 +68,12 @@ static void fillDrawCommandsItem(DictionaryGraphicDatas* dl, DictionaryItem* x, 
 {
 	if(!x) return;
 	++curline;
-	drawCommand[curline].type = 2;
-	drawCommand[curline].indent = curindent;
-	drawCommand[curline].name = x->itemName;
-	drawCommand[curline].penColor = (dl->itemColors)[x->itemEmphasizeType];
-	drawCommand[curline].prefix = "| ";
-	drawCommand[curline].source = (void*)x;
+	dicLines[curline].type = 2;
+	dicLines[curline].indent = curindent;
+	dicLines[curline].name = x->itemName;
+	dicLines[curline].penColor = (dl->itemColors)[x->itemEmphasizeType];
+	dicLines[curline].prefix = "| ";
+	dicLines[curline].source = (void*)x;
 	fillDrawCommandsItem(dl, x->nextItem, curindent);
 }
 
@@ -80,12 +81,12 @@ static void fillDrawCommandsFolder(DictionaryGraphicDatas* dl, DictionaryFolder*
 {
 	if(!x) return;
 	++curline;
-	drawCommand[curline].type = 1;
-	drawCommand[curline].indent = curindent;
-	drawCommand[curline].name = x->folderName;
-	drawCommand[curline].penColor = (dl->folderColors)[x->folderEmphasizeType];
-	drawCommand[curline].prefix = x->folderExpended ? "+ " : "- ";
-	drawCommand[curline].source = (void*)x;
+	dicLines[curline].type = 1;
+	dicLines[curline].indent = curindent;
+	dicLines[curline].name = x->folderName;
+	dicLines[curline].penColor = (dl->folderColors)[x->folderEmphasizeType];
+	dicLines[curline].prefix = x->folderExpended ? "+ " : "- ";
+	dicLines[curline].source = (void*)x;
 	if(x->folderExpended)
 	{
 		fillDrawCommandsItem(dl, x->items, curindent+dl->indent);
@@ -97,7 +98,7 @@ static void fillDrawCommandsFolder(DictionaryGraphicDatas* dl, DictionaryFolder*
 static void fillDrawCommands(DictionaryGraphicDatas* dl, DictionaryFolder* x)
 {
 	assert(dl);
-	culine = 0;
+	curline = 0;
 	fillDrawCommandsFolder(dl,x,0);
 }
 
@@ -117,7 +118,7 @@ static const char* defaultColors[4] = {"Black","Red","Green","Blue"};
 
 static void checkInitialized()
 {
-	if(difaultDicgd.pointSize != -1)
+	if(defaultDicgd.pointSize != -1)
 	{
 		defaultDicgd.pointSize = -1;
 		defaultDicgd.indent = 4;
@@ -133,7 +134,7 @@ static int pointSizeBuffer;
 static char* fontBuffer;
 static char* penColor;
 
-static void bufferChangeGraphicState(DictionaryGraphicDatas dl)
+static void bufferChangeGraphicState(DictionaryGraphicDatas* dl)
 {
 	if(!dl) return;
 	penColor = GetPenColor();
@@ -149,7 +150,7 @@ static void bufferChangeGraphicState(DictionaryGraphicDatas dl)
 	}
 }
 
-static void retGraphicState(DictionaryGraphicDatas dl)
+static void retGraphicState(DictionaryGraphicDatas* dl)
 {
 	if(!dl) return;
 	SetPenColor(penColor);
@@ -213,14 +214,18 @@ DictionaryCursor PositionizeDictionaryList(DictionaryGraphicDatas* dl, Dictionar
 	{
 		DictionaryCursor res;
 		res.pointEntryType = 0;
-		res.folderIn = res.pointFolder = res.pointItem = 0;
+		res.folderIn = 0;
+		res.pointFolder = 0;
+		res.pointItem = 0;
 		return res;
 	}
 	else
 	{
 		DictionaryCursor res;
 		res.pointEntryType = dicLines[resLine].type;
-		res.folderIn = res.pointFolder = res.pointItem = 0;
+		res.folderIn = 0;
+		res.pointFolder = 0;
+		res.pointItem = 0;
 		if(res.pointEntryType == 1)
 		{
 			res.pointFolder = (DictionaryFolder*)dicLines[resLine].source;
@@ -230,7 +235,7 @@ DictionaryCursor PositionizeDictionaryList(DictionaryGraphicDatas* dl, Dictionar
 		{
 			assert(res.pointEntryType == 2);
 			res.pointItem = (DictionaryItem*)dicLines[resLine].source;
-			res.folderIn = res.pointItem.folder;
+			res.folderIn = res.pointItem->folder;
 		}
 		return res;
 	}
@@ -243,14 +248,14 @@ DictionaryCursor PositionizeDictionaryList(DictionaryGraphicDatas* dl, Dictionar
 DictionaryGraphicDatas* CopyDictionaryGraphicDatas(DictionaryGraphicDatas* sorce)
 {
 	DictionaryGraphicDatas* dest = NEW(DictionaryGraphicDatas);
-	memcpy(dest, source, sizeof(DictionaryGraphicDatas));
+	memcpy(dest, sorce, sizeof(DictionaryGraphicDatas));
 	return dest;
 }
 
 DictionaryGraphicDatas* CreateDictionaryGraphicDatas()
 {
 	checkInitialized();
-	return CopyDictionaryGraphicDatas(defaultDicgd);
+	return CopyDictionaryGraphicDatas(&defaultDicgd);
 }
 
 void FreeDictionaryGraphicDatas(DictionaryGraphicDatas* dg)
@@ -276,6 +281,7 @@ DictionaryItem* CreateDictionaryItem()
 	ni->itemID   = ++IDs;
 	ni->itemName = NEWVARR(char, NAME_SIZE);
 	strcpy(ni->itemName, "Noname"); 
+	return ni;
 }
 
 void FreeDictionaryItem(DictionaryItem* di)
@@ -309,6 +315,7 @@ DictionaryFolder* CreateDictionaryFolder()
 	nf->folderID   = ++IDs;
 	nf->folderName = NEWVARR(char, NAME_SIZE);
 	strcpy(nf->folderName, "Noname");
+	return nf;
 }
 
 void FreeDictionaryFolder(DictionaryFolder* df)
@@ -383,4 +390,6 @@ DictionaryFolder* CopyDictionaryFolder(DictionaryFolder* sorce)
 			df = df->nextFolder;
 		}
 	}
+	
+	return dest;
 }

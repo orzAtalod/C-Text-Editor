@@ -3,6 +3,9 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
+#include "graphics.h"
+#include "extgraph.h"
 
 //pixelList中的rgb值都是整数，再simpleGUI中使用需要除以255.0
 static int (*colorPalette)[3];//存储调色板
@@ -158,4 +161,9 @@ void DisplayImage(ImageInfo* ptr,double cx,double cy,double GivenWidth)//把grap
 		}
 		MovePen(cx,GetCurrentY()+flag*1.0/GetYResolution());
 	} 
+}
+
+void FreeImageStructure(ImageInfo* ptr)
+{
+	free(ptr);
 }

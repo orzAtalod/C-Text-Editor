@@ -3,6 +3,8 @@
 #include "blockList.h"
 #include "textStructure.h"
 #include "fileSystemCore.h"
+#include "explorerCore.h"
+#include <string.h>
 
 static int curPage;
 
@@ -58,7 +60,7 @@ void SaveFile(const char* fileName)
 char savFilePathstore[255];
 void RegisterSavFilePath(const char* savFilePath)
 {
-	memcpy(savFilePathstore, savFilePath);
+	strcpy(savFilePathstore, savFilePath);
 }
 
 void LoadSavFile()

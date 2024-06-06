@@ -78,7 +78,7 @@ DictionaryFolder* CopyDictionaryFolder(DictionaryFolder* sorce);
 */
 
 DictionaryGraphicDatas* CreateDictionaryGraphicDatas();
-void FreeDictionaryGraphicDatas(DictionaryFolder*);
+void FreeDictionaryGraphicDatas(DictionaryGraphicDatas*);
 DictionaryGraphicDatas* CopyDictionaryGraphicDatas(DictionaryGraphicDatas* sorce);
 
 void DrawDictionaryList(DictionaryGraphicDatas* dl, DictionaryFolder* fl, double cx, double cy, double width, double begH, double endH);

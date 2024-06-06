@@ -5,7 +5,7 @@
 #include "simpio.h"
 #include "graphics.h"
 #include <time.h>
-#include"boolean.h"
+#include "boolean.h"
 #include <windows.h>
 #include <winuser.h>
 
@@ -562,6 +562,7 @@ static char charize(int key)
 {
     if(key>=NUMBER_BEGIN && key<NUMBER_BEGIN+10) return key-NUMBER_BEGIN;
     if(key>=ALPHA_BEGIN  && key<ALPHA_BEGIN +27) return key-ALPHA_BEGIN;
+    return key;
 }
 
 void KeyboardEventProcess(int key, int event) {
@@ -589,10 +590,6 @@ void KeyboardEventProcess(int key, int event) {
         display();
         return;
     }
-	
-    bool ctrlPressed = GetCtrlKeyState();
-    bool altPressed = GetAltKeyState();
-    bool shiftPressed = GetShiftKeyState();
 
     //判断快捷键
     if(event==KEY_DOWN && isChar(key) && inputMode!=3)
@@ -670,7 +667,7 @@ void ChangeDisplayMethodToMain() {
 // 小输入界面
 void ChangeDisplayMethodToInput(ButtonEventWithInput callback) {
     changeDisplayMethodProcess();
-    double mainAreaHeight = screenHeight - TITLE_HEIGHT - MENU_HEIGHT - TOOL_HEIGHT - INPUT_BAR_HEIGHT - 4 * WINDOW_MARGIN
+    double mainAreaHeight = screenHeight - TITLE_HEIGHT - MENU_HEIGHT - TOOL_HEIGHT - INPUT_BAR_HEIGHT - 4 * WINDOW_MARGIN;
     setRollerHeight(mainAreaHeight);
     inputMode = 1;
     inputConfirmedCallback = callback;

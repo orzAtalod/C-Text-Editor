@@ -40,10 +40,10 @@ void ChangePageOfColorTable(int p)//不仅是转换页，也是创建一个页�
 
 void ClearColorTable()
 {
-	if(colorPage[p]) free(colorPage[p]);
-	colorPage[p]=(struct colorTable*)malloc(sizeof(struct colorTable));
-	colorPage[p]->flength=0;
-	colorPage[p]->slength=0;	
+	if(colorPage[curColorPage]) free(colorPage[curColorPage]);
+	colorPage[curColorPage]=(struct colorTable*)malloc(sizeof(struct colorTable));
+	colorPage[curColorPage]->flength=0;
+	colorPage[curColorPage]->slength=0;
 }
 
 void ReadColorTable(FILE* f)
@@ -179,9 +179,9 @@ void ChangePageOfFontTable(int p)
 
 void ClearFontTable()
 {
-	if(fontPage[p]) free(fontPage[p]);
-	fontPage[p]=(struct fontTable*)malloc(sizeof(struct fontTable));
-	fontPage[p]->length=0;	
+	if(fontPage[curFontPage]) free(fontPage[curFontPage]);
+	fontPage[curFontPage]=(struct fontTable*)malloc(sizeof(struct fontTable));
+	fontPage[curFontPage]->length=0;
 }
 
 void ReadFontTable(FILE* f)

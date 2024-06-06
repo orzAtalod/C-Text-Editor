@@ -1,6 +1,12 @@
 #include "explorerCore.h"
 #include "dictionaryList.h"
 #include "blockList.h"
+#include "editorCore.h"
+#include "fileSystem.h"
+#include <assert.h>
+#include <stdlib.h>
+#include <string.h>
+#include "myGUI.h"
 #define NEW(x)  ((x*)malloc(sizeof(x)))
 #define NEWVARR(x,len) ((x*)malloc((len)*sizeof(x)))
 
@@ -12,7 +18,7 @@ static char userName[255];                static int userNameLen;
 static int currentFile;
 
 static DictionaryFolder* corresDFolder[65535];
-static DictionaryFolder* corresDFile[65535];
+static DictionaryItem*   corresDFile[65535];
 static DictionaryFolder* fullFolder;
 
 ///////////////////////////////////////////////// 基础函数 //////////////////////////////////////
@@ -24,7 +30,7 @@ static void changeCurrentFileByID(int newFile)
 	}
 	currentFile = newFile;
 	corresDFile[currentFile]->itemEmphasizeType = 2;
-	ChangePageOfEditCore(fileOnBlockListPage[newFile]);
+	ChangePageOfEditorCore(fileOnBlockListPage[newFile]);
 }
 
 static int openFile(int fileID) //返回打开页码
@@ -35,7 +41,6 @@ static int openFile(int fileID) //返回打开页码
 		return fileOnBlockListPage[fileID];
 	}
 
-	const int curBLPage = GetPageOfBlockList();
 	++fileOnEditNum;
 	fileOnBlockListPage[fileID] = fileOnEditNum;
 	LoadFileAtPage(fileOnEditNum, files[fileID]->filePath);
@@ -55,7 +60,7 @@ static void closeFile(int fileID)
 
 void ReloadCurrentFile()
 {
-	if(currentFile) ChangePageOfEditCore(fileOnBlockListPage[currentFile]);
+	if(currentFile) ChangePageOfEditorCore(fileOnBlockListPage[currentFile]);
 }
 
 FileHeaderInfo* GetCurrentFileHeaderInfo()
@@ -64,7 +69,7 @@ FileHeaderInfo* GetCurrentFileHeaderInfo()
 	else return 0;
 }
 
-int CreateEmptyFile(); //新建一页，返回新建的那一页
+int CreateEmptyFile()  //新建一页，返回新建的那一页
 {
 	files[++fileNum] = (FileHeaderInfo*)malloc(sizeof(FileHeaderInfo));
 	files[fileNum]->editTime = 0;
@@ -86,18 +91,19 @@ int CreateEmptyFile(); //新建一页，返回新建的那一页
 	++fileOnEditNum;
 	fileOnBlockListPage[fileNum] = fileOnEditNum;
 	ClearAllItemsOnPage(fileOnEditNum);
-	return changeCurrentFileByID(fileNum);
+	changeCurrentFileByID(fileNum);
+	return fileOnEditNum;
 }
 
 static void createEmptyFolder()
 {
 	folders[++folderNum] = (FolderHeaderInfo*)malloc(sizeof(FolderHeaderInfo));
 	folders[folderNum]->folderID = folderNum;
-	folders[folderNum]->folderName = (FolderHeaderInfo*)malloc(20*sizeof(char));
+	folders[folderNum]->folderName = (char*)malloc(20*sizeof(char));
 	strcpy(folders[folderNum]->folderName, "Noname");
 	folders[folderNum]->parentFolder = 0;
 
-	DictionaryItem* newFolder = CreateDictionaryFolder();
+	DictionaryFolder* newFolder = CreateDictionaryFolder();
 	newFolder->folderID = folderNum;
 	newFolder->parent = fullFolder;
 	newFolder->nextFolder = fullFolder->subFolders;
@@ -165,7 +171,7 @@ void readFiles(FILE* f)
 		files[i]->folder = folders[fileBuffer[i].folderID];
 		files[i]->fileName = NEWVARR(char, fileBuffer[i].fileNameLen+5);
 		files[i]->tags = NEWVARR(int, fileBuffer[i].tagNum+5);
-		filePath[i] = NEWVARR(char, fileBuffer[i].filePathLen+5);
+		files[i]->filePath = NEWVARR(char, fileBuffer[i].filePathLen+5);
 		fread(files[i]->fileName, sizeof(char), fileBuffer[i].fileNameLen, f);
 		fread(files[i]->tags,     sizeof(int),  fileBuffer[i].tagNum,      f);
 		fread(files[i]->filePath, sizeof(char), fileBuffer[i].filePathLen, f);
@@ -235,12 +241,12 @@ void BuildFiles()
 		corresDFolder[i] = now;
 	}
 
-	for(int i=1; i<=itemNum; ++i)
+	for(int i=1; i<=fileNum; ++i)
 	{
 		DictionaryItem* now = CreateDictionaryItem();
 		strcpy(now->itemName, files[i]->fileName);
 		now->itemID = i;
-		now->folder = files[i]->folder ? files[i]->folder : fullFolder;
+		now->folder = files[i]->folder ? corresDFolder[files[i]->folder->folderID] : fullFolder;
 		if(!now->folder->items)
 		{
 			now->folder->items = now;
@@ -251,7 +257,7 @@ void BuildFiles()
 			now->prevItem = now->folder->items;
 			now->folder->items = now;
 		}
-		corresDItem[i] = now;
+		corresDFile[i] = now;
 	}
 	
 	for(int i=1; i<=folderNum; ++i)
@@ -338,7 +344,7 @@ void WriteSavFile(FILE* f)
 	writeFolders(f);
 	writeFiles(f);
 	userNameLen = strlen(fullFolder->folderName);
-	strcpy(userNameLen, fullFolder->folderName);
+	strcpy(userName, fullFolder->folderName);
 	fwrite(&userNameLen, sizeof(int), 1, f);
 	fwrite(userName, sizeof(char), userNameLen, f);
 	fwrite(&currentFile, sizeof(int), 1, f);
@@ -413,7 +419,7 @@ static void filterFolder(FileFilterFunc func, DictionaryFolder* df, int silentp)
 
 DictionaryFolder* FilterExplorer(FileFilterFunc func, int silentp)
 {
-	const DictionaryFolder* newFolder = CopyDictionaryFolder(fullFolder);
+	DictionaryFolder* newFolder = CopyDictionaryFolder(fullFolder);
 	filterFolder(func, newFolder, silentp);
 	return newFolder;
 }
@@ -432,6 +438,11 @@ void DrawExplorer(double cx, double cy, double width, double height)
 	if(!showDGD) initializeDGD();
 	lastWidth = width;
 	DrawDictionaryList(showDGD, fullFolder, cx, cy, width, 0, height);
+}
+
+void guiDrawExplorer(double cx,double cy,double dx,double dy)
+{
+	DrawExplorer(cx,cy,dx-cx,cy-dy);
 }
 
 static int lastClicked;
@@ -525,7 +536,7 @@ void ExplorerLeftMouseUp()
 			if(a->prevItem) a->prevItem->nextItem = a->nextItem;
 			if(a->nextItem) a->nextItem->prevItem = a->prevItem;
 
-			DictionaryItem* b = currentClickedPosition.folderIn;
+			DictionaryFolder* b = currentClickedPosition.folderIn;
 			a->folder = b;
 			if(!b->items)
 			{
@@ -539,7 +550,7 @@ void ExplorerLeftMouseUp()
 				b->items = a;
 			}
 
-			files[a->fileID]->folder = folders[b->folderID];
+			files[a->itemID]->folder = folders[b->folderID];
 		}
 	}
 	lastClicked = currentClicked = 0;
@@ -571,22 +582,27 @@ void ExplorerRightMouseDown(double mx, double my)
 	}
 }
 
+static void setName(char* str, const char* renameV, int renameN)
+{
+	str = realloc(str, (renameN+5)*sizeof(char));
+	strcpy(str, renameV);
+}
+
 static int renameType;
 static int renameID;
 static void renameCallback(const char* renameValue)
 {
 	if(!renameValue) return;
+	const int renameLen = strlen(renameValue);
 	if(renameType == 1)
 	{
-		strcpy(folders[renameID]->folderName, renameValue);
-		folders[renameID].folderNameLen = strlen(renameValue);
-		strcpy(corresDFolder[renameID]->folderName, renameValue);
+		setName(folders[renameID]->folderName, renameValue, renameLen);
+		setName(corresDFolder[renameID]->folderName, renameValue, renameLen);
 	}
 	else
 	{
-		strcpy(files[renameID]->fileName, renameValue);
-		files[renameID].fileNameLen = strlen(renameValue);
-		strcpy(corresDFile[renameID]->fileName, renameValue);
+		setName(files[renameID]->fileName, renameValue, renameLen);
+		setName(corresDFile[renameID]->itemName, renameValue, renameLen);
 	}
 }
 
@@ -603,8 +619,8 @@ void ExplorerRightMouseUp()
 			renameType = lastClickedPosition.pointEntryType;
 			renameID = lastClickedPosition.pointEntryType == 1          ? 
 							(lastClickedPosition.pointFolder)->folderID :
-							(lastClickedPosition.pointItem)->itemID；
-			ChangeDisplayMethodToMajorInput(renameCallback);
+							(lastClickedPosition.pointItem)->itemID; 
+			ChangeDisplayMethodToMajorInput("重命名为：",renameCallback);
 		}
 	}
 	else //右键拖拽，为删除
@@ -639,3 +655,12 @@ void CloseCurrentFile()
 		closeFile(nowCurr);
 	}
 }
+
+void ExploreCoreInitCallBacks()
+{
+	RegisterExplorerMouseLeftDown(ExplorerLeftMouseDown);
+	RegisterExplorerMouseLeftUp(ExplorerLeftMouseUp);
+	RegisterExplorerMouseRightDown(ExplorerRightMouseDown);
+	RegisterExplorerMouseRightUp(ExplorerRightMouseUp);
+	RegisterExplorerDraw(guiDrawExplorer);
+} 

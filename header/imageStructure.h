@@ -58,12 +58,14 @@ ImageInfo* ReadImage(FILE* F);
 void WriteImage(ImageInfo* ptr,FILE* f);
 
 /*展示图像，图像左上角在(cx,cy)，以英寸位单位*/
-void DisplayImage(ImageInfo* ptr,double cx,double cy,double GivenWidth)；
+void DisplayImage(ImageInfo* ptr,double cx,double cy,double GivenWidth);
 
 /*基于存储特性写的用于替代fread的函数,从文件f读取count个大小为1字节的数据块，返回对应的int值*/
 int ReadBMP(int count, FILE* f);
 
 /*根据传入的结构计算图片高度，像素到英寸的转换*/
 double GetImageHeight(ImageInfo* ptr,double GivenWidth);
+
+void FreeImageStructure(ImageInfo* ptr);
 
 #endif

@@ -2,15 +2,16 @@
 #include "editorCore.h"
 #include "explorerCore.h"
 #include "windows.h"
-//////////////////////////////////////////////// èœå•æ æ“ä½œ ////////////////////////////
-//èœå•å“åº”å‡½æ•°
+#include "fileSystem.h" 
+//////////////////////////////////////////////// ²Ëµ¥À¸²Ù×÷ ////////////////////////////
+//²Ëµ¥ÏìÓ¦º¯Êı
 /*
 static char *fileMenu[]  = {"File", "Save", "Open", "New", "Save As", "Close"};
 static char *toolsMenu[] = {"Tools", "Stats", "Search", "Browse"};
 static char *aboutMenu[] = {"About", "Settings", "Help"};
 */
 
-static void openFilePath;
+static void openFilePath(const char*);
 static void emptyFunc(const char* str) {;}
 
 static void save() //Ctrl+S
@@ -30,7 +31,7 @@ static void setPath(FileHeaderInfo* fh, const char* path)
 
 static void open() //Ctrl+O
 {
-	ChangeDisplayMethodToMajorInput("è¾“å…¥éœ€è¦æ‰“å¼€çš„æ–‡ä»¶è·¯å¾„ï¼š",openFilePath);
+	ChangeDisplayMethodToMajorInput("ÊäÈëĞèÒª´ò¿ªµÄÎÄ¼şÂ·¾¶£º",openFilePath);
 }
 
 static void openFilePath(const char* path)
@@ -39,7 +40,7 @@ static void openFilePath(const char* path)
 	FILE* f = fopen(path,"rb");
 	if(!f)
 	{
-		ChangeDisplayMethodToMajorInput("æ–‡ä»¶ä¸å­˜åœ¨ï¼", emptyFunc);
+		ChangeDisplayMethodToMajorInput("ÎÄ¼ş²»´æÔÚ£¡", emptyFunc);
 		return;
 	}
 	fclose(f);
@@ -64,13 +65,13 @@ static void saveAsFilePath(const char* path)
 {
 	if(!path) return;
 	FileHeaderInfo* cf = GetCurrentFileHeaderInfo();
-	if(!cf) ChangeDisplayMethodToMajorInput("å½“å‰æ— æ–‡ä»¶ï¼", emptyFunc);
+	if(!cf) ChangeDisplayMethodToMajorInput("µ±Ç°ÎŞÎÄ¼ş£¡", emptyFunc);
 	else { setPath(GetCurrentFileHeaderInfo(), path); SaveCurrentFile(); StoreSavFile(); }
 }
 
 static void saveAs()
 {
-	ChangeDisplayMethodToMajorInput("è¾“å…¥å¦å­˜ä¸ºè·¯å¾„ï¼ˆå«æ–‡ä»¶åï¼‰", saveAsFilePath);
+	ChangeDisplayMethodToMajorInput("ÊäÈëÁí´æÎªÂ·¾¶£¨º¬ÎÄ¼şÃû£©", saveAsFilePath);
 }
 
 static void close()
@@ -102,12 +103,6 @@ static void settings()
 static void help()
 {
 	system("help.txt");
-}
-
-static void exit()
-{
-	StoreSavFile();
-	exit(0);
 }
 
 void ControllerInitCallbacks()
