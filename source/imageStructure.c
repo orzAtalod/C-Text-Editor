@@ -29,7 +29,7 @@ ImageInfo* OpenImage(FILE* f)
     fread(tempchar,sizeof(char),2,f);
     tempchar[2]='\0';
     if(strcmp(tempchar,"BM")!=0){//判定图片是否是BMP
-        assert(!"imagType is false");//由于存储的特性，所以字母反了一下
+        assert(!"imagType is false");
     }
     fseek(f,30,SEEK_SET);
 
