@@ -163,6 +163,16 @@ void DisplayImage(ImageInfo* ptr,double cx,double cy,double GivenWidth)//把grap
 	} 
 }
 
+void FakeDraw(ImageInfo* ptr,double cx,double cy,double GivenWidth)
+{
+	double x,y,w,h;
+	x=cx;
+	y=GetWindowHeight()+cy+GetImageHeight(ptr,GivenWidth);
+    	w=GivenWidth;
+   	h=-GetImageHeight(ptr,GivenWidth);
+    	drawBox(x,y,w,h,0,"Image is here","L","Red");//simpleGUI中
+}
+
 void FreeImageStructure(ImageInfo* ptr)
 {
 	free(ptr);
