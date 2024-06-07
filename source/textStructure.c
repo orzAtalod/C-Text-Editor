@@ -19,7 +19,6 @@ StyleString* ReadStyleString(FILE* f)
 	return res;
 }
 
-
 void WriteStyleString(StyleString* str, FILE* f)
 {
 	bufferInt[0] = str->pointSize;

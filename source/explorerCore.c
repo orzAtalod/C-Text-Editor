@@ -8,7 +8,7 @@
 #include <string.h>
 #include "myGUI.h"
 #define NEW(x)  ((x*)malloc(sizeof(x)))
-#define NEWVARR(x,len) ((x*)malloc((len)*sizeof(x)))
+#define NEWVARR(x,len) ((x*)calloc((len),(sizeof(x)))) 
 
 static char* tags[65535];                 static int tagStoreNum;
 static FolderHeaderInfo* folders[65535];  static int folderNum;
@@ -74,10 +74,10 @@ int CreateEmptyFile()  //新建一页，返回新建的那一页
 	files[++fileNum] = (FileHeaderInfo*)malloc(sizeof(FileHeaderInfo));
 	files[fileNum]->editTime = 0;
 	files[fileNum]->tagNum = 0;
-	files[fileNum]->tags = (int*)malloc(5*sizeof(int));
-	files[fileNum]->fileName = (char*)malloc(20*sizeof(char));
+	files[fileNum]->tags = NEWVARR(int,5);
+	files[fileNum]->fileName = NEWVARR(char,20);
 	strcpy(files[fileNum]->fileName, "Noname");
-	files[fileNum]->filePath = (char*)malloc(20*sizeof(char));
+	files[fileNum]->filePath = NEWVARR(char,20);
 	files[fileNum]->folder = 0;
 
 	DictionaryItem* newFileDic = CreateDictionaryItem();
@@ -458,12 +458,7 @@ void DrawExplorer(double cx, double cy, double dx, double dy)
 {
 	if(!showDGD) initializeDGD();
 	lastWidth = dx-cx;
-	DrawDictionaryList(showDGD, fullFolder, cx, cy, dx-cx, 0, cy-dy);
-}
-
-void guiDrawExplorer(double cx,double cy,double dx,double dy)
-{
-	DrawExplorer(cx,cy,dx-cx,cy-dy);
+	DrawDictionaryList(showDGD, fullFolder, cx, cy, dx-cx, 0, dy-cy);
 }
 
 static int lastClicked;
@@ -683,5 +678,5 @@ void ExploreCoreInitCallBacks()
 	RegisterExplorerMouseLeftUp(ExplorerLeftMouseUp);
 	RegisterExplorerMouseRightDown(ExplorerRightMouseDown);
 	RegisterExplorerMouseRightUp(ExplorerRightMouseUp);
-	RegisterExplorerDraw(guiDrawExplorer);
+	RegisterExplorerDraw(DrawExplorer);
 } 

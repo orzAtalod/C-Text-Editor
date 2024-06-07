@@ -941,6 +941,36 @@ static void pointSizeChange(const char* newPS)
 	}
 }
 
+static void imageInsertCore(const char* imagePath)
+{
+	FILE* f = fopen(imagePath,"rb");
+	if(f)
+	{
+		void* opendata = OpenImage(f);
+		if(!opendata) return;
+		if(!cursorType || !cursor1.blockVal)
+		{
+			blockChain* nbc = createBlock();
+			AlignmentInfo ali;
+			ali.alignBlockID = 0;
+			ali.alignArgument = beginAy;
+			ali.alignType = 0;
+			ali.column = getColumnFromX(beginAx);
+			BlockMove(nbc->curr->ID, ali);
+			cursor1.blockVal = nbc->curr;
+			cursor1.position = 0;
+			cursorType = 1;
+		}
+		cursor1.blockVal->type = 2;
+		cursor1.blockVal->dataptr = opendata;
+	}
+}
+
+static void imageInsert()
+{
+	ChangeDisplayMethodToMajorInput(" ‰»ÎÕº∆¨µÿ÷∑",imageInsertCore);
+}
+
 static void keyboardInput(char ch)
 {
 	if(cursorType == 2) deleteTroughCursor();
@@ -1281,6 +1311,7 @@ void EditorCoreInitCallbacks()
 	RegisterItalicMethod(italic);
 	RegisterPointSizeMethod(pointSizeChange);
 	RegisterFontMethod(fontChange);
+	RegisterImageMethod(imageInsert);
 
 	RegisterEditorGraphicDraw(drawMainEdit);
 	RegisterRollerUpperBoundDraw(getRollerBegin);

@@ -65,8 +65,14 @@ int ReadBMP(int count, FILE* f);
 double GetImageHeight(ImageInfo* ptr,double GivenWidth);
 
 /*显示图片位置*/
-void FakeDraw(ImageInfo* ptr,double cx,double cy,double GivenWidth); 
+void FakeDraw(ImageInfo* ptr,double cx,double cy,double GivenWidth,double begH,double endH); 
 
 void FreeImageStructure(ImageInfo* ptr);
+
+int GetPositionFromRelativeXY_ImageInfo(ImageInfo* str, double width, double rx, double ry);
+double GetRelativeXFromPosition_ImageInfo(ImageInfo* str, double width, int position);
+double GetRelativeYFromPosition_ImageInfo(ImageInfo* str, double width, int position);
+
+double GetImageInfoElementHeight(ImageInfo* str);
 
 #endif

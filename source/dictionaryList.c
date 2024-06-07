@@ -280,7 +280,7 @@ DictionaryItem* CreateDictionaryItem()
 	static int IDs = 0;
 	DictionaryItem* ni = CNEW(DictionaryItem);
 	ni->itemID   = ++IDs;
-	ni->itemName = NEWVARR(char, NAME_SIZE);
+	ni->itemName = NEWVARR(char, NAME_SIZE+5);
 	strcpy(ni->itemName, "Noname"); 
 	return ni;
 }
@@ -314,7 +314,7 @@ DictionaryFolder* CreateDictionaryFolder()
 	static int IDs = 0;
 	DictionaryFolder* nf = CNEW(DictionaryFolder);
 	nf->folderID   = ++IDs;
-	nf->folderName = NEWVARR(char, NAME_SIZE);
+	nf->folderName = NEWVARR(char, NAME_SIZE+5);
 	strcpy(nf->folderName, "Noname");
 	 
 	return nf;

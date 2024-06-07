@@ -163,7 +163,7 @@ void DisplayImage(ImageInfo* ptr,double cx,double cy,double GivenWidth)//把grap
 	} 
 }
 
-void FakeDraw(ImageInfo* ptr,double cx,double cy,double GivenWidth)
+void FakeDraw(ImageInfo* ptr,double cx,double cy,double GivenWidth,double begH,double endH)
 {
 /*	double x,y,w,h;
 	x=cx;
@@ -176,4 +176,24 @@ void FakeDraw(ImageInfo* ptr,double cx,double cy,double GivenWidth)
 void FreeImageStructure(ImageInfo* ptr)
 {
 	free(ptr);
+}
+
+int GetPositionFromRelativeXY_ImageInfo(ImageInfo* str, double width, double rx, double ry)
+{
+    return rx>width/2;
+}
+
+double GetRelativeXFromPosition_ImageInfo(ImageInfo* str, double width, int position)
+{
+    return position ? width : 0;
+}
+
+double GetRelativeYFromPosition_ImageInfo(ImageInfo* str, double width, int position)
+{
+    return 0;
+}
+
+double GetImageInfoElementHeight(ImageInfo* str)
+{
+    return -1;
 }
