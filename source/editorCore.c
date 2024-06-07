@@ -78,11 +78,8 @@ void ChangePageOfEditorCore(int p)
 	ChangePageOfBlockList(p);
 	ChangePageOfColorTable(p);
 	ChangePageOfFontTable(p);
-	if(p!=blockChainPage)
-	{
-		blockChainPage = p;
-		buildBC();
-	}
+	blockChainPage = p;
+	buildBC();
 }
 
 ///////////////////////////////////////// ¿é¸ß¶È¼ÆËã //////////////////////////////////////////////
@@ -983,6 +980,7 @@ static void newLine() //Enter
 		AlignmentInfo ali;
 		ali.alignBlockID = 0;
 		ali.alignArgument = beginAy;
+		ali.alignType = 0;
 		ali.column = getColumnFromX(beginAx);
 		BlockMove(nbc->curr->ID, ali);
 		cursor1.blockVal = nbc->curr;

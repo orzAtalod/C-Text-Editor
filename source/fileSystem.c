@@ -39,10 +39,10 @@ void SaveFileAtPage(int page, const char* fileName)
 {
 	FILE* f = fopen(fileName,"wb");
 	ChangePageOfColorTable(page);
-	WriteColorTable(f);
 	ChangePageOfFontTable(page);
-	WriteFontTable(f);
 	ChangePageOfBlockList(page);
+	WriteColorTable(f);
+	WriteFontTable(f);
 	SaveBlockList(f);
 	fclose(f);
 }

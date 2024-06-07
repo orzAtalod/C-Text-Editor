@@ -132,6 +132,11 @@ void LoadBlockList(FILE* f)
 
 void SaveBlockList(FILE* f)
 {
+	if(!blocklistLength[curPage])
+	{
+		fwrite(blocklistLength+curPage,sizeof(int),1,f);
+		return;
+	} 
 	assert(curPage);
 	writeColumns(f);
 	const int blocknum = blocklistLength[curPage];

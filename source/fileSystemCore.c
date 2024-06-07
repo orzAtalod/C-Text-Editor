@@ -27,7 +27,7 @@ static unsigned long long colorPageExsists[4];
 
 void ChangePageOfColorTable(int p)//不仅是转换页，也是创建一个页，所以第一次调用color数据结构时，需要先用这个函数创建一个页 
 {
-	if(colorPageExsists[p%64] | (1LLU<<(p/64))){
+	if(colorPageExsists[p%64] & (1LLU<<(p/64))){
 		curColorPage=p;//这一页已经存在，直接转换 
 	}else{//创建页 
 		colorPageExsists[p%64] |= 1LLU<<(p/64);
@@ -167,7 +167,7 @@ static unsigned long long fontPageExsists[4];
 
 void ChangePageOfFontTable(int p)
 {
-	if(fontPageExsists[p/64] | (1LLU<<(p%64))){
+	if(fontPageExsists[p/64] & (1LLU<<(p%64))){
 		curFontPage=p;
 	}else{
 		fontPageExsists[p/64] |= 1LLU<<(p%64);
@@ -193,6 +193,7 @@ void ReadFontTable(FILE* f)
 		(void)RegisterFontTable(tempname); //make complier happy
 		fread(tempname,sizeof(char),NAME_STRING_LIMIT,f);
 	}
+	free(tempname);
 }
 
 void WriteFontTable(FILE* f)

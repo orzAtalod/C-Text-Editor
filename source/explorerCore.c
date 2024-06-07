@@ -92,6 +92,12 @@ int CreateEmptyFile()  //新建一页，返回新建的那一页
 	fileOnBlockListPage[fileNum] = fileOnEditNum;
 	ClearAllItemsOnPage(fileOnEditNum);
 	changeCurrentFileByID(fileNum);
+
+	ChangePageOfFontTable(fileOnEditNum);
+	ChangePageOfColorTable(fileOnEditNum);
+	RegisterFontTable("default");
+	RegisterFontTable("Times");
+	RegisterColorTable("Black");
 	return fileOnEditNum;
 }
 
