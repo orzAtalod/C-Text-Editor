@@ -465,6 +465,7 @@ static int lastClicked;
 static int currentClicked;
 static DictionaryCursor lastClickedPosition;
 static DictionaryCursor currentClickedPosition;
+static int lastOriEmph;
 
 void ExplorerLeftMouseDown(double mx, double my)
 {
@@ -476,10 +477,12 @@ void ExplorerLeftMouseDown(double mx, double my)
 		{
 			if(lastClickedPosition.pointEntryType==1)
 			{
+				lastOriEmph = (lastClickedPosition.pointFolder)->folderEmphasizeType; 
 				(lastClickedPosition.pointFolder)->folderEmphasizeType = 3;
 			}
 			else
 			{
+				lastOriEmph = (lastClickedPosition.pointItem)->itemEmphasizeType;
 				(lastClickedPosition.pointItem)->itemEmphasizeType = 3;
 			}
 		}
@@ -492,29 +495,40 @@ void ExplorerLeftMouseDown(double mx, double my)
 	}
 }
 
+static int folderSamePosition()
+{
+	return lastClickedPosition.pointFolder==currentClickedPosition.pointFolder && lastClickedPosition.pointItem==currentClickedPosition.pointItem;
+}
+
 void ExplorerLeftMouseUp()
 {
-	if(lastClicked && !currentClicked) //判定为单击
+	if(!lastClicked) return;
+	if((lastClicked&&!currentClicked) || folderSamePosition()) //判定为单击
 	{
+		lastClicked = currentClicked = 0;
 		if(!lastClickedPosition.pointEntryType) return;
 		if(lastClickedPosition.pointEntryType == 1)
 		{
+			(lastClickedPosition.pointFolder)->folderEmphasizeType = lastOriEmph;
 			(lastClickedPosition.pointFolder)->folderExpended = !(lastClickedPosition.pointFolder)->folderExpended;
-			(lastClickedPosition.pointFolder)->folderEmphasizeType = 0;
 		}
 		else
 		{
+			lastClickedPosition.pointItem->itemEmphasizeType = lastOriEmph;
 			openFile((lastClickedPosition.pointItem)->itemID);
 			changeCurrentFileByID((lastClickedPosition.pointItem)->itemID);
 		}
 	}
 	else
 	{
+		lastClicked = currentClicked = 0;
 		if(!lastClickedPosition.pointEntryType) return;
 		if(!currentClickedPosition.folderIn) currentClickedPosition.folderIn = fullFolder;
 		if(lastClickedPosition.pointEntryType == 1)
 		{
+			(lastClickedPosition.pointFolder)->folderEmphasizeType = lastOriEmph;
 			DictionaryFolder* a = lastClickedPosition.pointFolder;
+			if(a == currentClickedPosition.folderIn) return;
 			if(a->parent->subFolders == a)
 			{
 				a->parent->subFolders = 0;
@@ -523,6 +537,7 @@ void ExplorerLeftMouseUp()
 			}
 			if(a->prevFolder) a->prevFolder->nextFolder = a->nextFolder;
 			if(a->nextFolder) a->nextFolder->prevFolder = a->prevFolder;
+			a->nextFolder = a->prevFolder = 0;
 
 			DictionaryFolder* b = currentClickedPosition.folderIn;
 			a->parent = b;
@@ -542,6 +557,7 @@ void ExplorerLeftMouseUp()
 		}
 		else
 		{
+			lastClickedPosition.pointItem->itemEmphasizeType = lastOriEmph;			
 			DictionaryItem* a = lastClickedPosition.pointItem;
 			if(a->folder->items == a)
 			{
@@ -551,6 +567,7 @@ void ExplorerLeftMouseUp()
 			}
 			if(a->prevItem) a->prevItem->nextItem = a->nextItem;
 			if(a->nextItem) a->nextItem->prevItem = a->prevItem;
+			a->nextItem = a->prevItem = 0;
 
 			DictionaryFolder* b = currentClickedPosition.folderIn;
 			a->folder = b;
@@ -569,7 +586,6 @@ void ExplorerLeftMouseUp()
 			files[a->itemID]->folder = folders[b->folderID];
 		}
 	}
-	lastClicked = currentClicked = 0;
 }
 
 void ExplorerRightMouseDown(double mx, double my)
@@ -612,8 +628,15 @@ static void renameCallback(const char* renameValue)
 	const int renameLen = strlen(renameValue);
 	if(renameType == 1)
 	{
-		setName(folders[renameID]->folderName, renameValue, renameLen);
-		setName(corresDFolder[renameID]->folderName, renameValue, renameLen);
+		if(renameID)
+		{
+			setName(folders[renameID]->folderName, renameValue, renameLen);
+			setName(corresDFolder[renameID]->folderName, renameValue, renameLen);
+		}
+		else
+		{
+			setName(fullFolder->folderName, renameValue, renameLen);
+		}
 	}
 	else
 	{
@@ -624,8 +647,10 @@ static void renameCallback(const char* renameValue)
 
 void ExplorerRightMouseUp()
 {
-	if(lastClicked && !currentClicked) //判定为单击
+	if(!lastClicked) return;
+	if((lastClicked&&!currentClicked) || folderSamePosition()) //判定为单击
 	{
+		lastClicked = currentClicked = 0;
 		if(!lastClickedPosition.pointEntryType)
 		{
 			createEmptyFolder();

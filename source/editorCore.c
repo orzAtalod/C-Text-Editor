@@ -142,8 +142,17 @@ static double screenBeginHeight; // all negative
 //used as callback
 static void changeScreenHeight(double newScreenHeight) { screenHeight = -(newScreenHeight-CULUMN_CURSOR_HEGIHT); }
 
-static double getRollerBegin() { return screenBeginHeight>0 ? 0 : screenBeginHeight/fullHeight; }
-static double getRollerEnd()   { return screenBeginHeight+screenHeight<=fullHeight ? 1 : (screenBeginHeight+screenHeight)/fullHeight; }
+static double getRollerBegin()
+{
+	if(fullHeight<1e-5) return 0;
+	return screenBeginHeight>0 ? 0 : screenBeginHeight/fullHeight;
+}
+
+static double getRollerEnd()
+{
+	if(fullHeight<1e-5) return 1;
+	return screenBeginHeight+screenHeight<=fullHeight ? 1 : (screenBeginHeight+screenHeight)/fullHeight;
+}
 
 static void rollerRollUp()   { if(screenBeginHeight<0) screenBeginHeight+=ROLLER_STEP; }
 static void rollerRollDown() { if(screenBeginHeight+screenHeight>fullHeight) screenBeginHeight-=ROLLER_STEP; }
@@ -940,6 +949,8 @@ static void pointSizeChange(const char* newPS)
 		}
 	}
 }
+
+static int getColumnFromX(double x); 
 
 static void imageInsertCore(const char* imagePath)
 {

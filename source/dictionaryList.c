@@ -209,7 +209,7 @@ DictionaryCursor PositionizeDictionaryList(DictionaryGraphicDatas* dl, Dictionar
 	bufferChangeGraphicState(dl);
 
 	fillDrawCommands(dl,fl);
-	const int resLine = -mY/GetFontHeight();
+	const int resLine = (-mY/GetFontHeight())+1;
 	if(resLine<=0 || resLine>curline)
 	{
 		DictionaryCursor res;

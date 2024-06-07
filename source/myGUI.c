@@ -442,9 +442,9 @@ static void mouseUpProcess(int button)
 {
     if(mouseActivated[button])
     {
+        mouseActivated[button] = 0;
         if(mouseUpFuncs[button][mouseFocusID])
             mouseUpFuncs[button][mouseFocusID]();
-        mouseActivated[button] = 0;
         mouseFocusID = 0;
     }
 }
@@ -478,7 +478,7 @@ void myMouseEventProcess(int x, int y, int button, int event) {
     double editorXStart = browserWidth + BUTTON_GAP;
     double scrollbarX   = screenWidth - SCROLLBAR_WIDTH;
 
-    if (event==BUTTON_UP && (button==LEFT_BUTTON || button==RIGHT_BUTTON)) mouseUpProcess(button==1 ? 1 : 2);
+    if (event==BUTTON_UP && (button==LEFT_BUTTON || button==RIGHT_BUTTON)) mouseUpProcess(button==LEFT_BUTTON ? 1 : 2);
     if (event==MOUSEMOVE) mouseMoveProcess(xd,yd);
     if (event==ROLL_UP || event==ROLL_DOWN)
     {
