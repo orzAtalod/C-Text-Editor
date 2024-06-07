@@ -4,11 +4,6 @@
 
 /*
 *
-* document: 24/5/20 林景行 
-* program:
-* last change: 
-* details in github history
-*
 * Color Table数据结构 
 * 分为两个部分，第一个部分从char*映射到double[3]，用于定义颜色；第二个部分
 *     从int映射到char*，用于读入Color数据（建议采用char*数组） 

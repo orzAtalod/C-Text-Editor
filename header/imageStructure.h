@@ -4,8 +4,6 @@
 
 /*
  *
- * document:24/5/31 项健乐
- *
  * 本程序仅用于未经压缩的BMP格式图片
  * 
  * 接下来先介绍需要用到的BMP文件格式(参考https://blog.csdn.net/u013066730/article/details/82625158)
@@ -67,7 +65,7 @@ int ReadBMP(int count, FILE* f);
 double GetImageHeight(ImageInfo* ptr,double GivenWidth);
 
 /*显示图片位置*/
-void FakeDraw(ImageInfo* ptr,double cx,double cy,double GivenWidth)
+void FakeDraw(ImageInfo* ptr,double cx,double cy,double GivenWidth); 
 
 void FreeImageStructure(ImageInfo* ptr);
 

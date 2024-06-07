@@ -63,9 +63,10 @@ static void buildBC()  //Í¬Ê±Çå¿Õ
 //	TraverseColorDifinitions(DefineColor);
 	buildColumns();
 
+	corrBlockChain[0] = 0;
 	for(int i=1; i<=blockNum; ++i)
 	{
-		free(corrBlockChain[i]);
+		if(corrBlockChain[i]) free(corrBlockChain[i]);
 		corrBlockChain[i] = 0;
 	}
 	blockNum = 0;
@@ -100,6 +101,7 @@ static double calculateAlign(AlignmentInfo info)
 
 static void calculateBlockHeight(blockChain* bc)
 {
+	if(!bc) return;
 	travelled[bc->curr->ID] = 1;
 	const int preID = bc->curr->align.alignBlockID;
 	if(!travelled[preID]) calculateBlockHeight(corrBlockChain[preID]);
