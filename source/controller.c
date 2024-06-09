@@ -6,6 +6,8 @@
 #include "search.h" 
 #include "stat.h" 
 #include "extgraph.h"
+#include <stdlib.h>
+#include <time.h>
 //////////////////////////////////////////////// 菜单栏操作 ////////////////////////////
 //菜单响应函数
 /*
@@ -123,6 +125,7 @@ void ExitProgram()
 
 void ControllerInitCallbacks()
 {
+	srand(clock());
 	RegisterSaveMethod(save);
 	RegisterOpenMethod(open);
 	RegisterCreateMethod(newFile);
