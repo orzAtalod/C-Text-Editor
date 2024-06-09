@@ -5,6 +5,7 @@
 #include "fileSystem.h" 
 #include "search.h" 
 #include "stat.h" 
+#include "extgraph.h"
 //////////////////////////////////////////////// 菜单栏操作 ////////////////////////////
 //菜单响应函数
 /*
@@ -114,6 +115,12 @@ static void help()
 	system("help.txt");
 }
 
+void ExitProgram()
+{
+	save();
+	ExitGraphics();
+}
+
 void ControllerInitCallbacks()
 {
 	RegisterSaveMethod(save);
@@ -131,5 +138,13 @@ void ControllerInitCallbacks()
 
 	RegisterSearchDisplayMethod(SearchDraw);
 	RegisterStatDisplayMethod(StatDraw);
-	RegisterShowTagsMethod(ShowTags); 
+	RegisterShowTagsMethod(ShowTags);
+	
+	RegisterEditorHotKey("100t",addtag);
+	RegisterEditorHotKey("100s",save);
+	RegisterEditorHotKey("101s",saveAs);
+	RegisterEditorHotKey("100h",help);
+	RegisterEditorHotKey("100n",newFile);
+	RegisterEditorHotKey("100w",close);
+	RegisterEditorHotKey("100f",search);
 }

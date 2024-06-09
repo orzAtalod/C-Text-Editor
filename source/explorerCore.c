@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "myGUI.h"
+#include "controller.h"
 #define NEW(x)  ((x*)malloc(sizeof(x)))
 #define NEWVARR(x,len) ((x*)calloc((len),(sizeof(x)))) 
 
@@ -778,7 +779,10 @@ void CloseCurrentFile()
 				break;
 			}
 		}
-		if(currentFile == nowCurr) CreateEmptyFile();
+		if(currentFile == nowCurr)
+		{
+			ExitProgram();
+		}
 		closeFile(nowCurr);
 	}
 }

@@ -51,6 +51,7 @@ static void buildBlock(Block* blk)
 	++blockNum;
 	corrBlockChain[blk->ID] = (blockChain*)malloc(sizeof(blockChain));
 	corrBlockChain[blk->ID]->curr = blk;
+	corrBlockChain[blk->ID]->next = 0;
 	if(blk->align.alignBlockID && GetBlockFromIDInBlockList(blk->align.alignBlockID)->align.column==blk->align.column)
 	{
 		buildBlock(GetBlockFromIDInBlockList(blk->align.alignBlockID));
@@ -1340,4 +1341,7 @@ void EditorCoreInitCallbacks()
 	
 	RegisterSetRollerHeightMethod(changeScreenHeight);
 	RegisterSetEditorWidth(setWidth);
+	
+	RegisterEditorHotKey("100b",bold);
+	RegisterEditorHotKey("100i",italic);
 }

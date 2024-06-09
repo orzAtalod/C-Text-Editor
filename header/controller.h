@@ -2,5 +2,6 @@
 #define __CONTROLLER_H_INCLUDED__
 
 void ControllerInitCallbacks();
+void ExitProgram();
 
 #endif

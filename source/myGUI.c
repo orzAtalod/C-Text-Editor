@@ -581,8 +581,8 @@ static int isChar(int key)
 
 static char charize(int key)
 {
-	if(key>=NUMBER_BEGIN && key<NUMBER_BEGIN+10) return key-NUMBER_BEGIN;
-	if(key>=ALPHA_BEGIN  && key<ALPHA_BEGIN +27) return key-ALPHA_BEGIN;
+	if(key>=NUMBER_BEGIN && key<NUMBER_BEGIN+10) return key-NUMBER_BEGIN+'0';
+	if(key>=ALPHA_BEGIN  && key<ALPHA_BEGIN +27) return key-ALPHA_BEGIN+'a';
 	return key;
 }
 
@@ -619,6 +619,7 @@ void myKeyboardEventProcess(int key, int event)
 		int i;
 		for(i=0; i<hotKeyCount; ++i)
 		{
+			const char* ncx = madeupHotkeyCode(charize(key));
 			if(strcmp(hotKeys[i].keyCombo, madeupHotkeyCode(charize(key))) == 0)
 			{
 				hotKeys[i].callback();
