@@ -20,10 +20,22 @@ static int currentFile;
 static DictionaryFolder* corresDFolder[65535];
 static DictionaryItem*   corresDFile[65535];
 static DictionaryFolder* fullFolder;
+static int curTime;
 
 ///////////////////////////////////////////////// 基础函数 //////////////////////////////////////
+void RefreshEditTime()
+{
+	const int x = GetClock();
+	if(currentFile)
+	{
+		files[currentFile]->editTime += x-curTime;
+	}
+	curTime = x;
+}
+
 static void changeCurrentFileByID(int newFile)
 {
+	RefreshEditTime();
 	if(currentFile)
 	{
 		corresDFile[currentFile]->itemEmphasizeType = 1;
@@ -455,6 +467,69 @@ DictionaryFolder* FilterExplorer(FileFilterFunc func, int silentp)
 	return newFolder;
 }
 
+////////////////////////////////////////////////// tags ///////////////////////////////////////////
+int GetTagNum() { return tagStoreNum; }
+char** GetTags() { return tags; }
+
+void AddtagToCurFile(const char* tagName)
+{
+	int tagID = 0;
+	for(int i=1; i<=tagStoreNum; ++i)
+	{
+		if(!strcmp(tags[i], tagName))
+		{
+			tagID = i;
+			break;
+		}
+	}
+	if(!tagID)
+	{
+		++tagStoreNum;
+		const int tagNameLen = strlen(tagName);
+		tags[tagStoreNum] = (char*)malloc((tagNameLen+5)*sizeof(char));
+		strcpy(tags[tagStoreNum], tagName);
+		tagID = tagStoreNum;
+	}
+	if(currentFile)
+	{
+		int  tagsLen = files[currentFile]->tagNum;
+		int* tagsArr = files[currentFile]->tags;
+		for(int i=1; i<=tagsLen; ++i)
+		{
+			if(tagsArr[i] == tagID)
+			{
+				for(int j=i+1; j<=tagsLen; ++j)
+				{
+					tagsArr[j-1] = tagsArr[j];
+				}
+				--files[currentFile]->tagNum;
+				return;
+			}
+		}
+		files[currentFile]->tags = realloc(files[currentFile]->tags, (tagsLen+6)*sizeof(int));
+		files[currentFile]->tags[tagsLen+1] = tagID;
+		++files[currentFile]->tagNum;
+	}
+}
+
+char tagBuffer[255];
+const char* ShowTags()
+{
+	tagBuffer[0] = '\0'; 
+	int* tagsArr = files[currentFile]->tags;
+	int  tagsLen = files[currentFile]->tagNum;
+	int  index = 0;
+	for(int i=1; i<=tagsLen; ++i)
+	{
+		tagBuffer[index] = '#';
+		strcpy(tagBuffer+index+1, tags[tagsArr[i]]);
+		index += strlen(tags[tagsArr[i]])+2;
+		tagBuffer[index-1] = ' ';
+		tagBuffer[index] = '\0';
+	}
+	return tagBuffer;
+}
+
 ////////////////////////////////////////////////// 显示与交互  //////////////////////////////////// 
 static DictionaryGraphicDatas* showDGD;
 static double lastWidth;
@@ -686,6 +761,7 @@ void ExplorerRightMouseUp()
 
 void SaveCurrentFile()
 {
+	RefreshEditTime();
 	if(currentFile) SaveFileAtPage(fileOnBlockListPage[currentFile], files[currentFile]->filePath);
 }
 

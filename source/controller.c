@@ -4,6 +4,7 @@
 #include "windows.h"
 #include "fileSystem.h" 
 #include "search.h" 
+#include "stat.h" 
 //////////////////////////////////////////////// 菜单栏操作 ////////////////////////////
 //菜单响应函数
 /*
@@ -83,7 +84,8 @@ static void close()
 
 static void stats()
 {
-
+	StatBegin();
+	ChangeDisplayMethodToStat();
 }
 
 static void search()
@@ -91,9 +93,15 @@ static void search()
 	ChangeDisplayMethodToSearch(SearchString);
 }
 
-static void browse()
+static void addtagCallback(const char* tagName)
 {
+	if(!tagName || tagName[0]=='\0') return;
+	AddtagToCurFile(tagName);
+}
 
+static void addtag()
+{
+	ChangeDisplayMethodToMajorInput("输入标签名：", addtagCallback);
 }
 
 static void settings()
@@ -116,10 +124,12 @@ void ControllerInitCallbacks()
 
 	RegisterStatMethod(stats);
 	RegisterSearchMethod(search);
-	RegisterExploreMethod(browse);
+	RegisterAddTagMethod(addtag);
 
 	RegisterSettingMethod(settings);
 	RegisterHelpMethod(help);
 
 	RegisterSearchDisplayMethod(SearchDraw);
+	RegisterStatDisplayMethod(StatDraw);
+	RegisterShowTagsMethod(ShowTags); 
 }

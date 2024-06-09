@@ -37,6 +37,13 @@ void ReloadCurrentFile();
 void CloseCurrentFile();
 FileHeaderInfo* GetCurrentFileHeaderInfo();
 
-void ExploreCoreInitCallBacks(); 
+void ExploreCoreInitCallBacks();
+
+int GetTagNum();
+char** GetTags();
+void AddtagToCurFile(const char* tagName);
+const char* ShowTags();
+
+void RefreshEditTime();
 
 #endif

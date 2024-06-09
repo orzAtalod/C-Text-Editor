@@ -14,7 +14,7 @@
 // 宏定义
 #define TITLE_HEIGHT 0             // 标题区高度
 #define MENU_HEIGHT 0.3            // 菜单区高度
-#define TOOL_HEIGHT 0.5            // 工具区高度
+#define TOOL_HEIGHT 0.6            // 工具区高度
 #define BUTTON_WIDTH 1.0           // 按钮宽度
 #define BUTTON_GAP 0.05            // 按钮之间的间隙
 #define SCROLLBAR_WIDTH 0.1        // 滚动条宽度
@@ -27,6 +27,7 @@ static GetInfoMethod   rollerUpperBoundDraw           = NULL;
 static GetInfoMethod   rollerLowerBoundDraw           = NULL;
 static SetValueMethod  setRollerHeight                = NULL;
 static SetValueMethod  setEditorWidth                 = NULL;
+static GetStrMethod    showTags                       = NULL;
 
 static ButtonEvent          editorMouseMiddleRollup   = NULL;
 static ButtonEvent          editorMouseMiddleRolldown = NULL;
@@ -40,7 +41,7 @@ static ButtonEvent FileMenuMethod[5]  = {};
 static ButtonEvent ToolsMenuMethod[3] = {};
 static ButtonEvent AboutMenuMethod[2] = {};    // 定义菜单项
 static char *fileMenu[]  = {"File", "Save", "Open", "New", "Save As", "Close"};
-static char *toolsMenu[] = {"Tools", "Stats", "Search", "Browse"};
+static char *toolsMenu[] = {"Tools", "Stats", "Search", "Add Tag"};
 static char *aboutMenu[] = {"About", "Settings", "Help"};
 
 static char lastSelectedColor[32]                     = "Red"; // 存储快捷颜色
@@ -203,6 +204,12 @@ void DrawInputBar(double x, double y, double width, double height) {
 	}
 }
 
+void DrawInfomationArea(double cx, double dy, double dx, double cy)
+{
+	MovePen(cx,dy+0.05);
+	DrawTextString(showTags());
+}
+
 void DrawSettingPage(double x, double y, double width, double height) {
 	typedef struct {
 		char colorName[32];
@@ -275,12 +282,14 @@ static void displayBegin()
 	SetPenColor("Black");
 }
 
+#define INFO_AREA_HEIGHT 0.2
 static void displayMod0() //主界面
 {
 	DrawMenuBar_(WINDOW_MARGIN, screenHeight - TITLE_HEIGHT - MENU_HEIGHT - WINDOW_MARGIN, screenWidth - 2 * WINDOW_MARGIN, MENU_HEIGHT);
 	DrawToolBar(WINDOW_MARGIN, screenHeight - TITLE_HEIGHT - MENU_HEIGHT - TOOL_HEIGHT - 2 * WINDOW_MARGIN, screenWidth - 2 * WINDOW_MARGIN, TOOL_HEIGHT);
 	double mainAreaHeight = screenHeight - TITLE_HEIGHT - MENU_HEIGHT - TOOL_HEIGHT - 3 * WINDOW_MARGIN;
-	DrawMainArea(WINDOW_MARGIN, WINDOW_MARGIN, screenWidth - 2 * WINDOW_MARGIN, mainAreaHeight);
+	DrawMainArea(WINDOW_MARGIN, WINDOW_MARGIN+INFO_AREA_HEIGHT, screenWidth - 2 * WINDOW_MARGIN, mainAreaHeight-INFO_AREA_HEIGHT);
+	DrawInfomationArea(WINDOW_MARGIN, 0, screenWidth - 2 * WINDOW_MARGIN, INFO_AREA_HEIGHT);
 	if(inputMode!=0) display();
 }
 
@@ -749,6 +758,7 @@ void RegisterSearchDisplayMethod(AreaPaintMethod cb)  { searchResultDraw = cb; }
 void RegisterStatDisplayMethod(AreaPaintMethod cb)    { statDisplayDraw = cb; }
 void RegisterSetRollerHeightMethod(SetValueMethod cb) { setRollerHeight = cb; }
 void RegisterSetEditorWidth(SetValueMethod cb)        { setEditorWidth = cb; }
+void RegisterShowTagsMethod(GetStrMethod cb)          { showTags = cb; }
 
 //鼠标响应函数
 //NULL, left, right ; NULL, editor, explorer, roller, search
@@ -791,7 +801,7 @@ void RegisterCloseMethod(ButtonEvent cb)  { FileMenuMethod[4]=cb; }
 
 void RegisterStatMethod(ButtonEvent cb)    { ToolsMenuMethod[0]=cb; }
 void RegisterSearchMethod(ButtonEvent cb)  { ToolsMenuMethod[1]=cb; }
-void RegisterExploreMethod(ButtonEvent cb) { ToolsMenuMethod[2]=cb; }
+void RegisterAddTagMethod(ButtonEvent cb)  { ToolsMenuMethod[2]=cb; }
 
 void RegisterSettingMethod(ButtonEvent cb) { AboutMenuMethod[0]=cb; }
 void RegisterHelpMethod(ButtonEvent cb)    { AboutMenuMethod[1]=cb; }

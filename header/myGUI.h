@@ -34,6 +34,7 @@ typedef void (*MouseEventMethod)(double,double);
 typedef void (*KeyboardEventMethod)(char); 
 typedef void (*ColorDefinitionMethod)(const char*,double,double,double); 
 typedef void (*SetValueMethod)(double);
+typedef const char* (*GetStrMethod)();
 
 /*
 *
@@ -95,6 +96,7 @@ void RegisterCloseMethod(ButtonEvent);
 void RegisterStatMethod(ButtonEvent);
 void RegisterSearchMethod(ButtonEvent);
 void RegisterExploreMethod(ButtonEvent);
+void RegisterAddTagMethod(ButtonEvent); 
 
 void RegisterSettingMethod(ButtonEvent);
 void RegisterHelpMethod(ButtonEvent);
@@ -110,6 +112,7 @@ void RegisterExplorerDraw(AreaPaintMethod);
 void RegisterEditorGraphicDraw(AreaPaintMethod);
 void RegisterRollerUpperBoundDraw(GetInfoMethod);
 void RegisterRollerLowerBoundDraw(GetInfoMethod);
+void RegisterShowTagsMethod(GetStrMethod);
 
 void RegisterEditorHotKey(char*, ButtonEvent);
 void RegisterEditorMouseLeftDown(MouseEventMethod);
