@@ -73,8 +73,11 @@ static int openFile(int fileID) //·µ»Ø´ò¿ªÒ³Âë
 static void closeFile(int fileID)
 {
 	assert(currentFile != fileID);
+	StoreCurPage();
+	SaveFileAtPage(fileOnBlockListPage[fileID], files[fileID]->filePath);
 	corresDFile[fileID]->itemEmphasizeType = 0;
 	if(fileOnBlockListPage[fileID] == fileOnEditNum) --fileOnEditNum;
+	RecoverCurPage();
 	fileOnBlockListPage[fileID] = 0;
 }
 

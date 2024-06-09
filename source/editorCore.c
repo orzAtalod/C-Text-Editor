@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include "graphics.h"
 #include <assert.h>
+#include "imageStructure.h"
 
 typedef struct blockChainBase {
 	Block* curr;
@@ -18,6 +19,16 @@ static int blockChainPage = 0;
 static blockChain* corrBlockChain[65535];   static int blockNum;
 static double columnWidth[255];             static int columnNum;
 static double columnWidthPosition[255];
+
+typedef struct
+{
+	Block* blockVal;
+	int position; //position是唯一指定块中光标位置的变量
+} cursorMsg;
+
+static int cursorType; //光标数量
+static cursorMsg cursor1, cursor2; //顺序不限
+#define CURSOR_DENSITY 0.2
 
 /////////////////////////////////////// 基本操作 ///////////////////////////////////////////
 
@@ -30,7 +41,9 @@ blockChain* getPre(blockChain* x)
 
 /////////////////////////////////////// 建立与清空逻辑 //////////////////////////////////////
 
+static double screenHeight;
 static double screenWidth;
+static double screenBeginHeight; // all negative
 
 static void setWidth(double w) { screenWidth = w; }
 
@@ -59,6 +72,8 @@ static void buildBlock(Block* blk)
 	}
 }
 
+void initDefault();
+
 static void buildBC()  //同时清空
 {
 //	TraverseColorDifinitions(DefineColor);
@@ -72,6 +87,15 @@ static void buildBC()  //同时清空
 	}
 	blockNum = 0;
 	TraverseBlockList(buildBlock);
+	
+	cursorType = 0; 
+	cursor1.blockVal = 0;
+	cursor1.position = 0;
+	cursor2.blockVal = 0;
+	cursor2.position = 0;
+	
+	screenBeginHeight = 0;
+	initDefault();
 }
 
 void ChangePageOfEditorCore(int p)
@@ -135,8 +159,6 @@ static void calculateHeight()
 
 //////////////////////////////////////// 屏幕位置维护 ////////////////////////////////////
 
-static double screenHeight;
-static double screenBeginHeight; // all negative
 #define ROLLER_STEP 0.1
 #define CULUMN_CURSOR_HEGIHT 0.1
 
@@ -161,16 +183,6 @@ static void rollerRollDown() { if(screenBeginHeight+screenHeight>fullHeight) scr
 static void rollerLeftDown(double mx, double my) { screenBeginHeight = my/screenHeight*fullHeight; }
 
 //////////////////////////////////////// 光标操作 ///////////////////////////////////////////
-
-typedef struct
-{
-	Block* blockVal;
-	int position; //position是唯一指定块中光标位置的变量
-} cursorMsg;
-
-static int cursorType; //光标数量
-static cursorMsg cursor1, cursor2; //顺序不限
-#define CURSOR_DENSITY 0.2
 
 static int priorierThan(cursorMsg cursor1, cursorMsg cursor2)
 {
@@ -462,6 +474,13 @@ static void mouseLeftUpOnMain()
 static int defaultPointSize = 15;
 static const char* defaultColor = "Black"; // 这两个字符串保存在静态段，不会被修改
 static const char* defaultFont = "Times";
+
+void initDefault()
+{
+	defaultPointSize = 15;
+	defaultColor = "Black";
+	defaultFont = "Times";
+}
 
 StyleString* newStyleString()
 {

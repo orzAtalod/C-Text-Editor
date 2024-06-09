@@ -55,10 +55,6 @@ void ClearColorTable();
 
 /*
 *
-* document: 24/5/20 林景行 
-* program:
-* last change: 
-* details in github history
 *
 * Font Table数据结构
 * 与Color Table相似，不过只有第二部分，因为第一部分的Font已经由系统预先定义。 
