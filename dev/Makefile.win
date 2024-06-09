@@ -4,8 +4,8 @@
 CPP      = g++.exe
 CC       = gcc.exe
 WINDRES  = windres.exe
-OBJ      = ../outputs/main.o ../outputs/exceptio.o ../outputs/genlib.o ../outputs/graphics.o ../outputs/linkedlist.o ../outputs/random.o ../outputs/simpio.o ../outputs/strlib.o ../outputs/textStructure.o ../outputs/fileSystem.o ../outputs/blockList.o ../outputs/fileSystemCore.o ../outputs/explorerCore.o ../outputs/dictionaryList.o ../outputs/myGUI.o ../outputs/blocklistInitor.o ../outputs/controller.o ../outputs/editorCore.o ../outputs/imageStructure.o ../outputs/imgui.o
-LINKOBJ  = ../outputs/main.o ../outputs/exceptio.o ../outputs/genlib.o ../outputs/graphics.o ../outputs/linkedlist.o ../outputs/random.o ../outputs/simpio.o ../outputs/strlib.o ../outputs/textStructure.o ../outputs/fileSystem.o ../outputs/blockList.o ../outputs/fileSystemCore.o ../outputs/explorerCore.o ../outputs/dictionaryList.o ../outputs/myGUI.o ../outputs/blocklistInitor.o ../outputs/controller.o ../outputs/editorCore.o ../outputs/imageStructure.o ../outputs/imgui.o
+OBJ      = ../outputs/main.o ../outputs/exceptio.o ../outputs/genlib.o ../outputs/graphics.o ../outputs/linkedlist.o ../outputs/random.o ../outputs/simpio.o ../outputs/strlib.o ../outputs/textStructure.o ../outputs/fileSystem.o ../outputs/blockList.o ../outputs/fileSystemCore.o ../outputs/explorerCore.o ../outputs/dictionaryList.o ../outputs/myGUI.o ../outputs/blocklistInitor.o ../outputs/controller.o ../outputs/editorCore.o ../outputs/imageStructure.o ../outputs/imgui.o ../outputs/search.o ../outputs/stat.o
+LINKOBJ  = ../outputs/main.o ../outputs/exceptio.o ../outputs/genlib.o ../outputs/graphics.o ../outputs/linkedlist.o ../outputs/random.o ../outputs/simpio.o ../outputs/strlib.o ../outputs/textStructure.o ../outputs/fileSystem.o ../outputs/blockList.o ../outputs/fileSystemCore.o ../outputs/explorerCore.o ../outputs/dictionaryList.o ../outputs/myGUI.o ../outputs/blocklistInitor.o ../outputs/controller.o ../outputs/editorCore.o ../outputs/imageStructure.o ../outputs/imgui.o ../outputs/search.o ../outputs/stat.o
 LIBS     = -L"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib" -L"C:/Program Files (x86)/Dev-Cpp/MinGW32/mingw32/lib" -static-libstdc++ -static-libgcc -mwindows -g3
 INCS     = -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include" -I"../libgraphics" -I"../header" -I"../simpleGUI"
 CXXINCS  = -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/include" -I"C:/Program Files (x86)/Dev-Cpp/MinGW32/lib/gcc/mingw32/4.7.2/include/c++" -I"../libgraphics" -I"../header" -I"../simpleGUI"
@@ -83,3 +83,9 @@ $(BIN): $(OBJ)
 
 ../outputs/imgui.o: ../simpleGUI/imgui.c
 	$(CC) -c ../simpleGUI/imgui.c -o ../outputs/imgui.o $(CFLAGS)
+
+../outputs/search.o: ../source/search.c
+	$(CC) -c ../source/search.c -o ../outputs/search.o $(CFLAGS)
+
+../outputs/stat.o: ../source/stat.c
+	$(CC) -c ../source/stat.c -o ../outputs/stat.o $(CFLAGS)
