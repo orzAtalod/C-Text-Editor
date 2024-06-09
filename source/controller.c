@@ -87,7 +87,7 @@ static void stats()
 
 static void search()
 {
-
+	ChangeDisplayMethodToSearch(SearchString);
 }
 
 static void browse()
@@ -119,4 +119,6 @@ void ControllerInitCallbacks()
 
 	RegisterSettingMethod(settings);
 	RegisterHelpMethod(help);
+
+	RegisterSearchDisplayMethod(SearchDraw);
 }

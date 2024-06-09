@@ -171,10 +171,9 @@ void ChangeDisplayMethodToMajorInput(char* inputMessage, ButtonEventWithInput ca
 *
 */
 
-void ChangeDisplayMethodToSearch();
+void ChangeDisplayMethodToSearch(ButtonEventWithInput cb);
 
 void RegisterSearchDisplayMethod(AreaPaintMethod);
-void RegisterSearchInputMethod(ButtonEventWithInput);
 
 /*
 *

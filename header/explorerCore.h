@@ -10,6 +10,7 @@ typedef struct fhBase {
 } FolderHeaderInfo;
 
 typedef struct {
+	int fileID;
 	int tagNum;
 	int editTime;
 	int* tags;

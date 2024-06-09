@@ -86,8 +86,8 @@ static void DrawMenuBar_(double x, double y, double width, double height) {
 	const int choice2 = menuList(GenUIID(1), x + width/3   + BUTTON_GAP, y, width/3-2*BUTTON_GAP, width/3-2*BUTTON_GAP, height-2*BUTTON_GAP, toolsMenu, sizeof(toolsMenu)/sizeof(toolsMenu[0]));
 	const int choice3 = menuList(GenUIID(2), x + 2*width/3 + BUTTON_GAP, y, width/3-2*BUTTON_GAP, width/3-2*BUTTON_GAP, height-2*BUTTON_GAP, aboutMenu, sizeof(aboutMenu)/sizeof(aboutMenu[0]));
 	if(choice1>0) { ChangeDisplayMethodToMain(); FileMenuMethod[choice1-1]();  }
-	if(choice2>0) { ChangeDisplayMethodToMain(); ToolsMenuMethod[choice1-1](); }
-	if(choice3>0) { ChangeDisplayMethodToMain(); AboutMenuMethod[choice1-1](); }
+	if(choice2>0) { ChangeDisplayMethodToMain(); ToolsMenuMethod[choice2-1](); }
+	if(choice3>0) { ChangeDisplayMethodToMain(); AboutMenuMethod[choice3-1](); }
 }
 
 void colorInputCallback(const char* color) {
@@ -526,7 +526,7 @@ char* madeupHotkeyCode(char ch)
 
 int isChr(char ch)
 {
-	return ch!='\r' && ch!='\b';
+	return ch!='\r' && ch!='\b' && ch!=27;
 }
 
 void myCharEventProcess(char ch) 
@@ -637,6 +637,7 @@ void myKeyboardEventProcess(int key, int event)
 			{
 				--inputBufferLength;
 				inputBuffer[inputBufferLength] = '\0';
+				if(inputMode==3) inputConfirmedCallback(inputBuffer);
 			}
 			if(key == KEYBOARD_ENTER)
 			{

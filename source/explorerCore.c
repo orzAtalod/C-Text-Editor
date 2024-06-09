@@ -79,6 +79,7 @@ int CreateEmptyFile()  //新建一页，返回新建的那一页
 	strcpy(files[fileNum]->fileName, "Noname");
 	files[fileNum]->filePath = NEWVARR(char,20);
 	files[fileNum]->folder = 0;
+	files[fileNum]->fileID = fileNum;
 
 	DictionaryItem* newFileDic = CreateDictionaryItem();
 	newFileDic->itemID = fileNum;
@@ -178,6 +179,7 @@ void readFiles(FILE* f)
 		files[i]->fileName = NEWVARR(char, fileBuffer[i].fileNameLen+5);
 		files[i]->tags = NEWVARR(int, fileBuffer[i].tagNum+5);
 		files[i]->filePath = NEWVARR(char, fileBuffer[i].filePathLen+5);
+		files[i]->fileID = i;
 		fread(files[i]->fileName, sizeof(char), fileBuffer[i].fileNameLen, f);
 		fread(files[i]->tags,     sizeof(int),  fileBuffer[i].tagNum,      f);
 		fread(files[i]->filePath, sizeof(char), fileBuffer[i].filePathLen, f);
