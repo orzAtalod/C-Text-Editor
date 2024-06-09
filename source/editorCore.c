@@ -227,8 +227,8 @@ cursorMsg getCursorPosition(double Ax, double Ay)
 	for(int i=1; i<=blockNum; ++i)
 	{
 		if(corrBlockChain[i]->curr->align.column != curcol) continue;
-		if(blockBeginHeight[i]<Ax) continue;
-		if(blockBeginHeight[i]+blockHeight[i]>=Ax && (!corrBlockChain[i]->next || blockBeginHeight[corrBlockChain[i]->next->curr->ID]>=Ax))
+		if(blockBeginHeight[i]<Ay) continue;
+		if(blockBeginHeight[i]+blockHeight[i]>=Ay && (!corrBlockChain[i]->next || blockBeginHeight[corrBlockChain[i]->next->curr->ID]>=Ay))
 		{
 			continue;
 		}
