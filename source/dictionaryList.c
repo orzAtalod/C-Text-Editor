@@ -353,13 +353,15 @@ DictionaryFolder* CopyDictionaryFolder(DictionaryFolder* sorce)
 	
 	if(sorce->items)
 	{
-		dest->items = CopyDictionaryItem(sorce->items);	
+		dest->items = CopyDictionaryItem(sorce->items);
+		dest->items->folder = dest; 
 
 		DictionaryItem* dt = dest->items;
 		for(DictionaryItem* it = sorce->items->nextItem; it; it=it->nextItem)
 		{
 			dt->nextItem = CopyDictionaryItem(it);
 			dt->nextItem->prevItem = dt;
+			dt->nextItem->folder = dest;
 			dt = dt->nextItem;
 		}
 	
@@ -368,6 +370,7 @@ DictionaryFolder* CopyDictionaryFolder(DictionaryFolder* sorce)
 		{
 			dt->prevItem = CopyDictionaryItem(it);
 			dt->prevItem->nextItem = dt;
+			dt->prevItem->folder = dest;
 			dt = dt->prevItem;
 		}
 	}
@@ -375,12 +378,14 @@ DictionaryFolder* CopyDictionaryFolder(DictionaryFolder* sorce)
 	if(sorce->subFolders)
 	{
 		dest->subFolders = CopyDictionaryFolder(sorce->subFolders);
+		dest->subFolders->parent = dest;
 		
 		DictionaryFolder* df = dest->subFolders;
 		for(DictionaryFolder* it = sorce->subFolders->nextFolder; it; it=it->nextFolder)
 		{
 			df->nextFolder = CopyDictionaryFolder(it);
 			df->nextFolder->prevFolder = df;
+			df->nextFolder->parent = dest;
 			df = df->nextFolder;
 		}
 		
@@ -389,6 +394,7 @@ DictionaryFolder* CopyDictionaryFolder(DictionaryFolder* sorce)
 		{
 			df->prevFolder = CopyDictionaryFolder(it);
 			df->prevFolder->nextFolder = df;
+			df->nextFolder->parent = df;
 			df = df->nextFolder;
 		}
 	}

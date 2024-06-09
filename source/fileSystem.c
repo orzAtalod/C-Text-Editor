@@ -23,6 +23,19 @@ void ClearAllItemsOnPage(int page)
 	ClearBlockList();
 }
 
+static int curPage;
+void StoreCurPage()
+{
+	curPage = GetPageOfBlockList();
+}
+
+void RecoverCurPage()
+{
+	ChangePageOfColorTable(curPage);
+	ChangePageOfFontTable(curPage);
+	ChangePageOfBlockList(curPage);
+}
+
 int LoadFileAtPage(int page, const char* fileName)
 {
 	ClearAllItemsOnPage(page);

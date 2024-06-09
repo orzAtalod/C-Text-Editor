@@ -360,7 +360,7 @@ static void displayMod3() //搜索界面
 
 	// 绘制搜索结果显示区
 	if (searchResultDraw) {
-		searchResultDraw(WINDOW_MARGIN, WINDOW_MARGIN, screenWidth - 2 * WINDOW_MARGIN, searchInputYStart - 2 * WINDOW_MARGIN);
+		searchResultDraw(WINDOW_MARGIN, searchInputYStart - 2 * WINDOW_MARGIN, screenWidth - 2 * WINDOW_MARGIN, WINDOW_MARGIN);
 	}
 	if(inputMode!=3) display();
 }

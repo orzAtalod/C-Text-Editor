@@ -4,6 +4,7 @@
 #include "fileSystem.h"
 #include "controller.h"
 #include "blocklistInitor.h"
+#include "search.h"
 
 void Main()
 {
@@ -15,6 +16,7 @@ void Main()
 	RegisterSavFilePath("user.sav");
 	LoadSavFile();
 	BuildFiles();
+	SearchBuild();
 
 	GUI_Start();
 }

@@ -29,7 +29,7 @@ typedef void (*FileBrowseFunc)(FileHeaderInfo*, int); //int ²ÎÊıÎª blocklist ¿É½
 typedef int  (*FileFilterFunc)(FileHeaderInfo*, int);
 
 void              BrowseExplorer(FileBrowseFunc func, int silentp); //silentp==1 Ê±£¬±éÀúÎÄ¼şÊ±²»´ò¿ªÎÄ¼ş 
-DictionaryFolder* FilterExplorer(FileFilterFunc func, int silentp); //FileFilterFunc ·µ»Ø1Ê±É¾³ıÎÄ¼ş 
+DictionaryFolder* FilterExplorer(FileFilterFunc func, int silentp); //FileFilterFunc ·µ»Ø0Ê±É¾³ıÎÄ¼ş 
 
 void SaveCurrentFile();
 int CreateEmptyFile(); //ĞÂ½¨Ò»Ò³£¬·µ»ØĞÂ½¨µÄÄÇÒ»Ò³

@@ -1,10 +1,35 @@
 #include <string.h>
+#include <stdlib.h>
+#include "blockList.h"
+#include "textStructure.h"
+#include "explorerCore.h"
 
 //using data structure SAM(suffix automaton) to search the strings along all files
 //including the MOST stadard linked list in your life to satisfy those who is VERY nickpicking
 ////////////////////////////////////////// CONSTANTS /////////////////////////////////////////////
 
-#define CHARNUM 30
+#define CHARNUM 40
+
+int trans(char ch)
+{
+	if((ch>='A'&&ch<='Z') || (ch>='a'&&ch<='z'))
+	{
+		return ch>='a' ? ch-'a' : ch-'A';
+	}
+	if(ch>='0' && ch<='9')
+	{
+		return ch-'0'+26;
+	}
+	if(ch==' ')
+	{
+		return 36;
+	}
+	if(ch=='#')
+	{
+		return 37;
+	}
+	return 38;
+}
 
 ////////////////////////////////////////// Structure Define //////////////////////////////////////
 
@@ -33,11 +58,11 @@ static SAM* fileSAM[65535];
 /////////////////////////////////////////// Build SAM* From a Trie* //////////////////////////////
 
 // A STANDARD LINKED LIST
-typedef struct likedListBase {
+typedef struct linkedListBase {
 	Trie* currentTrie;
 	SAM*  currentSAM;
-	linkedListBase* next;
-} likedList;
+	struct linkedListBase* next;
+} linkedList;
 
 struct {
 	linkedList* head;
@@ -48,19 +73,19 @@ static void BFSqueuePush(SAM* nSAM, Trie* nTrie)
 {
 	if(!BFSqueue.head)
 	{
-		BFSqueue.head = BFSqueue.tail = (linkedList*)malloc(sizeof(likedList));
+		BFSqueue.head = BFSqueue.tail = (linkedList*)malloc(sizeof(linkedList));
 	}
 	else
 	{
-		BFSqueue.tail.next = (linkedList*)malloc(sizeof(likedList));
-		BFSqueue.tail = BFSqueue.tail.next;
+		BFSqueue.tail->next = (linkedList*)malloc(sizeof(linkedList));
+		BFSqueue.tail = BFSqueue.tail->next;
 	}
 	BFSqueue.tail->currentSAM  = nSAM;
 	BFSqueue.tail->currentTrie = nTrie;
 	BFSqueue.tail->next = 0;
 }
 
-static likedList* BFSqueuePop()
+static linkedList* BFSqueuePop()
 {
 	if(!BFSqueue.head) return 0;
 	
@@ -71,7 +96,7 @@ static likedList* BFSqueuePop()
 	}
 	else
 	{
-		BFSqueue.head = BFSqueue.head.next;
+		BFSqueue.head = BFSqueue.head->next;
 	}
 	
 	return res;
@@ -135,7 +160,7 @@ static SAM* buildSAMFromTrie(Trie* theTrie)
 					}
 				}
 
-				BFSqueuePush(nSAM, currentTrie->ch[i]);
+				BFSqueuePush(nSAM, curTrie->ch[i]);
 			}
 		}
 	}
@@ -155,7 +180,7 @@ static void insertTrieFromBlock(Block* blk)
 	Trie* curTrie = buildedTrie;
 	for(int i=0; i<curss->contentLen; ++i)
 	{
-		const char chr = curss->content[i]->content;
+		const int chr = trans(curss->content[i].content);
 		if(!curTrie->ch[chr])
 		{
 			curTrie->ch[chr] = newTrie();
@@ -209,37 +234,38 @@ static void buildKMP()
 static int searchFromSAM(int fileID)
 {
 	SAM* theSAM = fileSAM[fileID];
-	for(int i=0; txt[i]; ++i)
+	for(int i=0; searchText[i]; ++i)
 	{
-		theSAM = theSAM->ch[txt[i]];
+		theSAM = theSAM->ch[trans(searchText[i])];
 		if(!theSAM) return 0;
 	}
 	return 1;
 }
 
-static void searchBlockFromKMP(void* res, Block* blk)
+static void* searchBlockFromKMP(void* res, Block* blk)
 {
-	if(blk->type != 1) return;
-	if(*((int*)res)) return;
+	if(blk->type != 1) return res;
+	if(*((int*)res)) return res;
 	StyleString* ss = blk->dataptr;
 
-	const int curp = 0;
+	int curp = 0;
 	for(int i=0; i<ss->contentLen; ++i)
 	{
-		while(curp && searchText[curp]!=ss->content[i]->content)
+		while(curp && searchText[curp]!=ss->content[i].content)
 		{
 			curp = KMPnext[curp];
 		}
-		if(searchText[curp] == ss->content[i]->content)
+		if(searchText[curp] == ss->content[i].content)
 		{
 			curp = curp+1;
 		}
 		if(!searchText[curp])
 		{
 			*((int*)res) = 1;
-			return;
+			return res;
 		}
 	}
+	return res; 
 }
 
 static int searchFromKMP(int page)

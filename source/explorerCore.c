@@ -33,21 +33,28 @@ static void changeCurrentFileByID(int newFile)
 	ChangePageOfEditorCore(fileOnBlockListPage[newFile]);
 }
 
-static int openFile(int fileID) //返回打开页码
+static int silentOpenFile(int fileID)
 {
 	if(!fileID) return 0;
 	if(fileOnBlockListPage[fileID])
 	{
 		return fileOnBlockListPage[fileID];
 	}
-
+	
+	StoreCurPage();
 	++fileOnEditNum;
 	fileOnBlockListPage[fileID] = fileOnEditNum;
 	LoadFileAtPage(fileOnEditNum, files[fileID]->filePath);
-	corresDFile[fileID]->itemEmphasizeType = 1;
-	changeCurrentFileByID(fileID);
+	RecoverCurPage();
 	
 	return fileOnEditNum;
+}
+
+static int openFile(int fileID) //返回打开页码
+{
+	const int res = silentOpenFile(fileID);
+	changeCurrentFileByID(fileID);
+	return res;
 }
 
 static void closeFile(int fileID)
@@ -227,6 +234,7 @@ void BuildFiles()
 	strcpy(fullFolder->folderName, userName);
 	fullFolder->folderExpended = 1;
 	fullFolder->folderID = 0;
+	fullFolder->parent = 0; 
 
 	for(int i=1; i<=folderNum; ++i)
 	{
@@ -387,7 +395,7 @@ void BrowseExplorer(FileBrowseFunc func, int silentp)
 		int flag = 0;
 		if(!curPage && !silentp)
 		{
-			curPage = openFile(i);
+			curPage = silentOpenFile(i);
 			flag = 1;
 		}
 		func(files[i], curPage);
@@ -409,7 +417,7 @@ static void filterFolder(FileFilterFunc func, DictionaryFolder* df, int silentp)
 				curPage = openFile(it->itemID);
 				flag = 1;
 			}
-			if(func(files[it->itemID], curPage))
+			if(!func(files[it->itemID], curPage))
 			{
 				if(flag) closeFile(it->itemID);
 				DictionaryItem* tmp = it;

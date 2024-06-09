@@ -3,6 +3,7 @@
 #include "explorerCore.h"
 #include "windows.h"
 #include "fileSystem.h" 
+#include "search.h" 
 //////////////////////////////////////////////// 菜单栏操作 ////////////////////////////
 //菜单响应函数
 /*

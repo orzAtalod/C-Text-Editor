@@ -14,4 +14,7 @@ void RegisterSavFilePath(const char* savFilePath);
 void LoadSavFile();
 void StoreSavFile();
 
+void RecoverCurPage();
+void StoreCurPage();
+
 #endif
